@@ -19,6 +19,7 @@
 		BC51571D2A72D3F90080B6EA /* Tracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BC51571B2A72D3F90080B6EA /* Tracker.xcdatamodeld */; };
 		BC51571F2A72D3F90080B6EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC51571E2A72D3F90080B6EA /* Assets.xcassets */; };
 		BC5157222A72D3F90080B6EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC5157202A72D3F90080B6EA /* LaunchScreen.storyboard */; };
+		BC52A7552A7C17CA009D9CEB /* TrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */; };
 		BCF2FBDF2A7ACDDF007E6583 /* Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF2FBDE2A7ACDDF007E6583 /* Trackers.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		BC51571E2A72D3F90080B6EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BC5157212A72D3F90080B6EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BC5157232A72D3F90080B6EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCell.swift; sourceTree = "<group>"; };
 		BCF2FBDE2A7ACDDF007E6583 /* Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trackers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -92,6 +94,7 @@
 				BC5157202A72D3F90080B6EA /* LaunchScreen.storyboard */,
 				BC5157232A72D3F90080B6EA /* Info.plist */,
 				BC51571B2A72D3F90080B6EA /* Tracker.xcdatamodeld */,
+				BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -170,6 +173,7 @@
 				BC307D092A79805F0076AA89 /* TabBarController.swift in Sources */,
 				BC307D0F2A79814C0076AA89 /* NewTrackerViewController.swift in Sources */,
 				BC51571D2A72D3F90080B6EA /* Tracker.xcdatamodeld in Sources */,
+				BC52A7552A7C17CA009D9CEB /* TrackerCell.swift in Sources */,
 				BC5157172A72D3F90080B6EA /* TrackerListViewController.swift in Sources */,
 				BC5157132A72D3F80080B6EA /* AppDelegate.swift in Sources */,
 				BC307D0D2A79810A0076AA89 /* TrackerTypeChoiceViewController.swift in Sources */,

@@ -10,6 +10,7 @@ import UIKit
 let emojiList: [String] = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
                            "😇", "😡", "🥶", "🤔", "🙌", "🍔",
                            "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
+
 enum trackerEmojis: String {
     case 🙂, 😻, 🌺, 🐶, 😱, 😇, 😡, 🥶, 🤔, 🙌, 🍔, 🥦, 🏓, 🥇, 🎸, 🏝, 😪
     case heart = "❤️"
@@ -56,3 +57,22 @@ extension UIColor {
         static let section18 = UIColor(red: 0.184, green: 0.816, blue: 0.345, alpha: 1)
     }
 }
+
+let sectionColors: [UIColor] = [.colorSections.section1,
+                                .colorSections.section2,
+                                .colorSections.section3,
+                                .colorSections.section4,
+                                .colorSections.section5,
+                                .colorSections.section6,
+                                .colorSections.section7,
+                                .colorSections.section8,
+                                .colorSections.section9,
+                                .colorSections.section10,
+                                .colorSections.section11,
+                                .colorSections.section12,
+                                .colorSections.section13,
+                                .colorSections.section14,
+                                .colorSections.section15,
+                                .colorSections.section16,
+                                .colorSections.section17,
+                                .colorSections.section18]

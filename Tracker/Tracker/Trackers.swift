@@ -12,6 +12,6 @@ struct Tracker {
     let emoji: String
     let color: UIColor
     
-    static let test: [Tracker] = [Tracker(title: "Test 1", emoji: "🛼", color: .appColors.blue),
-                                  Tracker(title: "Test 2", emoji: "🎮", color: .appColors.red)]
+    static let test: [Tracker] = [Tracker(title: "Test 1", emoji: "🛼", color: .colorSections.section11),
+                                  Tracker(title: "Test 2", emoji: "🎮", color: .colorSections.section13)]
 }
