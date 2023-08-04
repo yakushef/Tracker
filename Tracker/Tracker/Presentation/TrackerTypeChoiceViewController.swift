@@ -20,17 +20,19 @@ class TrackerTypeChoiceViewController: UIViewController {
     func setup(button: UIButton) {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        button.tintColor = .appColors.whiteDay
         button.backgroundColor = .appColors.blackDay
+        button.titleLabel?.font = .boldSystemFont(ofSize: 16)
         button.layer.cornerRadius = 16
         button.clipsToBounds = true
     }
     
     func setupUI() {
-        let habitButton = UIButton()
+        let habitButton = UIButton.systemButton(with: UIImage(), target: self, action: #selector(addHabit))
         habitButton.setTitle("Привычка", for: .normal)
         setup(button: habitButton)
         
-        let singleButton = UIButton()
+        let singleButton = UIButton.systemButton(with: UIImage(), target: self, action: #selector(addSingleEvent))
         singleButton.setTitle("Нерегулярное событие", for: .normal)
         setup(button: singleButton)
         
@@ -48,6 +50,18 @@ class TrackerTypeChoiceViewController: UIViewController {
         buttonsStack.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         buttonsStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
         buttonsStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
+    }
+    
+    @objc func addHabit() {
+        let habitVC = NewTrackerViewController()
+        habitVC.trackerType = .habit
+        self.show(UINavigationController(rootViewController: habitVC), sender: nil)
+    }
+    
+    @objc func addSingleEvent() {
+        let eventVC = NewTrackerViewController()
+        eventVC.trackerType = .singleEvent
+        self.show(UINavigationController(rootViewController: eventVC), sender: nil)
     }
 }
 

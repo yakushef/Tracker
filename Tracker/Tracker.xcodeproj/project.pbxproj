@@ -56,6 +56,7 @@
 		BC307CFF2A7976EE0076AA89 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */,
 				BC307D082A79805F0076AA89 /* TabBarController.swift */,
 				BC5157162A72D3F90080B6EA /* TrackerListViewController.swift */,
 				BC307D0A2A7980830076AA89 /* StatisticsViewController.swift */,
@@ -94,7 +95,6 @@
 				BC5157202A72D3F90080B6EA /* LaunchScreen.storyboard */,
 				BC5157232A72D3F90080B6EA /* Info.plist */,
 				BC51571B2A72D3F90080B6EA /* Tracker.xcdatamodeld */,
-				BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";

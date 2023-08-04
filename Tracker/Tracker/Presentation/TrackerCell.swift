@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 final class TrackerTypeHeader: UICollectionReusableView {
     let label = UILabel()
     
@@ -93,7 +94,7 @@ final class TrackerCell: UICollectionViewCell {
             titleLabel.topAnchor.constraint(equalTo: emojiLabel.bottomAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12)
         ])
-        titleLabel.font = .systemFont(ofSize: 12)
+        titleLabel.font = .boldSystemFont(ofSize: 12)
         titleLabel.numberOfLines = 2
         titleLabel.textColor = .appColors.whiteDay
         titleLabel.text = tracker.title

@@ -12,6 +12,11 @@ struct Tracker {
     let emoji: String
     let color: UIColor
     
+    enum type {
+        case singleEvent
+        case habit
+    }
+    
     static let test: [Tracker] = [Tracker(title: "Test 1", emoji: "🛼", color: .colorSections.section11),
                                   Tracker(title: "Test 2", emoji: "🎮", color: .colorSections.section13)]
 }
