@@ -30,8 +30,8 @@ class NewTrackerViewController: UIViewController {
         case edit
     }
     
-    let cancelButton = UIButton()
-    let createButton = UIButton()
+    let cancelButton = UIButton(type: .system)
+    let createButton = UIButton(type: .system)
     
     let textField = TrackerNameField()
     let optionsTable = UITableView()
@@ -77,8 +77,14 @@ class NewTrackerViewController: UIViewController {
         
         view.addSubview(optionsTable)
         optionsTable.translatesAutoresizingMaskIntoConstraints = false
+        var tableHeight: CGFloat
+        if trackerType == .habit {
+            tableHeight = 150
+        } else {
+            tableHeight = 75
+        }
         NSLayoutConstraint.activate([
-            optionsTable.heightAnchor.constraint(equalToConstant: 150),
+            optionsTable.heightAnchor.constraint(equalToConstant: tableHeight),
             optionsTable.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
             optionsTable.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
             optionsTable.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18)
@@ -125,8 +131,13 @@ class NewTrackerViewController: UIViewController {
         cancelButton.setTitle("Отменить", for: .normal)
         cancelButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
         cancelButton.setTitleColor(.appColors.red, for: .normal)
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
     }
 
+    @objc func cancelButtonTapped() {
+        dismiss(animated: true)
+    }
+    
     func setupForHabit() {
         navigationItem.title = "Новая привычка"
     }
@@ -145,6 +156,18 @@ class NewTrackerViewController: UIViewController {
 }
 
 extension NewTrackerViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            let catVC = CategoryListViewController()
+            show(UINavigationController(rootViewController: catVC), sender: self)
+        }
+        
+        if indexPath.row == 1 {
+            let timetableVC = TimetableViewController()
+            show(UINavigationController(rootViewController: timetableVC), sender: self)
+        }
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }

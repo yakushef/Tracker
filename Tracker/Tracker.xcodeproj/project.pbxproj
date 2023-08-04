@@ -20,6 +20,10 @@
 		BC51571F2A72D3F90080B6EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC51571E2A72D3F90080B6EA /* Assets.xcassets */; };
 		BC5157222A72D3F90080B6EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC5157202A72D3F90080B6EA /* LaunchScreen.storyboard */; };
 		BC52A7552A7C17CA009D9CEB /* TrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */; };
+		BC75DC622A7D5959001CB797 /* TimetableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC612A7D5959001CB797 /* TimetableViewController.swift */; };
+		BC75DC642A7D596C001CB797 /* CategoryListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC632A7D596C001CB797 /* CategoryListViewController.swift */; };
+		BC75DC662A7D5999001CB797 /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC652A7D5999001CB797 /* NewCategoryViewController.swift */; };
+		BC75DC682A7D8831001CB797 /* EmptyTablePlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */; };
 		BCF2FBDF2A7ACDDF007E6583 /* Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF2FBDE2A7ACDDF007E6583 /* Trackers.swift */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +43,10 @@
 		BC5157212A72D3F90080B6EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BC5157232A72D3F90080B6EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCell.swift; sourceTree = "<group>"; };
+		BC75DC612A7D5959001CB797 /* TimetableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimetableViewController.swift; sourceTree = "<group>"; };
+		BC75DC632A7D596C001CB797 /* CategoryListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListViewController.swift; sourceTree = "<group>"; };
+		BC75DC652A7D5999001CB797 /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
+		BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTablePlaceholder.swift; sourceTree = "<group>"; };
 		BCF2FBDE2A7ACDDF007E6583 /* Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trackers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -56,12 +64,12 @@
 		BC307CFF2A7976EE0076AA89 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				BC75DC602A7D58D7001CB797 /* Create + Edit */,
 				BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */,
 				BC307D082A79805F0076AA89 /* TabBarController.swift */,
 				BC5157162A72D3F90080B6EA /* TrackerListViewController.swift */,
 				BC307D0A2A7980830076AA89 /* StatisticsViewController.swift */,
-				BC307D0C2A79810A0076AA89 /* TrackerTypeChoiceViewController.swift */,
-				BC307D0E2A79814C0076AA89 /* NewTrackerViewController.swift */,
+				BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -97,6 +105,18 @@
 				BC51571B2A72D3F90080B6EA /* Tracker.xcdatamodeld */,
 			);
 			path = Tracker;
+			sourceTree = "<group>";
+		};
+		BC75DC602A7D58D7001CB797 /* Create + Edit */ = {
+			isa = PBXGroup;
+			children = (
+				BC307D0C2A79810A0076AA89 /* TrackerTypeChoiceViewController.swift */,
+				BC307D0E2A79814C0076AA89 /* NewTrackerViewController.swift */,
+				BC75DC612A7D5959001CB797 /* TimetableViewController.swift */,
+				BC75DC632A7D596C001CB797 /* CategoryListViewController.swift */,
+				BC75DC652A7D5999001CB797 /* NewCategoryViewController.swift */,
+			);
+			path = "Create + Edit";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,6 +189,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC75DC682A7D8831001CB797 /* EmptyTablePlaceholder.swift in Sources */,
 				BC307D032A797D820076AA89 /* Extension DateFormatter + Weekdays.swift in Sources */,
 				BC307D092A79805F0076AA89 /* TabBarController.swift in Sources */,
 				BC307D0F2A79814C0076AA89 /* NewTrackerViewController.swift in Sources */,
@@ -176,6 +197,9 @@
 				BC52A7552A7C17CA009D9CEB /* TrackerCell.swift in Sources */,
 				BC5157172A72D3F90080B6EA /* TrackerListViewController.swift in Sources */,
 				BC5157132A72D3F80080B6EA /* AppDelegate.swift in Sources */,
+				BC75DC662A7D5999001CB797 /* NewCategoryViewController.swift in Sources */,
+				BC75DC622A7D5959001CB797 /* TimetableViewController.swift in Sources */,
+				BC75DC642A7D596C001CB797 /* CategoryListViewController.swift in Sources */,
 				BC307D0D2A79810A0076AA89 /* TrackerTypeChoiceViewController.swift in Sources */,
 				BC307D012A7977030076AA89 /* Extension UIColor + Emojis.swift in Sources */,
 				BC307D0B2A7980830076AA89 /* StatisticsViewController.swift in Sources */,
