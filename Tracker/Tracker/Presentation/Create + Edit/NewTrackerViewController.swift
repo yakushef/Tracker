@@ -24,6 +24,17 @@ final class TrackerNameField: UITextField {
 class NewTrackerViewController: UIViewController {
     
     private let optionItems = ["Категория", "Расписание"]
+
+    var category: String? {
+        didSet {
+//            newTrackerCategoty = category
+            updateCategory()
+        }
+    }
+    
+    private var newTrackerTitle = ""
+    private var newTrackerCategoty = ""
+    private var newTrackerTimetable: [Weekday] = []
     
     public enum Mode {
         case new
@@ -69,6 +80,7 @@ class NewTrackerViewController: UIViewController {
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18)
         ])
         textField.clipsToBounds = true
+        textField.delegate = self
         textField.layer.cornerRadius = 16
         textField.font = .systemFont(ofSize: 17)
         textField.placeholder = "Введите название трекера"
@@ -134,6 +146,10 @@ class NewTrackerViewController: UIViewController {
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
     }
 
+    func updateCategory() {
+        optionsTable.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+    }
+    
     @objc func cancelButtonTapped() {
         dismiss(animated: true)
     }
@@ -189,6 +205,18 @@ extension NewTrackerViewController: UITableViewDataSource {
         cell.accessoryType = .disclosureIndicator
         cell.selectionStyle = .none
         
+        if indexPath.row == 0 {
+            let titleText = "\(optionItems[indexPath.row])\n"
+            let subtitleText = category ?? ""
+            if let category { cell.textLabel?.numberOfLines = 0 } else {
+                cell.textLabel?.numberOfLines = 1
+            }
+            var titleString = NSMutableAttributedString(string: titleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.label])
+            let subtitleString = NSMutableAttributedString(string: subtitleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.appColors.gray])
+            titleString.append(subtitleString)
+            cell.textLabel?.attributedText = titleString
+        }
+        
         if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
@@ -197,8 +225,12 @@ extension NewTrackerViewController: UITableViewDataSource {
     
         return cell
     }
-    
-    
+}
+
+extension NewTrackerViewController: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        newTrackerTitle = textField.text ?? ""
+    }
 }
 
 #Preview {
