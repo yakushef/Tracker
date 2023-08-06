@@ -24,13 +24,7 @@ struct Tracker {
         self.emoji = emoji
         self.color = color
         self.trackerType = .singleEvent
-        self.timetable = [.monday,
-                          .tuesday,
-                          .wednesday,
-                          .thursday,
-                          .friday,
-                          .saturday,
-                          .sunday]
+        self.timetable = weekDays
     }
     
     init(habitTitle: String, emoji: String, color: UIColor, timetable: [Weekday]) {

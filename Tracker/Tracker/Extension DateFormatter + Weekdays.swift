@@ -16,3 +16,11 @@ enum Weekday: String {
     case friday = "Пятница"
     case saturday = "Суббота"
 }
+
+let weekDays = [Weekday.monday,
+                Weekday.tuesday,
+                Weekday.wednesday,
+                Weekday.thursday,
+                Weekday.friday,
+                Weekday.saturday,
+                Weekday.sunday]

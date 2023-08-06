@@ -14,7 +14,8 @@ final class TrackerCollection: UICollectionView {
 
 final class TrackerListViewController: UIViewController {
     
-    private let trackers: [Tracker] = Tracker.test
+    private var trackers: [Tracker] = [] //[Tracker.test]
+    var trackerCollection: UICollectionView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +62,7 @@ final class TrackerListViewController: UIViewController {
     func collectionSetup() {
         let frame = view.safeAreaLayoutGuide.layoutFrame
         let layout = UICollectionViewFlowLayout()
-        let trackerCollection = UICollectionView(frame: frame, collectionViewLayout: layout)
+        trackerCollection = UICollectionView(frame: frame, collectionViewLayout: layout)
         trackerCollection.translatesAutoresizingMaskIntoConstraints = false
         trackerCollection.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         trackerCollection.delegate = self
@@ -69,6 +70,11 @@ final class TrackerListViewController: UIViewController {
         trackerCollection.register(TrackerTypeHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
         trackerCollection.register(TrackerCell.self, forCellWithReuseIdentifier: "tracker")
         view.addSubview(trackerCollection)
+        trackerCollection.reloadData()
+    }
+    
+    func newTrackerAdded(tracker: Tracker, category: String) {
+        trackers.append(tracker)
         trackerCollection.reloadData()
     }
 }

@@ -32,6 +32,12 @@ class NewTrackerViewController: UIViewController {
         }
     }
     
+    var activeDays: Set<Weekday> = [] {
+        didSet {
+            updateDays()
+        }
+    }
+    
     private var newTrackerTitle = ""
     private var newTrackerCategoty = ""
     private var newTrackerTimetable: [Weekday] = []
@@ -134,6 +140,7 @@ class NewTrackerViewController: UIViewController {
         createButton.setTitle("Создать", for: .normal)
         createButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
         createButton.tintColor = .appColors.whiteDay
+        createButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
         cancelButton.backgroundColor = .clear
         cancelButton.layer.borderWidth = 1
@@ -145,9 +152,36 @@ class NewTrackerViewController: UIViewController {
         cancelButton.setTitleColor(.appColors.red, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
     }
+    
+    func updateDays() {
+        optionsTable.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
+    }
 
     func updateCategory() {
         optionsTable.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+    }
+    
+    @objc func addButtonTapped() {
+        let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
+        guard let rootVC = window?.rootViewController as? UITabBarController,
+              let tabBarVCs = rootVC.viewControllers,
+              let navVC = tabBarVCs.first as? UINavigationController,
+              let presentingVC = navVC.viewControllers.first as? TrackerListViewController else { return }
+        
+        var tracker: Tracker
+        switch trackerType {
+        case .habit:
+            tracker = Tracker(habitTitle: textField.text ?? "", emoji: emojiList.randomElement() ?? "🧩", color: sectionColors.randomElement() ?? .gray, timetable: [])
+        case .singleEvent:
+            tracker = Tracker(eventTitle: textField.text ?? "",
+                              emoji: emojiList.randomElement() ?? "🧩",
+                              color: sectionColors.randomElement() ?? .gray)
+        }
+        
+        presentingVC.newTrackerAdded(tracker: tracker, category: category ?? "")
+        presentingVC.dismiss(animated: true, completion: {
+            presentingVC.dismiss(animated: false, completion: nil)
+        })
     }
     
     @objc func cancelButtonTapped() {
@@ -208,14 +242,52 @@ extension NewTrackerViewController: UITableViewDataSource {
         if indexPath.row == 0 {
             let titleText = "\(optionItems[indexPath.row])\n"
             let subtitleText = category ?? ""
-            if let category { cell.textLabel?.numberOfLines = 0 } else {
+            if category != nil { cell.textLabel?.numberOfLines = 0 } else {
                 cell.textLabel?.numberOfLines = 1
             }
-            var titleString = NSMutableAttributedString(string: titleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.label])
+            let titleString = NSMutableAttributedString(string: titleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.label])
             let subtitleString = NSMutableAttributedString(string: subtitleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.appColors.gray])
             titleString.append(subtitleString)
             cell.textLabel?.attributedText = titleString
         }
+        
+        if indexPath.row == 1 {
+            let titleText = "\(optionItems[indexPath.row])\n"
+            var subtitleText = ""
+            if !activeDays.isEmpty { cell.textLabel?.numberOfLines = 0 } else {
+                cell.textLabel?.numberOfLines = 1
+            }
+            var newDays: [String] = []
+            
+            for day in weekDays {
+                if activeDays.contains(day) {
+                    switch day {
+                    case .monday:
+                        newDays.append("Пн")
+                    case .tuesday:
+                        newDays.append("Вт")
+                    case .wednesday:
+                        newDays.append("Ср")
+                    case .thursday:
+                        newDays.append("Чт")
+                    case .friday:
+                        newDays.append("Пт")
+                    case .saturday:
+                        newDays.append("Сб")
+                    case .sunday:
+                        newDays.append("Вс")
+                    }
+                }
+            }
+            
+            subtitleText = newDays.joined(separator: ", ")
+            
+            let titleString = NSMutableAttributedString(string: titleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.label])
+            let subtitleString = NSMutableAttributedString(string: subtitleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.appColors.gray])
+            titleString.append(subtitleString)
+            cell.textLabel?.attributedText = titleString
+        }
+        
         
         if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)

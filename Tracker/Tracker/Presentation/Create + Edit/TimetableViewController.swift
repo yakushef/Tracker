@@ -66,7 +66,7 @@ final class TimetableViewController: UIViewController {
     let weekDaysTable = UITableView()
     let doneButton = GenericAppButton(type: .system)
     
-    let weekDays = [Weekday.monday, Weekday.tuesday, Weekday.wednesday, Weekday.thursday, Weekday.friday, Weekday.saturday, Weekday.sunday]
+    var activeDays = Set<Weekday>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,6 +104,27 @@ final class TimetableViewController: UIViewController {
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
         doneButton.setTitle("Готово", for: .normal)
+        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func doneButtonTapped() {
+        for i in 0...6 {
+            let indexPath = IndexPath(row: i, section: 0)
+            if let cell = weekDaysTable.cellForRow(at: indexPath) as? TimetableCell {
+                if cell.toggle.isOn {
+                    activeDays.insert(weekDays[i])
+                } else {
+                    activeDays.remove(weekDays[i])
+                }
+            }
+        }
+        
+        guard let presentingNavVC = presentingViewController as? UINavigationController,
+        let presentingVC = presentingNavVC.viewControllers.first as? NewTrackerViewController else { return }
+        
+            presentingVC.activeDays = activeDays
+        presentingVC.updateDays()
+        dismiss(animated: true)
     }
 }
 

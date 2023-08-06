@@ -114,8 +114,6 @@ extension CategoryListViewController: UITableViewDataSource {
         cell.textLabel?.text = categories[indexPath.row]
         return cell
     }
-    
-    
 }
 
 #Preview {
