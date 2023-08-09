@@ -21,7 +21,7 @@ final class TrackerTypeHeader: UICollectionReusableView {
             label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 12),
             label.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
-        label.text = "Check Yo Head"
+        label.text = ""
         label.font = .boldSystemFont(ofSize: 19)
     }
     
@@ -35,14 +35,39 @@ final class TrackerCell: UICollectionViewCell {
     var emojiLabel = UILabel()
     var pinImage = UIImageView()
     var titleLabel = UILabel()
+    lazy var isRecorded: Bool = false
+    var allRecords: [TrackerRecord] = []
+    var currentDate: Date = Date()
     
     var managementView = UIView()
     var incrementButton = UIButton()
     var daysLabel = UILabel()
     
-    var cellTracker: Tracker?
+    var cellTracker: Tracker!
     
-    func configureCell(with tracker: Tracker) {
+    override func prepareForReuse() {
+        daysLabel.text = ""
+        daysLabel.removeFromSuperview()
+        incrementButton.removeFromSuperview()
+    }
+    
+    func configureCell(with tracker: Tracker, date: Date) {
+        cellTracker = tracker
+        
+        //MARK: - Status for select date
+        
+        currentDate = date
+        allRecords = TrackerStorageService.shared.getRecords(for: cellTracker.id)
+        
+        isRecorded = false
+        
+        for record in allRecords {
+            let calendar = Calendar.current
+            if calendar.isDate(date, inSameDayAs: record.date) {
+            isRecorded = true
+            }
+        }
+        
         //MARK: - Card View
         
         addSubview(cardView)
@@ -69,6 +94,8 @@ final class TrackerCell: UICollectionViewCell {
             pinImage.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -4)
         ])
         
+        pinImage.isHidden = !(cellTracker?.isPinned ?? false)
+        
         //MARK: - Emoji
         
         cardView.addSubview(emojiLabel)
@@ -91,8 +118,9 @@ final class TrackerCell: UICollectionViewCell {
         cardView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: emojiLabel.bottomAnchor, constant: 8),
-            titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12)
+            titleLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -12),
+            titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
+            titleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12)
         ])
         titleLabel.font = .boldSystemFont(ofSize: 12)
         titleLabel.numberOfLines = 2
@@ -112,7 +140,8 @@ final class TrackerCell: UICollectionViewCell {
         
         //MARK: - Increment Button
         
-        incrementButton = UIButton.systemButton(with: UIImage(systemName: "plus") ?? UIImage(), target: self, action: nil)
+        incrementButton = UIButton(type: .system)
+        incrementButton.setImage(UIImage(systemName: isRecorded ? "checkmark" : "plus"), for: .normal)
         managementView.addSubview(incrementButton)
         incrementButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -122,9 +151,12 @@ final class TrackerCell: UICollectionViewCell {
             incrementButton.trailingAnchor.constraint(equalTo: managementView.trailingAnchor, constant: -12)
         ])
         incrementButton.backgroundColor = tracker.color
+        incrementButton.alpha = isRecorded ? 0.3 : 1.0
         incrementButton.tintColor = .appColors.whiteDay
         incrementButton.clipsToBounds = true
         incrementButton.layer.cornerRadius = 17
+        incrementButton.addTarget(self, action: #selector(incrementButtonTapped), for: .touchUpInside)
+        incrementButton.showsTouchWhenHighlighted = true
         
         //MARK: - Day Label
         
@@ -138,7 +170,33 @@ final class TrackerCell: UICollectionViewCell {
             daysLabel.bottomAnchor.constraint(equalTo: incrementButton.bottomAnchor)
         ])
         daysLabel.font = .systemFont(ofSize: 12)
-        daysLabel.text = "День в день"
+        
+        updateDay()
+    }
+    
+    private func updateDay() {
+        let daysCount = TrackerStorageService.shared.getRecords(for: cellTracker.id)
+        daysLabel.text = dayFormatter.string(from: DateComponents(day: daysCount.count))
+    }
+    
+    @objc func incrementButtonTapped() {
+        let record = TrackerRecord(trackerID: cellTracker.id, date: currentDate)
+        if !isRecorded {
+            TrackerStorageService.shared.addRecord(record)
+            incrementButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+            UIView.animate(withDuration: 0.25, animations: { [weak self] in
+                self?.incrementButton.alpha = 0.3
+            })
+                isRecorded = true
+        } else {
+                TrackerStorageService.shared.removeRecord(record)
+                incrementButton.setImage(UIImage(systemName: "plus"), for: .normal)
+            UIView.animate(withDuration: 0.25, animations: { [weak self] in
+                self?.incrementButton.alpha = 1
+            })
+            isRecorded = false
+            }
+        updateDay()
     }
 }
 

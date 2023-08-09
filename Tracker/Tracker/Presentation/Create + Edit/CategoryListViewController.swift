@@ -20,6 +20,8 @@ final class CategoryListViewController: UIViewController {
         
         navigationItem.title = "Категория"
         view.backgroundColor = .systemBackground
+        let categoryList = TrackerStorageService.shared.getAllCategories()
+        categories = categoryList.map { $0.name }
         setupUI()
     }
     
@@ -28,6 +30,8 @@ final class CategoryListViewController: UIViewController {
     }
     
     func checkIfEmpty() {
+//        let categoryList = TrackerStorageService.shared.getAllCategories()
+//        categories = categoryList.map { $0.name }
         placeholder.isHidden = !categories.isEmpty
         categoryTable.isHidden = categories.isEmpty
     }
@@ -75,6 +79,7 @@ final class CategoryListViewController: UIViewController {
 extension CategoryListViewController: NewCategoryDelegate {
     
     func addCategory(_ categoryName: String) {
+        TrackerStorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
         categories.append(categoryName)
         checkIfEmpty()
         categoryTable.performBatchUpdates({

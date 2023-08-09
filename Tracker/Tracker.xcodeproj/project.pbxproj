@@ -20,6 +20,7 @@
 		BC51571F2A72D3F90080B6EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC51571E2A72D3F90080B6EA /* Assets.xcassets */; };
 		BC5157222A72D3F90080B6EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC5157202A72D3F90080B6EA /* LaunchScreen.storyboard */; };
 		BC52A7552A7C17CA009D9CEB /* TrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */; };
+		BC537A1F2A803CE600407C34 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC537A1E2A803CE600407C34 /* FilterViewController.swift */; };
 		BC75DC622A7D5959001CB797 /* TimetableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC612A7D5959001CB797 /* TimetableViewController.swift */; };
 		BC75DC642A7D596C001CB797 /* CategoryListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC632A7D596C001CB797 /* CategoryListViewController.swift */; };
 		BC75DC662A7D5999001CB797 /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC652A7D5999001CB797 /* NewCategoryViewController.swift */; };
@@ -43,6 +44,7 @@
 		BC5157212A72D3F90080B6EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BC5157232A72D3F90080B6EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC52A7542A7C17CA009D9CEB /* TrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCell.swift; sourceTree = "<group>"; };
+		BC537A1E2A803CE600407C34 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
 		BC75DC612A7D5959001CB797 /* TimetableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimetableViewController.swift; sourceTree = "<group>"; };
 		BC75DC632A7D596C001CB797 /* CategoryListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListViewController.swift; sourceTree = "<group>"; };
 		BC75DC652A7D5999001CB797 /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 				BC5157162A72D3F90080B6EA /* TrackerListViewController.swift */,
 				BC307D0A2A7980830076AA89 /* StatisticsViewController.swift */,
 				BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */,
+				BC537A1E2A803CE600407C34 /* FilterViewController.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -192,6 +195,7 @@
 				BC75DC682A7D8831001CB797 /* EmptyTablePlaceholder.swift in Sources */,
 				BC307D032A797D820076AA89 /* Extension DateFormatter + Weekdays.swift in Sources */,
 				BC307D092A79805F0076AA89 /* TabBarController.swift in Sources */,
+				BC537A1F2A803CE600407C34 /* FilterViewController.swift in Sources */,
 				BC307D0F2A79814C0076AA89 /* NewTrackerViewController.swift in Sources */,
 				BC51571D2A72D3F90080B6EA /* Tracker.xcdatamodeld in Sources */,
 				BC52A7552A7C17CA009D9CEB /* TrackerCell.swift in Sources */,

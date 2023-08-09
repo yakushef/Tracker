@@ -171,7 +171,9 @@ class NewTrackerViewController: UIViewController {
         var tracker: Tracker
         switch trackerType {
         case .habit:
-            tracker = Tracker(habitTitle: textField.text ?? "", emoji: emojiList.randomElement() ?? "🧩", color: sectionColors.randomElement() ?? .gray, timetable: [])
+            var days: [Weekday] = []
+            days.append(contentsOf: activeDays)
+            tracker = Tracker(habitTitle: textField.text ?? "", emoji: emojiList.randomElement() ?? "🧩", color: sectionColors.randomElement() ?? .gray, timetable: days)
         case .singleEvent:
             tracker = Tracker(eventTitle: textField.text ?? "",
                               emoji: emojiList.randomElement() ?? "🧩",

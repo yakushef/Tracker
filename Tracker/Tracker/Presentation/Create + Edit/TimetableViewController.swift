@@ -105,6 +105,8 @@ final class TimetableViewController: UIViewController {
         ])
         doneButton.setTitle("Готово", for: .normal)
         doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        
+        
     }
     
     @objc func doneButtonTapped() {
@@ -122,8 +124,8 @@ final class TimetableViewController: UIViewController {
         guard let presentingNavVC = presentingViewController as? UINavigationController,
         let presentingVC = presentingNavVC.viewControllers.first as? NewTrackerViewController else { return }
         
-            presentingVC.activeDays = activeDays
-        presentingVC.updateDays()
+        presentingVC.activeDays = self.activeDays
+//        presentingVC.updateDays()
         dismiss(animated: true)
     }
 }
