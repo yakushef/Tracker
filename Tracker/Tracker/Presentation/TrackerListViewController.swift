@@ -7,9 +7,6 @@
 
 import UIKit
 
-final class TrackerCollection: UICollectionView {
-}
-
 final class TrackerListViewController: UIViewController {
     
     private var trackers: [Tracker] = []
@@ -19,6 +16,9 @@ final class TrackerListViewController: UIViewController {
     private var filterButton: UIButton!
     private var placeholder = UIView()
     private let datePicker = UIDatePicker()
+    private let search = UISearchController(searchResultsController: nil)
+    
+    //MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,18 +30,7 @@ final class TrackerListViewController: UIViewController {
         checkVisibility()
     }
     
-    func checkVisibility() {
-        placeholder.isHidden = !visibleCategories.isEmpty
-        trackerCollection.isHidden = visibleCategories.isEmpty
-    }
-    
-    func updateCategories() {
-        categories = TrackerStorageService.shared.getAllCategories()
-    }
-    
-    @objc func addNewTracker() {
-        self.show(UINavigationController(rootViewController: TrackerTypeChoiceViewController()), sender: nil)
-    }
+    // MARK: - UI Setup
     
     func navBarSetup() {
         navigationItem.title = "Трекеры"
@@ -57,11 +46,12 @@ final class TrackerListViewController: UIViewController {
         datePicker.preferredDatePickerStyle = .compact
         let dateButton = UIBarButtonItem(customView: datePicker)
         datePicker.maximumDate = Date()
-        datePicker.addTarget(self, action: #selector(updateForDay), for: .valueChanged)
+        datePicker.addTarget(self, action: #selector(updateVisibleCategories), for: .valueChanged)
         navigationItem.rightBarButtonItem = dateButton
         
-        let search = UISearchController(searchResultsController: nil)
         search.hidesNavigationBarDuringPresentation = false
+        search.searchBar.placeholder = "Поиск"
+        search.searchBar.delegate = self
         navigationItem.searchController = search
         navigationItem.hidesSearchBarWhenScrolling = false
         
@@ -98,9 +88,101 @@ final class TrackerListViewController: UIViewController {
         filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
     }
     
+    func checkVisibility() {
+        placeholder.isHidden = !visibleCategories.isEmpty
+        trackerCollection.isHidden = visibleCategories.isEmpty
+        
+        if let srarchText = search.searchBar.text,
+           !srarchText.isEmpty {
+            filterButton.isHidden = true
+            placeholder.removeFromSuperview()
+            placeholder = EmptyTablePlaceholder(type: .search, frame: view.safeAreaLayoutGuide.layoutFrame)
+            view.addSubview(placeholder)
+        } else {
+            filterButton.isHidden = visibleCategories.isEmpty
+            placeholder.removeFromSuperview()
+            placeholder = EmptyTablePlaceholder(type: .tracker, frame: view.safeAreaLayoutGuide.layoutFrame)
+            view.addSubview(placeholder)
+            
+        }
+    }
+    
+    // MARK: - Navigation
+    
+    @objc func addNewTracker() {
+        self.show(UINavigationController(rootViewController: TrackerTypeChoiceViewController()), sender: nil)
+    }
+    
     @objc func filterButtonTapped() {
         let filterVC = FilterViewController()
         show(UINavigationController(rootViewController: filterVC), sender: nil)
+    }
+    
+    @objc func updateForDay() {
+        visibleCategories = []
+        updateCategories()
+        let nonEmptyCategories = categories.filter {
+            !$0.trackers.isEmpty
+        }
+//        print("non empty \(nonEmptyCategories)")
+        for category in nonEmptyCategories {
+            let calendar = Calendar(identifier: .gregorian)
+            let weekday = calendar.component(.weekday, from: datePicker.date)
+            let todayTrackers = category.trackers.filter {
+                let trackerWeekdays = $0.timetable.map { $0.convertToCalendarWeekday() }
+                return trackerWeekdays.contains(weekday)
+            }
+            visibleCategories.append(TrackerCategory(name: category.name, trackers: todayTrackers))
+        }
+//        print("visibleCategories \(visibleCategories)")
+        visibleCategories = visibleCategories.filter {
+            !$0.trackers.isEmpty
+        }
+        checkVisibility()
+        trackerCollection.reloadData()
+    }
+    
+    // MARK: - Content Updates
+    
+    @objc func updateVisibleCategories() {
+        updateCategories()
+        visibleCategories = []
+        
+        let nonEmptyCategories = categories.filter {
+            !$0.trackers.isEmpty
+        }
+        
+        for category in nonEmptyCategories {
+            let calendar = Calendar(identifier: .gregorian)
+            let weekday = calendar.component(.weekday, from: datePicker.date)
+            let todayTrackers = category.trackers.filter {
+                let trackerWeekdays = $0.timetable.map { $0.convertToCalendarWeekday() }
+                return trackerWeekdays.contains(weekday)
+            }
+            visibleCategories.append(TrackerCategory(name: category.name, trackers: todayTrackers))
+        }
+        
+        if let searchText = search.searchBar.text,
+           !searchText.isEmpty {
+            let searchResults: [TrackerCategory] = visibleCategories.map {
+                let trackers = $0.trackers.filter {
+                    $0.title.localizedCaseInsensitiveContains(searchText)
+                }
+                return TrackerCategory(name: $0.name, trackers: trackers)
+            }
+            visibleCategories = searchResults
+        }
+        
+        visibleCategories = visibleCategories.filter {
+            !$0.trackers.isEmpty
+        }
+        
+        checkVisibility()
+        trackerCollection.reloadData()
+    }
+    
+    func updateCategories() {
+        categories = TrackerStorageService.shared.getAllCategories()
     }
     
     func newTrackerAdded(tracker: Tracker, category: String) {
@@ -121,33 +203,11 @@ final class TrackerListViewController: UIViewController {
             TrackerStorageService.shared.removeCategory(existingCategory)
             TrackerStorageService.shared.addCategory(newCategory)
         }
-        updateForDay()
-    }
-    
-    @objc func updateForDay() {
-        visibleCategories = []
-        categories = TrackerStorageService.shared.getAllCategories()
-        let nonEmptyCategories = categories.filter {
-            !$0.trackers.isEmpty
-        }
-        print("non empty \(nonEmptyCategories)")
-        for category in nonEmptyCategories {
-            var calendar = Calendar(identifier: .gregorian)
-            let weekday = calendar.component(.weekday, from: datePicker.date)
-            let todayTrackers = category.trackers.filter {
-                let trackerWeekdays = $0.timetable.map { $0.convertToCalendarWeekday() }
-                return trackerWeekdays.contains(weekday)
-            }
-            visibleCategories.append(TrackerCategory(name: category.name, trackers: todayTrackers))
-        }
-        print("visibleCategories \(visibleCategories)")
-        visibleCategories = visibleCategories.filter {
-            !$0.trackers.isEmpty
-        }
-        checkVisibility()
-        trackerCollection.reloadData()
+        updateVisibleCategories()
     }
 }
+
+    // MARK: - UICollectionViewDelegate
 
 extension TrackerListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -178,6 +238,8 @@ extension TrackerListViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+    // MARK: - UICollectionViewDataSource
+
 extension TrackerListViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return visibleCategories.count
@@ -194,6 +256,23 @@ extension TrackerListViewController: UICollectionViewDataSource {
         return cell
     }
 }
+
+// MARK: - UISearchBarDelegate
+
+extension TrackerListViewController: UISearchBarDelegate {
+
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        updateVisibleCategories()
+        
+        return true
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        updateVisibleCategories()
+    }
+}
+
+    //MARK: - Preview
 
 #Preview {
     let tab = MainListTabBar()
