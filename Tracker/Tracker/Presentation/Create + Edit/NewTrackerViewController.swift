@@ -27,7 +27,6 @@ class NewTrackerViewController: UIViewController {
 
     var category: String? {
         didSet {
-//            newTrackerCategoty = category
             updateCategory()
         }
     }
@@ -72,6 +71,12 @@ class NewTrackerViewController: UIViewController {
         } else {
             setuoForEditing()
         }
+    }
+    
+    func checkIfReadyToAdd() {
+        var isRedy = true
+        
+        
     }
     
     func setupUI() {
@@ -216,6 +221,7 @@ extension NewTrackerViewController: UITableViewDelegate {
         
         if indexPath.row == 1 {
             let timetableVC = TimetableViewController()
+            timetableVC.activeDays = self.activeDays
             show(UINavigationController(rootViewController: timetableVC), sender: self)
         }
     }
@@ -282,7 +288,7 @@ extension NewTrackerViewController: UITableViewDataSource {
                 }
             }
             
-            subtitleText = newDays.joined(separator: ", ")
+            subtitleText = newDays.count == 7 ? "Каждый день" : newDays.joined(separator: ", ")
             
             let titleString = NSMutableAttributedString(string: titleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.label])
             let subtitleString = NSMutableAttributedString(string: subtitleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.appColors.gray])
@@ -290,13 +296,11 @@ extension NewTrackerViewController: UITableViewDataSource {
             cell.textLabel?.attributedText = titleString
         }
         
-        
         if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
-    
         return cell
     }
 }

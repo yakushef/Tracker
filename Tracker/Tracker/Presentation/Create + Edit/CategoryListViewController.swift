@@ -20,6 +20,7 @@ final class CategoryListViewController: UIViewController {
         
         navigationItem.title = "Категория"
         view.backgroundColor = .systemBackground
+        categoryTable.isScrollEnabled = false
         let categoryList = TrackerStorageService.shared.getAllCategories()
         categories = categoryList.map { $0.name }
         setupUI()
@@ -30,8 +31,6 @@ final class CategoryListViewController: UIViewController {
     }
     
     func checkIfEmpty() {
-//        let categoryList = TrackerStorageService.shared.getAllCategories()
-//        categories = categoryList.map { $0.name }
         placeholder.isHidden = !categories.isEmpty
         categoryTable.isHidden = categories.isEmpty
     }
@@ -82,9 +81,7 @@ extension CategoryListViewController: NewCategoryDelegate {
         TrackerStorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
         categories.append(categoryName)
         checkIfEmpty()
-        categoryTable.performBatchUpdates({
-            categoryTable.insertRows(at: [IndexPath(row: (categories.count - 1), section: 0)], with: .automatic)
-        })
+        categoryTable.reloadData()
     }
 }
 
@@ -101,7 +98,12 @@ extension CategoryListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        75
+        if 75 * CGFloat(categories.count) > categoryTable.frame.height {
+            categoryTable.isScrollEnabled = true
+        } else {
+            categoryTable.isScrollEnabled = false
+        }
+        return 75
     }
 }
 
@@ -117,6 +119,22 @@ extension CategoryListViewController: UITableViewDataSource {
         cell.tintColor = .appColors.blue
         cell.backgroundColor = .appColors.lightGray
         cell.textLabel?.text = categories[indexPath.row]
+        cell.layer.masksToBounds = true
+        cell.layer.cornerRadius = 16
+        
+        if indexPath.row == 0 && categories.count == 1 {
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else {
+            switch indexPath.row {
+            case 0:
+                cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            case categories.count - 1:
+                cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            default:
+                cell.layer.maskedCorners = []
+            }
+        }
+
         return cell
     }
 }

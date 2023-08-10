@@ -42,6 +42,7 @@ final class NewCategoryViewController: UIViewController {
         textField.placeholder = "Введите название категории"
         textField.backgroundColor = .appColors.backgroundDay
         textField.clearButtonMode = .whileEditing
+        textField.delegate = self
         
         view.addSubview(doneButton)
         doneButton.translatesAutoresizingMaskIntoConstraints = false
@@ -53,13 +54,30 @@ final class NewCategoryViewController: UIViewController {
         ])
         doneButton.setTitle("Готово", for: .normal)
         doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
-        
+        doneButton.switchActiveState(isActive: false)
+    }
+    
+    func textChanged() {
+        guard let text = textField.text else { return }
+        doneButton.switchActiveState(isActive: !text.isEmpty)
     }
     
     @objc func done() {
         if let text = textField.text {
             delegate?.addCategory(text) }
         dismiss(animated: true)
+    }
+}
+
+extension NewCategoryViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        textChanged()
+        return true
     }
 }
 

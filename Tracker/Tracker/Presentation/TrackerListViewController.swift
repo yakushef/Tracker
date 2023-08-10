@@ -89,9 +89,6 @@ final class TrackerListViewController: UIViewController {
     }
     
     func checkVisibility() {
-        placeholder.isHidden = !visibleCategories.isEmpty
-        trackerCollection.isHidden = visibleCategories.isEmpty
-        
         if let srarchText = search.searchBar.text,
            !srarchText.isEmpty {
             filterButton.isHidden = true
@@ -103,8 +100,10 @@ final class TrackerListViewController: UIViewController {
             placeholder.removeFromSuperview()
             placeholder = EmptyTablePlaceholder(type: .tracker, frame: view.safeAreaLayoutGuide.layoutFrame)
             view.addSubview(placeholder)
-            
         }
+        
+        placeholder.isHidden = !visibleCategories.isEmpty
+        trackerCollection.isHidden = visibleCategories.isEmpty
     }
     
     // MARK: - Navigation

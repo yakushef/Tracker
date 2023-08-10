@@ -28,6 +28,16 @@ final class GenericAppButton: UIButton {
         }
     }
     
+    func switchActiveState(isActive: Bool) {
+        if isActive {
+            isEnabled = true
+            backgroundColor = .appColors.blackDay
+        } else {
+            isEnabled = false
+            backgroundColor = .appColors.gray
+        }
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init: coder not implemented")
     }
@@ -44,8 +54,9 @@ final class TimetableCell: UITableViewCell {
     
     func setupUI() {
         addSubview(toggle)
+        
         toggle.translatesAutoresizingMaskIntoConstraints = false
-        toggleSwitched()
+        toggle.isOn = isChosen
         toggle.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         toggle.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16).isActive = true
         toggle.onTintColor = .appColors.blue
@@ -66,7 +77,11 @@ final class TimetableViewController: UIViewController {
     let weekDaysTable = UITableView()
     let doneButton = GenericAppButton(type: .system)
     
-    var activeDays = Set<Weekday>()
+    var activeDays = Set<Weekday>() {
+        didSet {
+            doneButton.switchActiveState(isActive: !activeDays.isEmpty)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,8 +120,7 @@ final class TimetableViewController: UIViewController {
         ])
         doneButton.setTitle("Готово", for: .normal)
         doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        
-        
+        doneButton.switchActiveState(isActive: !activeDays.isEmpty)
     }
     
     @objc func doneButtonTapped() {
@@ -125,7 +139,6 @@ final class TimetableViewController: UIViewController {
         let presentingVC = presentingNavVC.viewControllers.first as? NewTrackerViewController else { return }
         
         presentingVC.activeDays = self.activeDays
-//        presentingVC.updateDays()
         dismiss(animated: true)
     }
 }
@@ -147,7 +160,7 @@ extension TimetableViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "week day", for: indexPath) as? TimetableCell else {
             return UITableViewCell()
         }
-        cell.setupUI()
+        cell.isChosen = activeDays.contains(weekDays[indexPath.row])
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
         cell.accessoryType = .none
@@ -157,6 +170,8 @@ extension TimetableViewController: UITableViewDataSource {
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
+        
+        cell.setupUI()
         
         let weekday = weekDays[indexPath.row].rawValue
         cell.textLabel?.text = weekday
