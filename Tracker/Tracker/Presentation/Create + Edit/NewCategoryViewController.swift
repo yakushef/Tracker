@@ -40,7 +40,7 @@ final class NewCategoryViewController: UIViewController {
         textField.layer.cornerRadius = 16
         textField.font = .systemFont(ofSize: 17)
         textField.placeholder = "Введите название категории"
-        textField.backgroundColor = .appColors.backgroundDay
+        textField.backgroundColor = .appColors.background
         textField.clearButtonMode = .whileEditing
         textField.delegate = self
         
@@ -57,8 +57,7 @@ final class NewCategoryViewController: UIViewController {
         doneButton.switchActiveState(isActive: false)
     }
     
-    func textChanged() {
-        guard let text = textField.text else { return }
+    func textChanged(to text: String) {
         doneButton.switchActiveState(isActive: !text.isEmpty)
     }
     
@@ -74,9 +73,9 @@ extension NewCategoryViewController: UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
-
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        textChanged()
+        textChanged(to: string)
         return true
     }
 }

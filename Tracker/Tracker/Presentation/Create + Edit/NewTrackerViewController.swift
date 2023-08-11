@@ -30,7 +30,6 @@ class NewTrackerViewController: UIViewController {
             updateCategory()
         }
     }
-    
     var activeDays: Set<Weekday> = [] {
         didSet {
             updateDays()
@@ -40,6 +39,20 @@ class NewTrackerViewController: UIViewController {
     private var newTrackerTitle = ""
     private var newTrackerCategoty = ""
     private var newTrackerTimetable: [Weekday] = []
+    private var isReady = false {
+        didSet {
+            createButton.switchActiveState(isActive: isReady)
+            UIView.animate(withDuration: 0.25, animations: { [weak self] in
+                guard let self else { return }
+                self.textErrorLabel.isHidden = (self.textField.text?.count ?? 0) <= 38
+                if self.textErrorLabel.alpha == 1 {
+                    self.textErrorLabel.alpha = 0
+                } else {
+                    self.textErrorLabel.alpha = 1
+                }
+            })
+        }
+    }
     
     public enum Mode {
         case new
@@ -47,8 +60,8 @@ class NewTrackerViewController: UIViewController {
     }
     
     let cancelButton = UIButton(type: .system)
-    let createButton = UIButton(type: .system)
-    
+    let createButton = GenericAppButton(type: .system)
+    let textErrorLabel = UILabel()
     let textField = TrackerNameField()
     let optionsTable = UITableView()
     
@@ -73,30 +86,48 @@ class NewTrackerViewController: UIViewController {
         }
     }
     
-    func checkIfReadyToAdd() {
-        var isRedy = true
-        
-        
-    }
-    
     func setupUI() {
         view.backgroundColor = .systemBackground
         
-        view.addSubview(textField)
+        let textStack = UIStackView()
+        textStack.translatesAutoresizingMaskIntoConstraints = false
+        textStack.axis = .vertical
+        textStack.spacing = 0
+        textStack.addArrangedSubview(textField)
+        textStack.addArrangedSubview(textErrorLabel)
+        view.addSubview(textStack)
+        NSLayoutConstraint.activate([
+            textStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            textStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 18),
+            textStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -18)
+        ])
+        
+//        view.addSubview(textField)
         textField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            textField.heightAnchor.constraint(equalToConstant: 75),
-            textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
-            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18)
+            textField.heightAnchor.constraint(equalToConstant: 75)
         ])
         textField.clipsToBounds = true
         textField.delegate = self
         textField.layer.cornerRadius = 16
         textField.font = .systemFont(ofSize: 17)
         textField.placeholder = "Введите название трекера"
-        textField.backgroundColor = .appColors.backgroundDay
+        textField.backgroundColor = .appColors.background
         textField.clearButtonMode = .whileEditing
+        textField.delegate = self
+        
+//        view.addSubview(textErrorLabel)
+        textErrorLabel.translatesAutoresizingMaskIntoConstraints = false
+        textErrorLabel.text = "Ограничение 38 символов"
+        textErrorLabel.textColor = .appColors.red
+        textErrorLabel.font = .systemFont(ofSize: 17)
+        textErrorLabel.contentMode = .center
+        textErrorLabel.textAlignment = .center
+        NSLayoutConstraint.activate([
+            textErrorLabel.heightAnchor.constraint(equalToConstant: 38)
+        ])
+        textErrorLabel.isHidden = (textField.text?.count ?? 0) <= 38
+        textErrorLabel.alpha = textErrorLabel.isHidden ? 0 : 1
         
         view.addSubview(optionsTable)
         optionsTable.translatesAutoresizingMaskIntoConstraints = false
@@ -108,14 +139,14 @@ class NewTrackerViewController: UIViewController {
         }
         NSLayoutConstraint.activate([
             optionsTable.heightAnchor.constraint(equalToConstant: tableHeight),
-            optionsTable.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
+            optionsTable.topAnchor.constraint(equalTo: textStack.bottomAnchor, constant: 24),
             optionsTable.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
             optionsTable.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18)
         ])
         optionsTable.clipsToBounds = true
         optionsTable.layer.cornerRadius = 16
         optionsTable.isScrollEnabled = false
-        optionsTable.backgroundColor = .appColors.backgroundDay
+        optionsTable.backgroundColor = .appColors.background
         
         optionsTable.dataSource = self
         optionsTable.delegate = self
@@ -139,13 +170,14 @@ class NewTrackerViewController: UIViewController {
             buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18)
         ])
         
-        createButton.backgroundColor = .appColors.blackDay
-        createButton.clipsToBounds = true
-        createButton.layer.cornerRadius = 16
+//        createButton.backgroundColor = .appColors.black
+//        createButton.clipsToBounds = true
+//        createButton.layer.cornerRadius = 16
         createButton.setTitle("Создать", for: .normal)
-        createButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
-        createButton.tintColor = .appColors.whiteDay
+//        createButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
+//        createButton.tintColor = .appColors.white
         createButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+        createButton.switchActiveState(isActive: isReady)
         
         cancelButton.backgroundColor = .clear
         cancelButton.layer.borderWidth = 1
@@ -308,6 +340,12 @@ extension NewTrackerViewController: UITableViewDataSource {
 extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         newTrackerTitle = textField.text ?? ""
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        isReady = (textField.text?.count ?? 0) <= 38
+        textField.resignFirstResponder()
+        return true
     }
 }
 

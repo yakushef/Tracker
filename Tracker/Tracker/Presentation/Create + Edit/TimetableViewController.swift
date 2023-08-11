@@ -11,8 +11,8 @@ final class GenericAppButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = .appColors.blackDay
-        self.tintColor = .appColors.whiteDay
+        self.backgroundColor = .appColors.black
+        self.tintColor = .appColors.white
         self.clipsToBounds = true
         self.layer.cornerRadius = 16
         self.titleLabel?.font = .boldSystemFont(ofSize: 16)
@@ -24,14 +24,14 @@ final class GenericAppButton: UIButton {
             backgroundColor = .appColors.gray
         } else {
             isEnabled = true
-            backgroundColor = .appColors.blackDay
+            backgroundColor = .appColors.black
         }
     }
     
     func switchActiveState(isActive: Bool) {
         if isActive {
             isEnabled = true
-            backgroundColor = .appColors.blackDay
+            backgroundColor = .appColors.black
         } else {
             isEnabled = false
             backgroundColor = .appColors.gray
@@ -103,7 +103,7 @@ final class TimetableViewController: UIViewController {
         weekDaysTable.clipsToBounds = true
         weekDaysTable.layer.cornerRadius = 16
         weekDaysTable.isScrollEnabled = false
-        weekDaysTable.backgroundColor = .appColors.backgroundDay
+        weekDaysTable.backgroundColor = .appColors.background
         weekDaysTable.tableHeaderView = UIView()
         
         weekDaysTable.dataSource = self

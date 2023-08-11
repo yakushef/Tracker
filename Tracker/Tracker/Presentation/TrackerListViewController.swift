@@ -36,7 +36,6 @@ final class TrackerListViewController: UIViewController {
         navigationItem.title = "Трекеры"
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
-        
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "AddTracker"), style: .plain, target: self, action: #selector(addNewTracker))
         
         datePicker.locale = Locale(identifier: "ru_DE_POSIX")
@@ -47,6 +46,7 @@ final class TrackerListViewController: UIViewController {
         let dateButton = UIBarButtonItem(customView: datePicker)
         datePicker.maximumDate = Date()
         datePicker.addTarget(self, action: #selector(updateVisibleCategories), for: .valueChanged)
+        datePicker.tintColor = .appColors.blue
         navigationItem.rightBarButtonItem = dateButton
         
         search.hidesNavigationBarDuringPresentation = false

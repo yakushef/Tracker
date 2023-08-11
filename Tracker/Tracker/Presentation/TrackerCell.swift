@@ -108,7 +108,7 @@ final class TrackerCell: UICollectionViewCell {
         ])
         emojiLabel.layer.cornerRadius = 12
         emojiLabel.clipsToBounds = true
-        emojiLabel.backgroundColor = .appColors.backgroundDay
+        emojiLabel.backgroundColor = .appColors.background
         emojiLabel.font = .systemFont(ofSize: 14)
         emojiLabel.textAlignment = .center
         emojiLabel.text = tracker.emoji
@@ -124,7 +124,7 @@ final class TrackerCell: UICollectionViewCell {
         ])
         titleLabel.font = .boldSystemFont(ofSize: 12)
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .appColors.whiteDay
+        titleLabel.textColor = .appColors.white
         titleLabel.text = tracker.title
         
         //MARK: - Management
@@ -152,7 +152,7 @@ final class TrackerCell: UICollectionViewCell {
         ])
         incrementButton.backgroundColor = tracker.color
         incrementButton.alpha = isRecorded ? 0.3 : 1.0
-        incrementButton.tintColor = .appColors.whiteDay
+        incrementButton.tintColor = .appColors.white
         incrementButton.clipsToBounds = true
         incrementButton.layer.cornerRadius = 17
         incrementButton.addTarget(self, action: #selector(incrementButtonTapped), for: .touchUpInside)
