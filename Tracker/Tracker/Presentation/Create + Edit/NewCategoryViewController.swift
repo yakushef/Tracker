@@ -70,12 +70,8 @@ final class NewCategoryViewController: UIViewController {
 
 extension NewCategoryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textChanged(to: textField.text ?? "")
         textField.resignFirstResponder()
-        return true
-    }
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        textChanged(to: string)
         return true
     }
 }

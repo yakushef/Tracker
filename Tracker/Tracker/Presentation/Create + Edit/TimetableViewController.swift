@@ -45,7 +45,32 @@ final class GenericAppButton: UIButton {
 
 final class TimetableCell: UITableViewCell {
     
-    var isChosen: Bool = false
+    weak var delegate: TimetableCellDelegate?
+    
+    var isChosen: Bool = false {
+        didSet {
+            var day = 0
+            switch textLabel?.text {
+            case "Понедельник":
+                day = 0
+            case "Вторник":
+                day = 1
+            case "Среда":
+                day = 2
+            case "Четверг":
+                day = 3
+            case "Пятница":
+                day = 4
+            case "Суббота":
+                day = 5
+            case "Воскресенье":
+                day = 6
+            default:
+                return
+            }
+            delegate?.dayDidChange(to: isChosen, day: day)
+        }
+    }
     var toggle = UISwitch()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -70,6 +95,10 @@ final class TimetableCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init: coder not implemented")
     }
+}
+
+protocol TimetableCellDelegate: AnyObject {
+    func dayDidChange(to: Bool,day: Int)
 }
 
 final class TimetableViewController: UIViewController {
@@ -164,6 +193,7 @@ extension TimetableViewController: UITableViewDataSource {
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
         cell.accessoryType = .none
+        cell.delegate = self
         
         if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
@@ -177,8 +207,16 @@ extension TimetableViewController: UITableViewDataSource {
         cell.textLabel?.text = weekday
         return cell
     }
-    
-    
+}
+
+extension TimetableViewController: TimetableCellDelegate {
+    func dayDidChange(to isChosen: Bool, day: Int) {
+        if isChosen {
+            activeDays.insert(weekDays[day])
+        } else {
+            activeDays.remove(weekDays[day])
+        }
+    }
 }
 
 #Preview {

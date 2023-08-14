@@ -28,11 +28,13 @@ class NewTrackerViewController: UIViewController {
     var category: String? {
         didSet {
             updateCategory()
+            checkIfReady()
         }
     }
     var activeDays: Set<Weekday> = [] {
         didSet {
             updateDays()
+            checkIfReady()
         }
     }
     
@@ -41,7 +43,7 @@ class NewTrackerViewController: UIViewController {
     private var newTrackerTimetable: [Weekday] = []
     private var isReady = false {
         didSet {
-            createButton.switchActiveState(isActive: isReady)
+            checkIfReady()
             UIView.animate(withDuration: 0.25, animations: { [weak self] in
                 guard let self else { return }
                 self.textErrorLabel.isHidden = (self.textField.text?.count ?? 0) <= 38
@@ -242,6 +244,22 @@ class NewTrackerViewController: UIViewController {
     func setuoForEditing() {
         
     }
+    
+    func checkIfReady() {
+        guard let category else {
+            createButton.switchActiveState(isActive: false)
+            return
+        }
+        var scheduledDays = activeDays
+        if trackerType == .singleEvent {
+            scheduledDays = Set(weekDays)
+        }
+        if isReady && !scheduledDays.isEmpty && !category.isEmpty {
+            createButton.switchActiveState(isActive: true)
+        } else {
+            createButton.switchActiveState(isActive: false)
+        }
+    }
 }
 
 extension NewTrackerViewController: UITableViewDelegate {
@@ -344,6 +362,10 @@ extension NewTrackerViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         isReady = (textField.text?.count ?? 0) <= 38
+        if let text = textField.text,
+           text.isEmpty {
+            isReady = false
+        }
         textField.resignFirstResponder()
         return true
     }

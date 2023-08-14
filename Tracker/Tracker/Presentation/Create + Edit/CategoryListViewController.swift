@@ -78,8 +78,17 @@ final class CategoryListViewController: UIViewController {
 extension CategoryListViewController: NewCategoryDelegate {
     
     func addCategory(_ categoryName: String) {
-        TrackerStorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
-        categories.append(categoryName)
+        let currentCategories = TrackerStorageService.shared.getAllCategories()
+        let sameCat = currentCategories.filter {
+            $0.name == categoryName
+        }
+        
+        if sameCat.isEmpty {
+            TrackerStorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
+        }
+        
+        let categoryList = TrackerStorageService.shared.getAllCategories()
+        categories = categoryList.map { $0.name }
         checkIfEmpty()
         categoryTable.reloadData()
     }
