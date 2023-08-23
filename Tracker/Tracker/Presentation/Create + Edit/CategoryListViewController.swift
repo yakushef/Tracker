@@ -11,9 +11,9 @@ final class CategoryListViewController: UIViewController {
     
     private var categories: [String] = []
     
-    let addButton = GenericAppButton(type: .system)
-    var placeholder = UIView()
-    let categoryTable = UITableView()
+    private let addButton = GenericAppButton(type: .system)
+    private var placeholder = UIView()
+    private let categoryTable = UITableView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,12 +30,12 @@ final class CategoryListViewController: UIViewController {
         super.viewWillAppear(animated)
     }
     
-    func checkIfEmpty() {
+    private func checkIfEmpty() {
         placeholder.isHidden = !categories.isEmpty
         categoryTable.isHidden = categories.isEmpty
     }
     
-    func setupUI() {
+    private func setupUI() {
         placeholder = EmptyTablePlaceholder(type: .category, frame: view.safeAreaLayoutGuide.layoutFrame)
         view.addSubview(placeholder)
         
@@ -54,7 +54,7 @@ final class CategoryListViewController: UIViewController {
         checkIfEmpty()
     }
     
-    func setupTable() {
+    private func setupTable() {
         categoryTable.delegate = self
         categoryTable.dataSource = self
         categoryTable.register(UITableViewCell.self, forCellReuseIdentifier: "category")
@@ -68,7 +68,7 @@ final class CategoryListViewController: UIViewController {
         ])
     }
     
-    @objc func newCategory() {
+    @objc private func newCategory() {
         let newCategoryVC = NewCategoryViewController()
         newCategoryVC.delegate = self
         show(UINavigationController(rootViewController: newCategoryVC), sender: nil)
@@ -99,11 +99,10 @@ extension CategoryListViewController: UITableViewDelegate {
         if let cell = tableView.cellForRow(at: indexPath) {
             cell.accessoryType = .checkmark
            }
-        guard let presentingNavVC = presentingViewController as? UINavigationController,
-        let presentingVC = presentingNavVC.viewControllers.first as? NewTrackerViewController else { return }
         
-            presentingVC.category = categories[indexPath.row]
-            dismiss(animated: true)
+        NewTrackerDelegate.shared.setNewTrackerCategoryName(to: categories[indexPath.row])
+        dismiss(animated: true)
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -146,8 +145,4 @@ extension CategoryListViewController: UITableViewDataSource {
 
         return cell
     }
-}
-
-#Preview {
-    return UINavigationController(rootViewController: CategoryListViewController())
 }

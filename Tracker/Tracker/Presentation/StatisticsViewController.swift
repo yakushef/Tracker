@@ -7,7 +7,7 @@
 
 import UIKit
 
-class StatisticsViewController: UIViewController {
+final class StatisticsViewController: UIViewController {
     
     var placeholder = UIView()
 

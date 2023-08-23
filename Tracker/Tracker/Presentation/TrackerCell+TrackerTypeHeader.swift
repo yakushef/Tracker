@@ -200,9 +200,3 @@ final class TrackerCell: UICollectionViewCell {
     }
 }
 
-#Preview {
-    let tab = MainListTabBar()
-    tab.awakeFromNib()
-    
-    return tab
-}

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainListTabBar: UITabBarController {
+final class MainListTabBar: UITabBarController {
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -31,9 +31,3 @@ class MainListTabBar: UITabBarController {
     }
 }
 
-#Preview {
-    let tab = MainListTabBar()
-    tab.awakeFromNib()
-    
-    return tab
-}

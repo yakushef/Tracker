@@ -13,7 +13,7 @@ protocol NewCategoryDelegate: AnyObject {
 
 final class NewCategoryViewController: UIViewController {
     
-    let textField = TrackerNameField()
+    private let textField = TrackerNameField()
     private let doneButton = GenericAppButton(type: .system)
     
     weak var delegate: NewCategoryDelegate?
@@ -26,7 +26,7 @@ final class NewCategoryViewController: UIViewController {
         setupUI()
     }
     
-    func setupUI() {
+    private func setupUI() {
         view.addSubview(textField)
         textField.backgroundColor = .appColors.gray
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -57,11 +57,11 @@ final class NewCategoryViewController: UIViewController {
         doneButton.switchActiveState(isActive: false)
     }
     
-    func textChanged(to text: String) {
+    private func textChanged(to text: String) {
         doneButton.switchActiveState(isActive: !text.isEmpty)
     }
     
-    @objc func done() {
+    @objc private func done() {
         if let text = textField.text {
             delegate?.addCategory(text) }
         dismiss(animated: true)
@@ -74,8 +74,4 @@ extension NewCategoryViewController: UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
-}
-
-#Preview {
-    return UINavigationController(rootViewController: NewCategoryViewController())
 }

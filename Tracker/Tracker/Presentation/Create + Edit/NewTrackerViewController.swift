@@ -21,7 +21,7 @@ final class TrackerNameField: UITextField {
     }
 }
 
-class NewTrackerViewController: UIViewController {
+final class NewTrackerViewController: UIViewController {
     
     private let optionItems = ["Категория", "Расписание"]
 
@@ -61,34 +61,34 @@ class NewTrackerViewController: UIViewController {
         case edit
     }
     
-    let cancelButton = UIButton(type: .system)
-    let createButton = GenericAppButton(type: .system)
-    let textErrorLabel = UILabel()
-    let textField = TrackerNameField()
-    let optionsTable = UITableView()
+    private let cancelButton = UIButton(type: .system)
+    private let createButton = GenericAppButton(type: .system)
+    private let textErrorLabel = UILabel()
+    private let textField = TrackerNameField()
+    private let optionsTable = UITableView()
     
     var vcMode: Mode = .new
     var trackerType: Tracker.type = .habit
+    
+    //MARK:  - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setupUI()
         
+        NewTrackerDelegate.shared.newTrackerVC = self
+        
         if trackerType == .habit {
             setupForHabit()
         } else {
             setupForSingleEvent()
         }
-        
-        if vcMode == .new {
-            setupForNewTracker()
-        } else {
-            setuoForEditing()
-        }
     }
     
-    func setupUI() {
+    //MARK: - Setup UI
+    
+    private func setupUI() {
         view.backgroundColor = .systemBackground
         
         let textStack = UIStackView()
@@ -104,7 +104,6 @@ class NewTrackerViewController: UIViewController {
             textStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -18)
         ])
         
-//        view.addSubview(textField)
         textField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             textField.heightAnchor.constraint(equalToConstant: 75)
@@ -118,7 +117,6 @@ class NewTrackerViewController: UIViewController {
         textField.clearButtonMode = .whileEditing
         textField.delegate = self
         
-//        view.addSubview(textErrorLabel)
         textErrorLabel.translatesAutoresizingMaskIntoConstraints = false
         textErrorLabel.text = "Ограничение 38 символов"
         textErrorLabel.textColor = .appColors.red
@@ -172,12 +170,7 @@ class NewTrackerViewController: UIViewController {
             buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18)
         ])
         
-//        createButton.backgroundColor = .appColors.black
-//        createButton.clipsToBounds = true
-//        createButton.layer.cornerRadius = 16
         createButton.setTitle("Создать", for: .normal)
-//        createButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
-//        createButton.tintColor = .appColors.white
         createButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         createButton.switchActiveState(isActive: isReady)
         
@@ -201,31 +194,22 @@ class NewTrackerViewController: UIViewController {
     }
     
     @objc func addButtonTapped() {
+        NewTrackerDelegate.shared.setTrackerTitle(to: textField.text ?? "")
+        NewTrackerDelegate.shared.createNewTracker()
+        
         let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
         guard let rootVC = window?.rootViewController as? UITabBarController,
               let tabBarVCs = rootVC.viewControllers,
               let navVC = tabBarVCs.first as? UINavigationController,
               let presentingVC = navVC.viewControllers.first as? TrackerListViewController else { return }
-        
-        var tracker: Tracker
-        switch trackerType {
-        case .habit:
-            var days: [Weekday] = []
-            days.append(contentsOf: activeDays)
-            tracker = Tracker(habitTitle: textField.text ?? "", emoji: emojiList.randomElement() ?? "🧩", color: sectionColors.randomElement() ?? .gray, timetable: days)
-        case .singleEvent:
-            tracker = Tracker(eventTitle: textField.text ?? "",
-                              emoji: emojiList.randomElement() ?? "🧩",
-                              color: sectionColors.randomElement() ?? .gray)
-        }
-        
-        presentingVC.newTrackerAdded(tracker: tracker, category: category ?? "")
+
         presentingVC.dismiss(animated: true, completion: {
-            presentingVC.dismiss(animated: false, completion: nil)
+            self.dismiss(animated: true)
         })
     }
     
     @objc func cancelButtonTapped() {
+        NewTrackerDelegate.shared.wipeAllTrackerInfo()
         dismiss(animated: true)
     }
     
@@ -235,14 +219,6 @@ class NewTrackerViewController: UIViewController {
     
     func setupForSingleEvent() {
         navigationItem.title = "Новое нерегулярное событие"
-    }
-    
-    func setupForNewTracker() {
-        
-    }
-    
-    func setuoForEditing() {
-        
     }
     
     func checkIfReady() {
@@ -262,6 +238,8 @@ class NewTrackerViewController: UIViewController {
     }
 }
 
+//MARK: - Table View Delegate
+
 extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
@@ -280,6 +258,8 @@ extension NewTrackerViewController: UITableViewDelegate {
         return 75
     }
 }
+
+//MARK: - Table View Data Source
 
 extension NewTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -355,6 +335,8 @@ extension NewTrackerViewController: UITableViewDataSource {
     }
 }
 
+//MARK: - Text Field Delegate
+
 extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         newTrackerTitle = textField.text ?? ""
@@ -371,6 +353,3 @@ extension NewTrackerViewController: UITextFieldDelegate {
     }
 }
 
-#Preview {
-    return UINavigationController(rootViewController: NewTrackerViewController())
-}

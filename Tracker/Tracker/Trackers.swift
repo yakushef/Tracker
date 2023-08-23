@@ -56,7 +56,7 @@ final class TrackerStorageService {
             allTrackers.append(contentsOf: oldCat.trackers)
             let updatedCat = TrackerCategory(name: newCategory.name, trackers: allTrackers)
             categories.remove(oldCat)
-            categories.insert(newCategory)
+            categories.insert(updatedCat) // !!
         }
     }
     
@@ -113,12 +113,4 @@ struct Tracker: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(id.uuidString)
     }
-    
-    static let test: [Tracker] = [Tracker(habitTitle: "Mic Check 1",
-                                          emoji: emojiList.randomElement() ?? "🛼",
-                                          color: .colorSections.section11,
-                                          timetable: [.monday, .wednesday, .friday]),
-                                  Tracker(eventTitle: "Check 2-1-2Check 2-1-2Check 2-1-2Check 2-1-2Check 2-1-2Check 2-1-2Check 2-1-2Check 2-1-2Check 2-1-2Check 2-1-2Check 2-1-2Check 2-1-2",
-                                          emoji:  emojiList.randomElement() ?? "🎮",
-                                          color: .colorSections.section13)]
 }

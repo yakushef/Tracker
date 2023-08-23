@@ -12,7 +12,7 @@ final class TrackerListViewController: UIViewController {
     private var trackers: [Tracker] = []
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
-    var trackerCollection: UICollectionView!
+    private var trackerCollection: UICollectionView!
     private var filterButton: UIButton!
     private var placeholder = UIView()
     private let datePicker = UIDatePicker()
@@ -22,6 +22,9 @@ final class TrackerListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NewTrackerDelegate.shared.trackerListVC = self
+        
         view.backgroundColor = .systemBackground
         
         updateCategories()
@@ -32,7 +35,7 @@ final class TrackerListViewController: UIViewController {
     
     // MARK: - UI Setup
     
-    func navBarSetup() {
+    private func navBarSetup() {
         navigationItem.title = "Трекеры"
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -123,7 +126,7 @@ final class TrackerListViewController: UIViewController {
         let nonEmptyCategories = categories.filter {
             !$0.trackers.isEmpty
         }
-//        print("non empty \(nonEmptyCategories)")
+
         for category in nonEmptyCategories {
             let calendar = Calendar(identifier: .gregorian)
             let weekday = calendar.component(.weekday, from: datePicker.date)
@@ -133,7 +136,7 @@ final class TrackerListViewController: UIViewController {
             }
             visibleCategories.append(TrackerCategory(name: category.name, trackers: todayTrackers))
         }
-//        print("visibleCategories \(visibleCategories)")
+
         visibleCategories = visibleCategories.filter {
             !$0.trackers.isEmpty
         }
@@ -184,24 +187,8 @@ final class TrackerListViewController: UIViewController {
         categories = TrackerStorageService.shared.getAllCategories()
     }
     
-    func newTrackerAdded(tracker: Tracker, category: String) {
-        trackers.append(tracker)
-        
-        let sameNameCategories = TrackerStorageService.shared.getAllCategories().filter {
-            $0.name == category
-        }
-        
-        if sameNameCategories.isEmpty {
-            let newCategory = TrackerCategory(name: category, trackers: [tracker])
-            TrackerStorageService.shared.addCategory(newCategory)
-        } else {
-            guard let existingCategory = sameNameCategories.first else { return }
-            var newTrackerList = existingCategory.trackers
-            newTrackerList.append(tracker)
-            let newCategory = TrackerCategory(name: category, trackers: newTrackerList)
-            TrackerStorageService.shared.removeCategory(existingCategory)
-            TrackerStorageService.shared.addCategory(newCategory)
-        }
+    func newTrackerAdded() {
+        categories = TrackerStorageService.shared.getAllCategories()
         updateVisibleCategories()
     }
 }
@@ -271,11 +258,3 @@ extension TrackerListViewController: UISearchBarDelegate {
     }
 }
 
-    //MARK: - Preview
-
-#Preview {
-    let tab = MainListTabBar()
-    tab.awakeFromNib()
-    
-    return tab
-}

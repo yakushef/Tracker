@@ -7,42 +7,6 @@
 
 import UIKit
 
-final class GenericAppButton: UIButton {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        self.backgroundColor = .appColors.black
-        self.tintColor = .appColors.white
-        self.clipsToBounds = true
-        self.layer.cornerRadius = 16
-        self.titleLabel?.font = .boldSystemFont(ofSize: 16)
-    }
-    
-    func switchActiveState() {
-        if isEnabled {
-            isEnabled = false
-            backgroundColor = .appColors.gray
-        } else {
-            isEnabled = true
-            backgroundColor = .appColors.black
-        }
-    }
-    
-    func switchActiveState(isActive: Bool) {
-        if isActive {
-            isEnabled = true
-            backgroundColor = .appColors.black
-        } else {
-            isEnabled = false
-            backgroundColor = .appColors.gray
-        }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init: coder not implemented")
-    }
-}
-
 final class TimetableCell: UITableViewCell {
     
     weak var delegate: TimetableCellDelegate?
@@ -88,7 +52,7 @@ final class TimetableCell: UITableViewCell {
         toggle.addTarget(self, action: #selector(toggleSwitched), for: .valueChanged)
     }
     
-    @objc func toggleSwitched() {
+    @objc private func toggleSwitched() {
         isChosen = toggle.isOn
     }
     
@@ -120,7 +84,7 @@ final class TimetableViewController: UIViewController {
         setupUI()
     }
     
-    func setupUI() {
+    private func setupUI() {
         view.addSubview(weekDaysTable)
         weekDaysTable.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -152,7 +116,7 @@ final class TimetableViewController: UIViewController {
         doneButton.switchActiveState(isActive: !activeDays.isEmpty)
     }
     
-    @objc func doneButtonTapped() {
+    @objc private func doneButtonTapped() {
         for i in 0...6 {
             let indexPath = IndexPath(row: i, section: 0)
             if let cell = weekDaysTable.cellForRow(at: indexPath) as? TimetableCell {
@@ -164,10 +128,7 @@ final class TimetableViewController: UIViewController {
             }
         }
         
-        guard let presentingNavVC = presentingViewController as? UINavigationController,
-        let presentingVC = presentingNavVC.viewControllers.first as? NewTrackerViewController else { return }
-        
-        presentingVC.activeDays = self.activeDays
+        NewTrackerDelegate.shared.setTrackerSchedule(to: activeDays)
         dismiss(animated: true)
     }
 }
@@ -217,8 +178,4 @@ extension TimetableViewController: TimetableCellDelegate {
             activeDays.remove(weekDays[day])
         }
     }
-}
-
-#Preview {
-    return UINavigationController(rootViewController: TimetableViewController())
 }

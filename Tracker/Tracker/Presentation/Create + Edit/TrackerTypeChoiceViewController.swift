@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TrackerTypeChoiceViewController: UIViewController {
+final class TrackerTypeChoiceViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,7 +17,7 @@ class TrackerTypeChoiceViewController: UIViewController {
         navigationItem.title = "Создание трекера"
     }
     
-    func setup(button: UIButton) {
+    private func setup(button: UIButton) {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.tintColor = .appColors.white
@@ -27,7 +27,7 @@ class TrackerTypeChoiceViewController: UIViewController {
         button.clipsToBounds = true
     }
     
-    func setupUI() {
+    private func setupUI() {
         let habitButton = UIButton.systemButton(with: UIImage(), target: self, action: #selector(addHabit))
         habitButton.setTitle("Привычка", for: .normal)
         setup(button: habitButton)
@@ -52,19 +52,18 @@ class TrackerTypeChoiceViewController: UIViewController {
         buttonsStack.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
     }
     
-    @objc func addHabit() {
+    @objc private func addHabit() {
         let habitVC = NewTrackerViewController()
         habitVC.trackerType = .habit
+        NewTrackerDelegate.shared.setTrackerType(to: .habit)
         self.show(UINavigationController(rootViewController: habitVC), sender: nil)
     }
     
-    @objc func addSingleEvent() {
+    @objc private func addSingleEvent() {
         let eventVC = NewTrackerViewController()
         eventVC.trackerType = .singleEvent
+        NewTrackerDelegate.shared.setTrackerType(to: .singleEvent)
         self.show(UINavigationController(rootViewController: eventVC), sender: nil)
     }
 }
 
-#Preview {
-    return UINavigationController(rootViewController: TrackerTypeChoiceViewController())
-}
