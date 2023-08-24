@@ -7,41 +7,42 @@
 
 import UIKit
 
+//MARK: - TrackerCellDelegate
 
-final class TrackerTypeHeader: UICollectionReusableView {
-    let label = UILabel()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 12),
-            label.centerYAnchor.constraint(equalTo: centerYAnchor)
-        ])
-        label.text = ""
-        label.font = .boldSystemFont(ofSize: 19)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+protocol TrackerCellDelegate: AnyObject {
+    func updatePinnedStatus()
+    func updateRecords(with record: TrackerRecord, completion: (Bool) -> Void)
 }
+
+//MARK: - TrackerCell
 
 final class TrackerCell: UICollectionViewCell {
     var cardView = UIView()
     var emojiLabel = UILabel()
     var pinImage = UIImageView()
     var titleLabel = UILabel()
-    lazy var isRecorded: Bool = false
+    var isRecorded: Bool = false {
+        didSet {
+            if isRecorded {
+                incrementButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+                UIView.animate(withDuration: 0.25, animations: { [weak self] in
+                    self?.incrementButton.alpha = 0.3
+                })
+            } else {
+                    incrementButton.setImage(UIImage(systemName: "plus"), for: .normal)
+                UIView.animate(withDuration: 0.25, animations: { [weak self] in
+                    self?.incrementButton.alpha = 1
+                })
+                }
+        }
+    }
     var allRecords: [TrackerRecord] = []
-    var currentDate: Date = Date()
+    weak var delegate: TrackerCellDelegate?
     
     var managementView = UIView()
     var incrementButton = UIButton()
     var daysLabel = UILabel()
+    var cellDate = Date()
     
     var cellTracker: Tracker!
     
@@ -51,22 +52,26 @@ final class TrackerCell: UICollectionViewCell {
         incrementButton.removeFromSuperview()
     }
     
-    func configureCell(with tracker: Tracker, date: Date) {
-        cellTracker = tracker
-        
-        //MARK: - Status for select date
-        
-        currentDate = date
+    //MARK: - Status for select date
+    
+    func checkIfRecorded() {
         allRecords = TrackerStorageService.shared.getRecords(for: cellTracker.id)
-        
-        isRecorded = false
-        
+
+        var isNowRecorded = false
+
         for record in allRecords {
             let calendar = Calendar.current
-            if calendar.isDate(date, inSameDayAs: record.date) {
-            isRecorded = true
+            if calendar.isDate(cellDate, inSameDayAs: record.date) {
+            isNowRecorded = true
             }
         }
+        isRecorded = isNowRecorded
+    }
+    
+    func configureCell(with tracker: Tracker, date: Date) {
+        cellTracker = tracker
+        cellDate = date
+        checkIfRecorded()
         
         //MARK: - Card View
         
@@ -180,22 +185,10 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     @objc func incrementButtonTapped() {
-        let record = TrackerRecord(trackerID: cellTracker.id, date: currentDate)
-        if !isRecorded {
-            TrackerStorageService.shared.addRecord(record)
-            incrementButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-            UIView.animate(withDuration: 0.25, animations: { [weak self] in
-                self?.incrementButton.alpha = 0.3
-            })
-                isRecorded = true
-        } else {
-                TrackerStorageService.shared.removeRecord(record)
-                incrementButton.setImage(UIImage(systemName: "plus"), for: .normal)
-            UIView.animate(withDuration: 0.25, animations: { [weak self] in
-                self?.incrementButton.alpha = 1
-            })
-            isRecorded = false
-            }
+        let record = TrackerRecord(trackerID: cellTracker.id, date: cellDate)
+        delegate?.updateRecords(with: record) { [weak self] newRecStatus in
+            self?.isRecorded = newRecStatus
+        }
         updateDay()
     }
 }

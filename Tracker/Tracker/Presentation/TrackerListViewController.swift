@@ -12,6 +12,8 @@ final class TrackerListViewController: UIViewController {
     private var trackers: [Tracker] = []
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
+    private var completedTrackers: [TrackerRecord] = []
+    
     private var trackerCollection: UICollectionView!
     private var filterButton: UIButton!
     private var placeholder = UIView()
@@ -25,11 +27,22 @@ final class TrackerListViewController: UIViewController {
         
         NewTrackerDelegate.shared.trackerListVC = self
         
+        NotificationCenter.default.addObserver(forName: TrackerStorageService.didChageCompletedTrackers, object: nil, queue: .main, using: { [weak self] _ in
+            guard let self else { return }
+            
+            completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        })
+        
         view.backgroundColor = .systemBackground
         
         updateCategories()
         navBarSetup()
         collectionSetup()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         checkVisibility()
     }
     
@@ -62,9 +75,6 @@ final class TrackerListViewController: UIViewController {
     }
     
     func collectionSetup() {
-        placeholder = EmptyTablePlaceholder(type: .tracker, frame: view.safeAreaLayoutGuide.layoutFrame)
-        view.addSubview(placeholder)
-        
         let frame = view.safeAreaLayoutGuide.layoutFrame
         let layout = UICollectionViewFlowLayout()
         trackerCollection = UICollectionView(frame: frame, collectionViewLayout: layout)
@@ -72,7 +82,7 @@ final class TrackerListViewController: UIViewController {
         trackerCollection.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         trackerCollection.delegate = self
         trackerCollection.dataSource = self
-        trackerCollection.register(TrackerTypeHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        trackerCollection.register(TrackerCatHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
         trackerCollection.register(TrackerCell.self, forCellWithReuseIdentifier: "tracker")
         view.addSubview(trackerCollection)
         trackerCollection.reloadData()
@@ -92,16 +102,17 @@ final class TrackerListViewController: UIViewController {
     }
     
     func checkVisibility() {
+        let frame = view.safeAreaLayoutGuide.layoutFrame
         if let srarchText = search.searchBar.text,
            !srarchText.isEmpty {
             filterButton.isHidden = true
             placeholder.removeFromSuperview()
-            placeholder = EmptyTablePlaceholder(type: .search, frame: view.safeAreaLayoutGuide.layoutFrame)
+            placeholder = EmptyTablePlaceholder(type: .search, frame: frame)
             view.addSubview(placeholder)
         } else {
             filterButton.isHidden = visibleCategories.isEmpty
             placeholder.removeFromSuperview()
-            placeholder = EmptyTablePlaceholder(type: .tracker, frame: view.safeAreaLayoutGuide.layoutFrame)
+            placeholder = EmptyTablePlaceholder(type: .tracker, frame: frame)
             view.addSubview(placeholder)
         }
         
@@ -140,6 +151,7 @@ final class TrackerListViewController: UIViewController {
         visibleCategories = visibleCategories.filter {
             !$0.trackers.isEmpty
         }
+        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
         checkVisibility()
         trackerCollection.reloadData()
     }
@@ -179,6 +191,8 @@ final class TrackerListViewController: UIViewController {
             !$0.trackers.isEmpty
         }
         
+        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        
         checkVisibility()
         trackerCollection.reloadData()
     }
@@ -213,7 +227,7 @@ extension TrackerListViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
-            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as? TrackerTypeHeader else {
+            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as? TrackerCatHeader else {
                 return UICollectionReusableView()
             }
             header.label.text = visibleCategories[indexPath.section].name
@@ -238,7 +252,9 @@ extension TrackerListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tracker", for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
         cell.configureCell(with: tracker, date: datePicker.date)
+        cell.delegate = self
         return cell
     }
 }
@@ -249,8 +265,11 @@ extension TrackerListViewController: UISearchBarDelegate {
 
     func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
         updateVisibleCategories()
-        
         return true
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        updateVisibleCategories()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -258,3 +277,24 @@ extension TrackerListViewController: UISearchBarDelegate {
     }
 }
 
+// MARK: - TrackerCellDelegate
+
+extension TrackerListViewController: TrackerCellDelegate {
+    func updatePinnedStatus() {
+        
+    }
+    
+    func updateRecords(with record: TrackerRecord, completion: (Bool) -> Void) {
+        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        let completedID = completedTrackers.filter {
+            $0.trackerID == record.trackerID
+        }
+        let isRecorded = !completedID.isEmpty
+        if !isRecorded {
+            TrackerStorageService.shared.addRecord(record)
+        } else {
+            TrackerStorageService.shared.removeRecord(record)
+        }
+        completion(!isRecorded)
+    }
+}
