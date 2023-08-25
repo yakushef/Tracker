@@ -28,6 +28,8 @@
 		BC75DC682A7D8831001CB797 /* EmptyTablePlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */; };
 		BC9E20522A97AAC500D30116 /* TrackerCatHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9E20512A97AAC500D30116 /* TrackerCatHeader.swift */; };
 		BCB7239D2A96309B00AB7FA7 /* GerericAppButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7239C2A96309B00AB7FA7 /* GerericAppButton.swift */; };
+		BCE38F472A98C280005BE0E6 /* TimetableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE38F462A98C280005BE0E6 /* TimetableCell.swift */; };
+		BCE38F492A98D190005BE0E6 /* Extension UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE38F482A98D190005BE0E6 /* Extension UIImage.swift */; };
 		BCF2FBDF2A7ACDDF007E6583 /* Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF2FBDE2A7ACDDF007E6583 /* Trackers.swift */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +57,8 @@
 		BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTablePlaceholder.swift; sourceTree = "<group>"; };
 		BC9E20512A97AAC500D30116 /* TrackerCatHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCatHeader.swift; sourceTree = "<group>"; };
 		BCB7239C2A96309B00AB7FA7 /* GerericAppButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GerericAppButton.swift; sourceTree = "<group>"; };
+		BCE38F462A98C280005BE0E6 /* TimetableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimetableCell.swift; sourceTree = "<group>"; };
+		BCE38F482A98D190005BE0E6 /* Extension UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension UIImage.swift"; sourceTree = "<group>"; };
 		BCF2FBDE2A7ACDDF007E6583 /* Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trackers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,6 +110,7 @@
 				BCB7239C2A96309B00AB7FA7 /* GerericAppButton.swift */,
 				BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */,
 				BC307D002A7977030076AA89 /* Extension UIColor + Emojis.swift */,
+				BCE38F482A98D190005BE0E6 /* Extension UIImage.swift */,
 				BC307D022A797D820076AA89 /* Extension DateFormatter + Weekdays.swift */,
 				BC1D387A2A8EA02400B6F976 /* NewTrackerDelegate.swift */,
 				BC307CFF2A7976EE0076AA89 /* Presentation */,
@@ -127,6 +132,7 @@
 				BC75DC612A7D5959001CB797 /* TimetableViewController.swift */,
 				BC75DC632A7D596C001CB797 /* CategoryListViewController.swift */,
 				BC75DC652A7D5999001CB797 /* NewCategoryViewController.swift */,
+				BCE38F462A98C280005BE0E6 /* TimetableCell.swift */,
 			);
 			path = "Create + Edit";
 			sourceTree = "<group>";
@@ -219,7 +225,9 @@
 				BCB7239D2A96309B00AB7FA7 /* GerericAppButton.swift in Sources */,
 				BC307D012A7977030076AA89 /* Extension UIColor + Emojis.swift in Sources */,
 				BC307D0B2A7980830076AA89 /* StatisticsViewController.swift in Sources */,
+				BCE38F492A98D190005BE0E6 /* Extension UIImage.swift in Sources */,
 				BC5157152A72D3F80080B6EA /* SceneDelegate.swift in Sources */,
+				BCE38F472A98C280005BE0E6 /* TimetableCell.swift in Sources */,
 				BCF2FBDF2A7ACDDF007E6583 /* Trackers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

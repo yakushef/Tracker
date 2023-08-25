@@ -22,6 +22,8 @@ final class NewCategoryViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.title = "Новая категория"
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+        
         view.backgroundColor = .systemBackground
         setupUI()
     }
@@ -62,8 +64,7 @@ final class NewCategoryViewController: UIViewController {
     }
     
     @objc private func done() {
-        if let text = textField.text {
-            delegate?.addCategory(text) }
+        if let text = textField.text { delegate?.addCategory(text) }
         dismiss(animated: true)
     }
 }

@@ -91,6 +91,7 @@ final class TrackerListViewController: UIViewController {
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         filterButton.backgroundColor = .appColors.blue
         filterButton.setTitle("Фильтры", for: .normal)
+        filterButton.titleLabel?.font = UIFont(name: "SFPro-Regular", size: 17)
         view.addSubview(filterButton)
         NSLayoutConstraint.activate([
             filterButton.heightAnchor.constraint(equalToConstant: 50),

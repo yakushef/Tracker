@@ -19,15 +19,13 @@ final class CategoryListViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.title = "Категория"
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+        
         view.backgroundColor = .systemBackground
         categoryTable.isScrollEnabled = false
         let categoryList = TrackerStorageService.shared.getAllCategories()
         categories = categoryList.map { $0.name }
         setupUI()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
     
     private func checkIfEmpty() {
@@ -36,9 +34,6 @@ final class CategoryListViewController: UIViewController {
     }
     
     private func setupUI() {
-        placeholder = EmptyTablePlaceholder(type: .category, frame: view.safeAreaLayoutGuide.layoutFrame)
-        view.addSubview(placeholder)
-        
         view.addSubview(addButton)
         addButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -49,6 +44,16 @@ final class CategoryListViewController: UIViewController {
         ])
         addButton.setTitle("Добавить категорию", for: .normal)
         addButton.addTarget(self, action: #selector(newCategory), for: .touchUpInside)
+        
+        placeholder = EmptyTablePlaceholder(type: .category, frame: view.safeAreaLayoutGuide.layoutFrame)
+        placeholder.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(placeholder)
+        NSLayoutConstraint.activate([
+            placeholder.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            placeholder.bottomAnchor.constraint(equalTo: addButton.topAnchor),
+            placeholder.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            placeholder.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
         
         setupTable()
         checkIfEmpty()
@@ -87,9 +92,14 @@ extension CategoryListViewController: NewCategoryDelegate {
             TrackerStorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
         }
         
+//        let categoryList = TrackerStorageService.shared.getAllCategories()
+//        categories = categoryList.map { $0.name }
+//        checkIfEmpty()
+
         let categoryList = TrackerStorageService.shared.getAllCategories()
         categories = categoryList.map { $0.name }
         checkIfEmpty()
+        categoryTable.separatorStyle = .singleLine
         categoryTable.reloadData()
     }
 }
@@ -125,24 +135,28 @@ extension CategoryListViewController: UITableViewDataSource {
         cell.selectionStyle = .none
         cell.accessoryType = .none
         cell.tintColor = .appColors.blue
-        cell.backgroundColor = .appColors.lightGray
+        cell.backgroundColor = .appColors.background
         cell.textLabel?.text = categories[indexPath.row]
         cell.layer.masksToBounds = true
         cell.layer.cornerRadius = 16
+        cell.layoutSubviews()
         
         if indexPath.row == 0 && categories.count == 1 {
             cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
             switch indexPath.row {
             case 0:
                 cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             case categories.count - 1:
                 cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
             default:
                 cell.layer.maskedCorners = []
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             }
         }
-
         return cell
     }
 }

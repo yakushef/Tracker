@@ -22,7 +22,16 @@ final class EmptyTablePlaceholder: UIView {
     
     init(type: PlaceholderType, frame: CGRect) {
         self.type = type
-        
+        super.init(frame: frame)
+        setupType()
+        setupStack()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init: coder not defined")
+    }
+    
+    private func setupType() {
         switch type {
         case .search:
             placeholderImage.image = UIImage(named: "nothingFound") ?? UIImage()
@@ -33,7 +42,7 @@ final class EmptyTablePlaceholder: UIView {
             placeholderImage.image = UIImage(named: "fallingStar") ?? UIImage()
             placeholderLabel.heightAnchor.constraint(equalToConstant: 36).isActive = true
             placeholderLabel.numberOfLines = 2
-            placeholderLabel.text = "Привычки и события можно\nобъединять по смыслу"
+            placeholderLabel.text = "Привычки и события можно\nобъединить по смыслу"
         case .tracker:
             placeholderImage.image = UIImage(named: "fallingStar") ?? UIImage()
             placeholderLabel.heightAnchor.constraint(equalToConstant: 18).isActive = true
@@ -45,9 +54,9 @@ final class EmptyTablePlaceholder: UIView {
             placeholderLabel.numberOfLines = 1
             placeholderLabel.text = "Анализировать пока нечего"
         }
-        
-        super.init(frame: frame)
-        
+    }
+    
+    private func setupStack() {
         addSubview(stack)
         stack.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -69,12 +78,8 @@ final class EmptyTablePlaceholder: UIView {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 7
         paragraphStyle.alignment = .center
-        placeholderLabel.font = .boldSystemFont(ofSize: 12)
+        placeholderLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
         placeholderLabel.attributedText = NSMutableAttributedString(string: placeholderLabel.text ?? "", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init: coder not defined")
     }
 }

@@ -15,6 +15,7 @@ final class TrackerTypeChoiceViewController: UIViewController {
         view.backgroundColor = .systemBackground
         setupUI()
         navigationItem.title = "Создание трекера"
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
     }
     
     private func setup(button: UIButton) {

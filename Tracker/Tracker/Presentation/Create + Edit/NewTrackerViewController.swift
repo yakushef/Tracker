@@ -79,6 +79,7 @@ final class NewTrackerViewController: UIViewController {
         
         NewTrackerDelegate.shared.newTrackerVC = self
         
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         if trackerType == .habit {
             setupForHabit()
         } else {

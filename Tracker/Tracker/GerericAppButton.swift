@@ -15,7 +15,7 @@ final class GenericAppButton: UIButton {
         self.tintColor = .appColors.white
         self.clipsToBounds = true
         self.layer.cornerRadius = 16
-        self.titleLabel?.font = .boldSystemFont(ofSize: 16)
+        self.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
     }
     
     func switchActiveState() {

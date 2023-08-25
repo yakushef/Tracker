@@ -23,18 +23,14 @@ final class TrackerCell: UICollectionViewCell {
     var titleLabel = UILabel()
     var isRecorded: Bool = false {
         didSet {
-            if isRecorded {
-                incrementButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-                UIView.animate(withDuration: 0.25, animations: { [weak self] in
-                    self?.incrementButton.alpha = 0.3
-                })
-            } else {
-                    incrementButton.setImage(UIImage(systemName: "plus"), for: .normal)
-                UIView.animate(withDuration: 0.25, animations: { [weak self] in
-                    self?.incrementButton.alpha = 1
-                })
-                }
+            incrementButton.setImage(buttonImage(), for: .normal)
+            incrementButton.alpha = isRecorded ? 0.3 : 1
         }
+    }
+    private lazy var buttonImage = { [weak self] in
+        guard let self else { return UIImage() }
+        var image = UIImage(named: self.isRecorded ? "Recorded" : "Plus") ?? UIImage()
+        return image
     }
     var allRecords: [TrackerRecord] = []
     weak var delegate: TrackerCellDelegate?
@@ -130,6 +126,7 @@ final class TrackerCell: UICollectionViewCell {
         titleLabel.font = .boldSystemFont(ofSize: 12)
         titleLabel.numberOfLines = 2
         titleLabel.textColor = .appColors.white
+        titleLabel.font = UIFont(name: "SFPro-Medium", size: 12)
         titleLabel.text = tracker.title
         
         //MARK: - Management
@@ -146,7 +143,7 @@ final class TrackerCell: UICollectionViewCell {
         //MARK: - Increment Button
         
         incrementButton = UIButton(type: .system)
-        incrementButton.setImage(UIImage(systemName: isRecorded ? "checkmark" : "plus"), for: .normal)
+        incrementButton.setImage(buttonImage(), for: .normal)
         managementView.addSubview(incrementButton)
         incrementButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -156,7 +153,6 @@ final class TrackerCell: UICollectionViewCell {
             incrementButton.trailingAnchor.constraint(equalTo: managementView.trailingAnchor, constant: -12)
         ])
         incrementButton.backgroundColor = tracker.color
-        incrementButton.alpha = isRecorded ? 0.3 : 1.0
         incrementButton.tintColor = .appColors.white
         incrementButton.clipsToBounds = true
         incrementButton.layer.cornerRadius = 17
@@ -174,8 +170,7 @@ final class TrackerCell: UICollectionViewCell {
             daysLabel.topAnchor.constraint(equalTo: managementView.topAnchor, constant: 8),
             daysLabel.bottomAnchor.constraint(equalTo: incrementButton.bottomAnchor)
         ])
-        daysLabel.font = .systemFont(ofSize: 12)
-        
+        daysLabel.font = UIFont(name: "SFPro-Medium", size: 12)
         updateDay()
     }
     
