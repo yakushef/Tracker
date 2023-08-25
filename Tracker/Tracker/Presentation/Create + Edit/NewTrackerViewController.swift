@@ -7,24 +7,10 @@
 
 import UIKit
 
-final class TrackerNameField: UITextField {
-    override func textRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.inset(by: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 38))
-    }
-    
-    override func editingRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.inset(by: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 38))
-    }
-    
-    override func clearButtonRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.inset(by: UIEdgeInsets(top: 0, left: self.bounds.width - 38, bottom: 0, right: 16))
-    }
-}
-
 final class NewTrackerViewController: UIViewController {
     
     private let optionItems = ["Категория", "Расписание"]
-
+    
     var category: String? {
         didSet {
             updateCategory()
@@ -56,11 +42,6 @@ final class NewTrackerViewController: UIViewController {
         }
     }
     
-    public enum Mode {
-        case new
-        case edit
-    }
-    
     private let cancelButton = UIButton(type: .system)
     private let createButton = GenericAppButton(type: .system)
     private let textErrorLabel = UILabel()
@@ -74,7 +55,6 @@ final class NewTrackerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupUI()
         
         NewTrackerDelegate.shared.newTrackerVC = self
@@ -85,6 +65,8 @@ final class NewTrackerViewController: UIViewController {
         } else {
             setupForSingleEvent()
         }
+        
+        addTapGestureToHideKeyboard(for: textField)
     }
     
     //MARK: - Setup UI
@@ -114,13 +96,14 @@ final class NewTrackerViewController: UIViewController {
         textField.layer.cornerRadius = 16
         textField.font = .systemFont(ofSize: 17)
         textField.placeholder = "Введите название трекера"
-        textField.backgroundColor = .appColors.background
+        textField.backgroundColor = .AppColors.background
         textField.clearButtonMode = .whileEditing
         textField.delegate = self
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         
         textErrorLabel.translatesAutoresizingMaskIntoConstraints = false
         textErrorLabel.text = "Ограничение 38 символов"
-        textErrorLabel.textColor = .appColors.red
+        textErrorLabel.textColor = .AppColors.red
         textErrorLabel.font = .systemFont(ofSize: 17)
         textErrorLabel.contentMode = .center
         textErrorLabel.textAlignment = .center
@@ -147,11 +130,12 @@ final class NewTrackerViewController: UIViewController {
         optionsTable.clipsToBounds = true
         optionsTable.layer.cornerRadius = 16
         optionsTable.isScrollEnabled = false
-        optionsTable.backgroundColor = .appColors.background
+        optionsTable.backgroundColor = .AppColors.background
         
         optionsTable.dataSource = self
         optionsTable.delegate = self
         optionsTable.register(UITableViewCell.self, forCellReuseIdentifier: "options item")
+        optionsTable.isUserInteractionEnabled = true
     
         let buttonStack = UIStackView()
         buttonStack.addArrangedSubview(cancelButton)
@@ -177,12 +161,12 @@ final class NewTrackerViewController: UIViewController {
         
         cancelButton.backgroundColor = .clear
         cancelButton.layer.borderWidth = 1
-        cancelButton.layer.borderColor = UIColor.appColors.red.cgColor
+        cancelButton.layer.borderColor = UIColor.AppColors.red.cgColor
         cancelButton.clipsToBounds = true
         cancelButton.layer.cornerRadius = 16
         cancelButton.setTitle("Отменить", for: .normal)
         cancelButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
-        cancelButton.setTitleColor(.appColors.red, for: .normal)
+        cancelButton.setTitleColor(.AppColors.red, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
     }
     
@@ -264,11 +248,7 @@ extension NewTrackerViewController: UITableViewDelegate {
 
 extension NewTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if trackerType == .habit {
-            return 2
-        } else {
-            return 1
-        }
+        trackerType == .habit ? 2 : 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -281,11 +261,13 @@ extension NewTrackerViewController: UITableViewDataSource {
         if indexPath.row == 0 {
             let titleText = "\(optionItems[indexPath.row])\n"
             let subtitleText = category ?? ""
-            if category != nil { cell.textLabel?.numberOfLines = 0 } else {
+            if category != nil {
+                cell.textLabel?.numberOfLines = 0
+            } else {
                 cell.textLabel?.numberOfLines = 1
             }
             let titleString = NSMutableAttributedString(string: titleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.label])
-            let subtitleString = NSMutableAttributedString(string: subtitleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.appColors.gray])
+            let subtitleString = NSMutableAttributedString(string: subtitleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.AppColors.gray])
             titleString.append(subtitleString)
             cell.textLabel?.attributedText = titleString
         }
@@ -293,7 +275,9 @@ extension NewTrackerViewController: UITableViewDataSource {
         if indexPath.row == 1 {
             let titleText = "\(optionItems[indexPath.row])\n"
             var subtitleText = ""
-            if !activeDays.isEmpty { cell.textLabel?.numberOfLines = 0 } else {
+            if !activeDays.isEmpty {
+                cell.textLabel?.numberOfLines = 0
+            } else {
                 cell.textLabel?.numberOfLines = 1
             }
             var newDays: [String] = []
@@ -322,7 +306,7 @@ extension NewTrackerViewController: UITableViewDataSource {
             subtitleText = newDays.count == 7 ? "Каждый день" : newDays.joined(separator: ", ")
             
             let titleString = NSMutableAttributedString(string: titleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.label])
-            let subtitleString = NSMutableAttributedString(string: subtitleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.appColors.gray])
+            let subtitleString = NSMutableAttributedString(string: subtitleText, attributes: [.font: UIFont.systemFont(ofSize: 16), .foregroundColor: UIColor.AppColors.gray])
             titleString.append(subtitleString)
             cell.textLabel?.attributedText = titleString
         }
@@ -339,18 +323,28 @@ extension NewTrackerViewController: UITableViewDataSource {
 //MARK: - Text Field Delegate
 
 extension NewTrackerViewController: UITextFieldDelegate {
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        newTrackerTitle = textField.text ?? ""
-    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        isReady = (textField.text?.count ?? 0) <= 38
-        if let text = textField.text,
-           text.isEmpty {
-            isReady = false
-        }
         textField.resignFirstResponder()
         return true
     }
 }
 
+extension NewTrackerViewController {
+    @objc private func textFieldDidChange() {
+        isReady = (textField.text?.count ?? 0) <= 38
+        if let text = textField.text,
+           text.isEmpty {
+            isReady = false
+        }
+    }
+}
+
+// MARK: - Mode
+
+extension NewTrackerViewController {
+    public enum Mode {
+        case new
+        case edit
+    }
+}

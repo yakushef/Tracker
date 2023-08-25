@@ -14,8 +14,8 @@ final class TrackerListViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     
-    private var trackerCollection: UICollectionView!
-    private var filterButton: UIButton!
+    private var trackerCollection = UICollectionView(frame: CGRect(), collectionViewLayout: UICollectionViewLayout())
+    private var filterButton = UIButton()
     private var placeholder = UIView()
     private let datePicker = UIDatePicker()
     private let search = UISearchController(searchResultsController: nil)
@@ -62,7 +62,7 @@ final class TrackerListViewController: UIViewController {
         let dateButton = UIBarButtonItem(customView: datePicker)
         datePicker.maximumDate = Date()
         datePicker.addTarget(self, action: #selector(updateVisibleCategories), for: .valueChanged)
-        datePicker.tintColor = .appColors.blue
+        datePicker.tintColor = .AppColors.blue
         navigationItem.rightBarButtonItem = dateButton
         
         search.hidesNavigationBarDuringPresentation = false
@@ -89,7 +89,7 @@ final class TrackerListViewController: UIViewController {
         
         filterButton = GenericAppButton(type: .system)
         filterButton.translatesAutoresizingMaskIntoConstraints = false
-        filterButton.backgroundColor = .appColors.blue
+        filterButton.backgroundColor = .AppColors.blue
         filterButton.setTitle("Фильтры", for: .normal)
         filterButton.titleLabel?.font = UIFont(name: "SFPro-Regular", size: 17)
         view.addSubview(filterButton)

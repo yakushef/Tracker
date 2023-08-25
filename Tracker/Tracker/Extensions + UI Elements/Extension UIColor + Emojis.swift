@@ -11,13 +11,13 @@ let emojiList: [String] = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
                            "😇", "😡", "🥶", "🤔", "🙌", "🍔",
                            "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
 
-enum trackerEmojis: String {
+enum TrackerEmojis: String {
     case 🙂, 😻, 🌺, 🐶, 😱, 😇, 😡, 🥶, 🤔, 🙌, 🍔, 🥦, 🏓, 🥇, 🎸, 🏝, 😪
     case heart = "❤️"
 }
 
 extension UIColor {
-    struct appColors {
+    struct AppColors {
         static let black = UIColor(dynamicProvider: { traitCollection in
             if traitCollection.userInterfaceStyle == .dark {
                 return UIColor(red: 1, green: 1, blue: 1, alpha: 1)
@@ -48,7 +48,7 @@ extension UIColor {
         static let blue = UIColor(red: 0.216, green: 0.447, blue: 0.906, alpha: 1)
     }
     
-    struct colorSections {
+    struct ColorSections {
         static let section1 = UIColor(red: 0.992, green: 0.298, blue: 0.286, alpha: 1)
         static let section2 = UIColor(red: 1, green: 0.533, blue: 0.118, alpha: 1)
         static let section3 = UIColor(red: 0, green: 0.482, blue: 0.98, alpha: 1)
@@ -72,21 +72,21 @@ extension UIColor {
     }
 }
 
-let sectionColors: [UIColor] = [.colorSections.section1,
-                                .colorSections.section2,
-                                .colorSections.section3,
-                                .colorSections.section4,
-                                .colorSections.section5,
-                                .colorSections.section6,
-                                .colorSections.section7,
-                                .colorSections.section8,
-                                .colorSections.section9,
-                                .colorSections.section10,
-                                .colorSections.section11,
-                                .colorSections.section12,
-                                .colorSections.section13,
-                                .colorSections.section14,
-                                .colorSections.section15,
-                                .colorSections.section16,
-                                .colorSections.section17,
-                                .colorSections.section18]
+let sectionColors: [UIColor] = [.ColorSections.section1,
+                                .ColorSections.section2,
+                                .ColorSections.section3,
+                                .ColorSections.section4,
+                                .ColorSections.section5,
+                                .ColorSections.section6,
+                                .ColorSections.section7,
+                                .ColorSections.section8,
+                                .ColorSections.section9,
+                                .ColorSections.section10,
+                                .ColorSections.section11,
+                                .ColorSections.section12,
+                                .ColorSections.section13,
+                                .ColorSections.section14,
+                                .ColorSections.section15,
+                                .ColorSections.section16,
+                                .ColorSections.section17,
+                                .ColorSections.section18]

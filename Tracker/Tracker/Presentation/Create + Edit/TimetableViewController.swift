@@ -40,7 +40,7 @@ final class TimetableViewController: UIViewController {
         weekDaysTable.clipsToBounds = true
         weekDaysTable.layer.cornerRadius = 16
         weekDaysTable.isScrollEnabled = false
-        weekDaysTable.backgroundColor = .appColors.background
+        weekDaysTable.backgroundColor = .AppColors.background
         weekDaysTable.tableHeaderView = UIView()
         
         weekDaysTable.dataSource = self

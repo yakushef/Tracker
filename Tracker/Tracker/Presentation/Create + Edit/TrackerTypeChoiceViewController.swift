@@ -21,8 +21,8 @@ final class TrackerTypeChoiceViewController: UIViewController {
     private func setup(button: UIButton) {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        button.tintColor = .appColors.white
-        button.backgroundColor = .appColors.black
+        button.tintColor = .AppColors.white
+        button.backgroundColor = .AppColors.black
         button.titleLabel?.font = .boldSystemFont(ofSize: 16)
         button.layer.cornerRadius = 16
         button.clipsToBounds = true

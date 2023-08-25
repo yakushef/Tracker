@@ -27,11 +27,11 @@ final class MainListTabBar: UITabBarController {
         
         viewControllers = [trackersVC, statVC]
 
-        tabBar.tintColor = .appColors.blue
+        tabBar.tintColor = .AppColors.blue
         
 
         let dividerView = UIView(frame: CGRect(x: tabBar.frame.minX, y: 0, width: tabBar.frame.width, height: 0.5))
-        dividerView.backgroundColor = UIColor.appColors.gray
+        dividerView.backgroundColor = UIColor.AppColors.gray
         tabBar.addSubview(dividerView)
     }
 }

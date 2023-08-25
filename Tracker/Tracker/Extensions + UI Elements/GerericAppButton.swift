@@ -11,8 +11,8 @@ final class GenericAppButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = .appColors.black
-        self.tintColor = .appColors.white
+        self.backgroundColor = .AppColors.black
+        self.tintColor = .AppColors.white
         self.clipsToBounds = true
         self.layer.cornerRadius = 16
         self.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
@@ -21,20 +21,20 @@ final class GenericAppButton: UIButton {
     func switchActiveState() {
         if isEnabled {
             isEnabled = false
-            backgroundColor = .appColors.gray
+            backgroundColor = .AppColors.gray
         } else {
             isEnabled = true
-            backgroundColor = .appColors.black
+            backgroundColor = .AppColors.black
         }
     }
     
     func switchActiveState(isActive: Bool) {
         if isActive {
             isEnabled = true
-            backgroundColor = .appColors.black
+            backgroundColor = .AppColors.black
         } else {
             isEnabled = false
-            backgroundColor = .appColors.gray
+            backgroundColor = .AppColors.gray
         }
     }
     

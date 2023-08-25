@@ -15,14 +15,14 @@ var dayFormatter: DateComponentsFormatter = { let formatter = DateComponentsForm
     return formatter
 }()
 
-enum Weekday: String {
-    case sunday = "Воскресенье"
+enum Weekday: String, CaseIterable {
     case monday = "Понедельник"
     case tuesday = "Вторник"
     case wednesday = "Среда"
     case thursday = "Четверг"
     case friday = "Пятница"
     case saturday = "Суббота"
+    case sunday = "Воскресенье"
     
     func convertToCalendarWeekday() -> Int {
         var day = 0
@@ -46,10 +46,4 @@ enum Weekday: String {
     }
 }
 
-let weekDays = [Weekday.monday,
-                Weekday.tuesday,
-                Weekday.wednesday,
-                Weekday.thursday,
-                Weekday.friday,
-                Weekday.saturday,
-                Weekday.sunday]
+let weekDays = Weekday.allCases

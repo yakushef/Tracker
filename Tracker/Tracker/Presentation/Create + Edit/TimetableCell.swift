@@ -48,7 +48,7 @@ final class TimetableCell: UITableViewCell {
         toggle.isOn = isChosen
         toggle.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         toggle.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16).isActive = true
-        toggle.onTintColor = .appColors.blue
+        toggle.onTintColor = .AppColors.blue
         toggle.addTarget(self, action: #selector(toggleSwitched), for: .valueChanged)
     }
     

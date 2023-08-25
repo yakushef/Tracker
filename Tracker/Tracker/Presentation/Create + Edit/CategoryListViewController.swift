@@ -14,7 +14,7 @@ final class CategoryListViewController: UIViewController {
     private let addButton = GenericAppButton(type: .system)
     private var placeholder = UIView()
     private let categoryTable = UITableView()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -92,10 +92,6 @@ extension CategoryListViewController: NewCategoryDelegate {
             TrackerStorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
         }
         
-//        let categoryList = TrackerStorageService.shared.getAllCategories()
-//        categories = categoryList.map { $0.name }
-//        checkIfEmpty()
-
         let categoryList = TrackerStorageService.shared.getAllCategories()
         categories = categoryList.map { $0.name }
         checkIfEmpty()
@@ -108,7 +104,7 @@ extension CategoryListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
             cell.accessoryType = .checkmark
-           }
+        }
         
         NewTrackerDelegate.shared.setNewTrackerCategoryName(to: categories[indexPath.row])
         dismiss(animated: true)
@@ -134,8 +130,8 @@ extension CategoryListViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "category", for: indexPath)
         cell.selectionStyle = .none
         cell.accessoryType = .none
-        cell.tintColor = .appColors.blue
-        cell.backgroundColor = .appColors.background
+        cell.tintColor = .AppColors.blue
+        cell.backgroundColor = .AppColors.background
         cell.textLabel?.text = categories[indexPath.row]
         cell.layer.masksToBounds = true
         cell.layer.cornerRadius = 16

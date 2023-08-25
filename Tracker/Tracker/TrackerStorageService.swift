@@ -7,8 +7,6 @@
 
 import UIKit
 
-//MARK: - Tracker Storage Service
-
 final class TrackerStorageService {
     static let shared = TrackerStorageService()
     static let didChageCompletedTrackers = Notification.Name(rawValue: "CompletedTrackersDidChange")
@@ -79,61 +77,5 @@ final class TrackerStorageService {
     
     func removeCategory(_ category: TrackerCategory) {
         categories.remove(category)
-    }
-}
-
-//MARK: - Tracker Category
-
-struct TrackerCategory: Hashable {
-    let name: String
-    let trackers: [Tracker]
-}
-
-//MARK: - Tracker Record
-
-struct TrackerRecord: Hashable {
-    let trackerID: UUID
-    let date: Date
-}
-
-//MARK: - Tracker
-
-struct Tracker: Hashable {
-    let id: UUID
-    
-    let title: String
-    let emoji: String
-    let color: UIColor
-    let trackerType: type
-    let timetable: [Weekday]
-    let isPinned: Bool
-    
-    enum type {
-        case singleEvent
-        case habit
-    }
-    
-    init(eventTitle: String, emoji: String, color: UIColor, isPinned: Bool = false) {
-        self.title = eventTitle
-        self.emoji = emoji
-        self.color = color
-        self.trackerType = .singleEvent
-        self.timetable = weekDays
-        self.isPinned = isPinned
-        self.id = UUID()
-    }
-    
-    init(habitTitle: String, emoji: String, color: UIColor, timetable: [Weekday], isPinned: Bool = false) {
-        self.title = habitTitle
-        self.emoji = emoji
-        self.color = color
-        self.trackerType = .habit
-        self.timetable = timetable
-        self.isPinned = isPinned
-        self.id = UUID()
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id.uuidString)
     }
 }

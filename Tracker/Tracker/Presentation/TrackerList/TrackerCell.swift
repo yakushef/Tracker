@@ -17,11 +17,11 @@ protocol TrackerCellDelegate: AnyObject {
 //MARK: - TrackerCell
 
 final class TrackerCell: UICollectionViewCell {
-    var cardView = UIView()
-    var emojiLabel = UILabel()
-    var pinImage = UIImageView()
-    var titleLabel = UILabel()
-    var isRecorded: Bool = false {
+    private var cardView = UIView()
+    private var emojiLabel = UILabel()
+    private var pinImage = UIImageView()
+    private var titleLabel = UILabel()
+    private var isRecorded: Bool = false {
         didSet {
             incrementButton.setImage(buttonImage(), for: .normal)
             incrementButton.alpha = isRecorded ? 0.3 : 1
@@ -32,15 +32,15 @@ final class TrackerCell: UICollectionViewCell {
         var image = UIImage(named: self.isRecorded ? "Recorded" : "Plus") ?? UIImage()
         return image
     }
-    var allRecords: [TrackerRecord] = []
+    private var allRecords: [TrackerRecord] = []
     weak var delegate: TrackerCellDelegate?
     
-    var managementView = UIView()
-    var incrementButton = UIButton()
-    var daysLabel = UILabel()
-    var cellDate = Date()
+    private var managementView = UIView()
+    private var incrementButton = UIButton()
+    private var daysLabel = UILabel()
+    private var cellDate = Date()
     
-    var cellTracker: Tracker!
+    private var cellTracker = Tracker(eventTitle: "", emoji: "", color: .gray)
     
     override func prepareForReuse() {
         daysLabel.text = ""
@@ -50,7 +50,7 @@ final class TrackerCell: UICollectionViewCell {
     
     //MARK: - Status for select date
     
-    func checkIfRecorded() {
+    private func checkIfRecorded() {
         allRecords = TrackerStorageService.shared.getRecords(for: cellTracker.id)
 
         var isNowRecorded = false
@@ -95,7 +95,7 @@ final class TrackerCell: UICollectionViewCell {
             pinImage.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -4)
         ])
         
-        pinImage.isHidden = !(cellTracker?.isPinned ?? false)
+        pinImage.isHidden = !cellTracker.isPinned
         
         //MARK: - Emoji
         
@@ -109,7 +109,7 @@ final class TrackerCell: UICollectionViewCell {
         ])
         emojiLabel.layer.cornerRadius = 12
         emojiLabel.clipsToBounds = true
-        emojiLabel.backgroundColor = .appColors.background
+        emojiLabel.backgroundColor = .AppColors.background
         emojiLabel.font = .systemFont(ofSize: 14)
         emojiLabel.textAlignment = .center
         emojiLabel.text = tracker.emoji
@@ -125,7 +125,7 @@ final class TrackerCell: UICollectionViewCell {
         ])
         titleLabel.font = .boldSystemFont(ofSize: 12)
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .appColors.white
+        titleLabel.textColor = .AppColors.white
         titleLabel.font = UIFont(name: "SFPro-Medium", size: 12)
         titleLabel.text = tracker.title
         
@@ -153,7 +153,7 @@ final class TrackerCell: UICollectionViewCell {
             incrementButton.trailingAnchor.constraint(equalTo: managementView.trailingAnchor, constant: -12)
         ])
         incrementButton.backgroundColor = tracker.color
-        incrementButton.tintColor = .appColors.white
+        incrementButton.tintColor = .AppColors.white
         incrementButton.clipsToBounds = true
         incrementButton.layer.cornerRadius = 17
         incrementButton.addTarget(self, action: #selector(incrementButtonTapped), for: .touchUpInside)

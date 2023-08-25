@@ -45,7 +45,7 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
         }
     }
     var newTrackEmoji: String = "⚠️"
-    var newTrackColor: UIColor = .appColors.gray
+    var newTrackColor: UIColor = .AppColors.gray
     var newTrackerCategoryName: String = ""
     
     func setTrackerTitle(to title: String) {
@@ -70,7 +70,7 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
     }
     
     func setTrackerColor() {
-        newTrackColor = sectionColors.randomElement() ?? .appColors.gray
+        newTrackColor = sectionColors.randomElement() ?? .AppColors.gray
     }
     
     func wipeAllTrackerInfo() {
@@ -79,7 +79,7 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
         newTrackerName = ""
         newTrackerSchedule = []
         newTrackEmoji = "⚠️"
-        newTrackColor = .appColors.gray
+        newTrackColor = .AppColors.gray
     }
     
     func createNewTracker() {

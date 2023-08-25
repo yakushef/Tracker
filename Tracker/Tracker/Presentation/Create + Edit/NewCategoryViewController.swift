@@ -26,11 +26,12 @@ final class NewCategoryViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         setupUI()
+        addTapGestureToHideKeyboard(for: textField)
     }
     
     private func setupUI() {
         view.addSubview(textField)
-        textField.backgroundColor = .appColors.gray
+        textField.backgroundColor = .AppColors.gray
         textField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             textField.heightAnchor.constraint(equalToConstant: 75),
@@ -42,9 +43,10 @@ final class NewCategoryViewController: UIViewController {
         textField.layer.cornerRadius = 16
         textField.font = .systemFont(ofSize: 17)
         textField.placeholder = "Введите название категории"
-        textField.backgroundColor = .appColors.background
+        textField.backgroundColor = .AppColors.background
         textField.clearButtonMode = .whileEditing
         textField.delegate = self
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         
         view.addSubview(doneButton)
         doneButton.translatesAutoresizingMaskIntoConstraints = false
@@ -59,19 +61,25 @@ final class NewCategoryViewController: UIViewController {
         doneButton.switchActiveState(isActive: false)
     }
     
-    private func textChanged(to text: String) {
-        doneButton.switchActiveState(isActive: !text.isEmpty)
+    @objc private func textFieldDidChange() {
+        var isReady = false
+        if let text = textField.text,
+           !text.isEmpty {
+            isReady = true
+        }
+        doneButton.switchActiveState(isActive: isReady)
     }
     
     @objc private func done() {
-        if let text = textField.text { delegate?.addCategory(text) }
+        if let text = textField.text {
+            delegate?.addCategory(text)
+        }
         dismiss(animated: true)
     }
 }
 
 extension NewCategoryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textChanged(to: textField.text ?? "")
         textField.resignFirstResponder()
         return true
     }
