@@ -12,23 +12,25 @@ protocol NewTrackerDelegateProtocol: AnyObject {
     var newTrackerType: Tracker.type {get}
     var newTrackerName: String {get}
     var newTrackerSchedule: Set<Weekday> {get}
-    var newTrackEmoji: String {get}
-    var newTrackColor: UIColor {get}
+    var newTrackEmoji: String? {get}
+    var newTrackColor: UIColor? {get}
     var newTrackerCategoryName: String {get}
     
     func setTrackerTitle(to title: String)
     func setTrackerType(to type: Tracker.type)
     func setTrackerSchedule(to schedule: Set<Weekday>)
     func setNewTrackerCategoryName(to category: String)
-    func setTrackerEmoji()
-    func setTrackerColor()
+    func setRandomEmoji()
+    func setTrackerEmoji(to emoji: String)
+    func setRandomColor()
+    func setTrackerColor(to color: UIColor)
     
     func wipeAllTrackerInfo()
     func createNewTracker()
 }
 
 final class NewTrackerDelegate: NewTrackerDelegateProtocol {
-    
+
     static let shared = NewTrackerDelegate()
     let storageService = TrackerStorageService.shared
     
@@ -44,8 +46,16 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
             newTrackerVC?.activeDays = newTrackerSchedule
         }
     }
-    var newTrackEmoji: String = "⚠️"
-    var newTrackColor: UIColor = .AppColors.gray
+    var newTrackEmoji: String? = nil {
+        didSet {
+            newTrackerVC?.newTrackerEmoji = newTrackEmoji
+        }
+    }
+    var newTrackColor: UIColor? = nil {
+        didSet {
+            newTrackerVC?.newTrackerColor = newTrackColor
+        }
+    }
     var newTrackerCategoryName: String = ""
     
     func setTrackerTitle(to title: String) {
@@ -65,11 +75,21 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
         newTrackerVC?.category = category
     }
     
-    func setTrackerEmoji() {
+    func setTrackerEmoji(to emoji: String) {
+        if emoji.count == 1 {
+            newTrackEmoji = emoji
+        }
+    }
+    
+    func setTrackerColor(to color: UIColor) {
+        newTrackColor = color
+    }
+    
+    func setRandomEmoji() {
         newTrackEmoji = emojiList.randomElement() ?? "🧩"
     }
     
-    func setTrackerColor() {
+    func setRandomColor() {
         newTrackColor = sectionColors.randomElement() ?? .AppColors.gray
     }
     
@@ -78,26 +98,24 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
         newTrackerType = .habit
         newTrackerName = ""
         newTrackerSchedule = []
-        newTrackEmoji = "⚠️"
-        newTrackColor = .AppColors.gray
+        newTrackEmoji = nil
+        newTrackColor = nil
     }
     
     func createNewTracker() {
         var tracker: Tracker
-        setTrackerColor()
-        setTrackerEmoji()
         switch newTrackerType {
         case .habit:
             var days: [Weekday] = []
             days.append(contentsOf: newTrackerSchedule)
             tracker = Tracker(habitTitle: newTrackerTitle,
-                              emoji: newTrackEmoji,
-                              color: newTrackColor,
+                              emoji: newTrackEmoji  ?? "🧩",
+                              color: newTrackColor ?? .AppColors.gray,
                               timetable: days)
         case .singleEvent:
             tracker = Tracker(eventTitle: newTrackerTitle,
-                              emoji: newTrackEmoji,
-                              color: newTrackColor)
+                              emoji: newTrackEmoji  ?? "🧩",
+                              color: newTrackColor ?? .AppColors.gray)
         }
         
         let sameNameCategories = storageService.getAllCategories().filter {

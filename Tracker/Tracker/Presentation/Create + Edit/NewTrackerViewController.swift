@@ -28,6 +28,16 @@ final class NewTrackerViewController: UIViewController {
     
     private var newTrackerTitle = ""
     private var newTrackerCategoty = ""
+    var newTrackerEmoji: String? = nil {
+        didSet {
+            checkIfReady()
+        }
+    }
+    var newTrackerColor: UIColor? = nil {
+        didSet {
+            checkIfReady()
+        }
+    }
     private var newTrackerTimetable: [Weekday] = []
     private var isReady = false {
         didSet {
@@ -307,7 +317,7 @@ final class NewTrackerViewController: UIViewController {
         if trackerType == .singleEvent {
             scheduledDays = Set(weekDays)
         }
-        if isReady && !scheduledDays.isEmpty && !category.isEmpty {
+        if isReady && !scheduledDays.isEmpty && !category.isEmpty && newTrackerColor != nil && newTrackerEmoji != nil {
             createButton.switchActiveState(isActive: true)
         } else {
             createButton.switchActiveState(isActive: false)
@@ -468,13 +478,21 @@ extension NewTrackerViewController: UICollectionViewDataSource {
 }
 
 extension NewTrackerViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let size = (collectionView.frame.width - 36) / 6
-        return CGSize(width: size, height: size)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == emojiCollection {
+            NewTrackerDelegate.shared.setTrackerEmoji(to: emojiList[indexPath.row])
+        } else if collectionView == colorCollection {
+            NewTrackerDelegate.shared.setTrackerColor(to: sectionColors[indexPath.row])
+        }
     }
 }
 
 extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let size = (collectionView.frame.width - 36) / 6
+        return CGSize(width: size, height: size)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         0
     }
