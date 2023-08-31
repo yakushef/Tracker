@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 var dayFormatter: DateComponentsFormatter = { let formatter = DateComponentsFormatter()
     formatter.allowedUnits = [.day]
@@ -43,6 +44,46 @@ enum Weekday: String, CaseIterable {
             day = 1
         }
         return day
+    }
+    
+    static func convertFromCD(_ weekdaysCD: TrackerScheduleCoreData) -> [Weekday] {
+        var weekdays: [Weekday] = []
+        if weekdaysCD.monday {
+            weekdays.append(.monday)
+        }
+        if weekdaysCD.tuesday {
+            weekdays.append(.tuesday)
+        }
+        if weekdaysCD.wednesday {
+            weekdays.append(.wednesday)
+        }
+        if weekdaysCD.thursday {
+            weekdays.append(.thursday)
+        }
+        if weekdaysCD.friday {
+            weekdays.append(.friday)
+        }
+        if weekdaysCD.saturday {
+            weekdays.append(.saturday)
+        }
+        if weekdaysCD.sunday {
+            weekdays.append(.sunday)
+        }
+        return weekdays
+    }
+    
+    static func convertToCD(_ weekdays: [Weekday], context: NSManagedObjectContext) -> TrackerScheduleCoreData {
+        let weekdaysCD = TrackerScheduleCoreData(context: context)
+        let weekdaysSet = Set(weekdays)
+        weekdaysCD.monday = weekdaysSet.contains(.monday)
+        weekdaysCD.tuesday = weekdaysSet.contains(.tuesday)
+        weekdaysCD.wednesday = weekdaysSet.contains(.wednesday)
+        weekdaysCD.thursday = weekdaysSet.contains(.thursday)
+        weekdaysCD.friday = weekdaysSet.contains(.friday)
+        weekdaysCD.saturday = weekdaysSet.contains(.saturday)
+        weekdaysCD.sunday = weekdaysSet.contains(.sunday)
+        
+        return weekdaysCD
     }
 }
 

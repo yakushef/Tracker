@@ -51,7 +51,7 @@ final class TrackerCell: UICollectionViewCell {
     //MARK: - Status for select date
     
     private func checkIfRecorded() {
-        allRecords = TrackerStorageService.shared.getRecords(for: cellTracker.id)
+        allRecords = StorageService.shared.getRecords(for: cellTracker.id)
 
         var isNowRecorded = false
 
@@ -175,7 +175,7 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     private func updateDay() {
-        let daysCount = TrackerStorageService.shared.getRecords(for: cellTracker.id)
+        let daysCount = StorageService.shared.getRecords(for: cellTracker.id)
         daysLabel.text = dayFormatter.string(from: DateComponents(day: daysCount.count))
     }
     

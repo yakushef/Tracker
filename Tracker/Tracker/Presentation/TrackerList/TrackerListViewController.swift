@@ -27,10 +27,14 @@ final class TrackerListViewController: UIViewController {
         
         NewTrackerDelegate.shared.trackerListVC = self
         
-        NotificationCenter.default.addObserver(forName: TrackerStorageService.didChageCompletedTrackers, object: nil, queue: .main, using: { [weak self] _ in
+        NotificationCenter.default.addObserver(forName: StorageService.didChageCompletedTrackers, object: nil, queue: .main, using: { [weak self] _ in
             guard let self else { return }
             
-            completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+            completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
+        })
+        
+        NotificationCenter.default.addObserver(forName: StorageService.didUpdateCategories, object: nil, queue: .main, using: { [weak self] _ in
+            self?.trackerCollection.reloadData()
         })
         
         view.backgroundColor = .systemBackground
@@ -152,7 +156,7 @@ final class TrackerListViewController: UIViewController {
         visibleCategories = visibleCategories.filter {
             !$0.trackers.isEmpty
         }
-        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
         checkVisibility()
         trackerCollection.reloadData()
     }
@@ -192,18 +196,18 @@ final class TrackerListViewController: UIViewController {
             !$0.trackers.isEmpty
         }
         
-        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
         
         checkVisibility()
         trackerCollection.reloadData()
     }
     
     func updateCategories() {
-        categories = TrackerStorageService.shared.getAllCategories()
+        categories = StorageService.shared.getAllCategories()
     }
     
     func newTrackerAdded() {
-        categories = TrackerStorageService.shared.getAllCategories()
+        categories = StorageService.shared.getAllCategories()
         updateVisibleCategories()
     }
 }
@@ -253,7 +257,7 @@ extension TrackerListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tracker", for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
         cell.configureCell(with: tracker, date: datePicker.date)
         cell.delegate = self
         return cell
@@ -286,15 +290,15 @@ extension TrackerListViewController: TrackerCellDelegate {
     }
     
     func updateRecords(with record: TrackerRecord, completion: (Bool) -> Void) {
-        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
         let completedID = completedTrackers.filter {
             $0.trackerID == record.trackerID
         }
         let isRecorded = !completedID.isEmpty
         if !isRecorded {
-            TrackerStorageService.shared.addRecord(record)
+            StorageService.shared.addRecord(record)
         } else {
-            TrackerStorageService.shared.removeRecord(record)
+            StorageService.shared.removeRecord(record)
         }
         completion(!isRecorded)
     }

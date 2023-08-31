@@ -32,7 +32,7 @@ protocol NewTrackerDelegateProtocol: AnyObject {
 final class NewTrackerDelegate: NewTrackerDelegateProtocol {
 
     static let shared = NewTrackerDelegate()
-    let storageService = TrackerStorageService.shared
+    let storageService = StorageService.shared
     
     weak var trackerListVC: TrackerListViewController?
     weak var newTrackerVC: NewTrackerViewController?
@@ -118,21 +118,24 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
                               color: newTrackColor ?? .AppColors.gray)
         }
         
-        let sameNameCategories = storageService.getAllCategories().filter {
-            $0.name == newTrackerCategoryName
-        }
+        // получить категорию по имени или создать новую
+        storageService.addTracker(tracker, categoryName: newTrackerCategoryName)
         
-        if sameNameCategories.isEmpty {
-            let newCategory = TrackerCategory(name: newTrackerCategoryName, trackers: [tracker])
-            storageService.addCategory(newCategory)
-        } else {
-            guard let existingCategory = sameNameCategories.first else { return }
-            var newTrackerList = existingCategory.trackers
-            newTrackerList.append(tracker)
-            let newCategory = TrackerCategory(name: newTrackerCategoryName, trackers: newTrackerList)
-            storageService.removeCategory(existingCategory)
-            storageService.addCategory(newCategory)
-        }
+//        let sameNameCategories = storageService.getAllCategories().filter {
+//            $0.name == newTrackerCategoryName
+//        }
+//
+//        if sameNameCategories.isEmpty {
+//            let newCategory = TrackerCategory(name: newTrackerCategoryName, trackers: [tracker])
+//            storageService.addCategory(newCategory)
+//        } else {
+//            guard let existingCategory = sameNameCategories.first else { return }
+//            var newTrackerList = existingCategory.trackers
+//            newTrackerList.append(tracker)
+//            let newCategory = TrackerCategory(name: newTrackerCategoryName, trackers: newTrackerList)
+//            storageService.removeCategory(existingCategory)
+//            storageService.addCategory(newCategory)
+//        }
         
         trackerListVC?.newTrackerAdded()
     }
