@@ -52,6 +52,7 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
         
         controller.delegate = self
         self.controller = controller
+        try? controller.performFetch()
     }
     
     func addCategory(category: TrackerCategory) {
@@ -75,6 +76,7 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
     func convertCategoryFromCoreData(_ categoryCD: TrackerCategoryCoreData) throws -> TrackerCategory {
         guard let title = categoryCD.title else { throw CategoryError.categoryDecodingError }
         let trackers = storageService?.getTrackers(for: categoryCD)
+        print(trackers)
         let newCategory = TrackerCategory(name: title, trackers: trackers ?? [])
         return newCategory
     }
@@ -87,6 +89,7 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
               }) else {
                   return []
               }
+        print(objects)
         print(categories)
         return categories
     }

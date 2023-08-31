@@ -121,9 +121,15 @@ extension StorageService: StorageServiceProtocol {
     }
 }
 
-extension StorageService: CategoryStoreDelegate {
+extension StorageService: CategoryStoreDelegate, TrackerStoreDelegate {
     func categoryStoreDidUpdate() {
         NotificationCenter.default.post(Notification(name: StorageService.didUpdateCategories,
                                                      object: nil))
     }
+    
+    func trackerStoreDidUpdate() {
+        NotificationCenter.default.post(Notification(name: StorageService.didUpdateCategories,
+                                                     object: nil))
+    }
 }
+

@@ -34,12 +34,13 @@ final class TrackerListViewController: UIViewController {
         })
         
         NotificationCenter.default.addObserver(forName: StorageService.didUpdateCategories, object: nil, queue: .main, using: { [weak self] _ in
+            self?.updateVisibleCategories()
             self?.trackerCollection.reloadData()
         })
         
         view.backgroundColor = .systemBackground
         
-        updateCategories()
+        updateVisibleCategories()
         navBarSetup()
         collectionSetup()
     }

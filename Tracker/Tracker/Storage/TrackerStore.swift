@@ -60,19 +60,25 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
         case .singleEvent:
             newTracker.isHabit = false
         }
+        
+        let cat = context.object(with: categoryCD.objectID) as! TrackerCategoryCoreData
+        
         newTracker.isPinned = tracker.isPinned
         newTracker.id = tracker.id
         newTracker.title = tracker.title
         newTracker.emoji = tracker.emoji
         newTracker.schedule = Weekday.convertToCD(tracker.timetable, context: context)
         newTracker.colorIndex = Int16(sectionColors.firstIndex(of: tracker.color) ?? 0)
-        newTracker.category = categoryCD
+        newTracker.category = cat
         newTracker.records = []
         
-        let cat = context.object(with: categoryCD.objectID) as! TrackerCategoryCoreData
-        cat.addToTrackers(newTracker)
+//        print(newTracker)
         
-        print(cat)
+
+        cat.addToTrackers(newTracker)
+//        categoryCD.addToTrackers(newTracker)
+        
+//        print(cat)
         
         do { try context.save() }
         catch {
@@ -84,7 +90,14 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
         controller?.fetchRequest.predicate = NSPredicate(format: "%K = %@",
                         argumentArray: [#keyPath(TrackerCoreData.category), category])
         try? controller?.performFetch()
-        return []
+        
+        guard let objects = controller?.fetchedObjects,
+              let trackers = try? objects.map({
+                  try convertTracker(from: $0)
+              }) else {
+                  return []
+              }
+        return trackers
     }
     
     func convertTracker(from trackerCD: TrackerCoreData) throws -> Tracker {
