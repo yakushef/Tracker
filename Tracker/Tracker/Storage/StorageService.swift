@@ -7,8 +7,6 @@
 
 import UIKit
 
-//PRIVATE!!
-
 protocol StorageServiceProtocol: AnyObject {
     var calendar: Calendar { get }
     var trackerStorage: TrackerStoreProtocol { get }
@@ -77,10 +75,6 @@ final class StorageService {
             categoryStorage.addCategory(category: newCategory)
         }
     }
-    
-    func removeCategory(_ category: TrackerCategory) {
-        categories.remove(category)
-    }
 }
 
 extension StorageService: StorageServiceProtocol {
@@ -131,9 +125,6 @@ extension StorageService: StorageServiceProtocol {
     
     func removeRecord(_ record: TrackerRecord) {
         recordStorage.removeRecord(record)
-//        let calendar = Calendar.current
-//        let newRecords = records.filter { !calendar.isDate($0.date, inSameDayAs: record.date)}
-//        records = newRecords
     }
 }
 

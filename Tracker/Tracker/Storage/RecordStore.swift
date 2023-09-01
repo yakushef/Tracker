@@ -71,7 +71,7 @@ final class RecordStore: NSObject, RecordStoreProtocol {
         return allRecords
     }
     
-    func recordFromCD(_ recordCD: TrackerRecordCoreData) throws -> TrackerRecord {
+    private func recordFromCD(_ recordCD: TrackerRecordCoreData) throws -> TrackerRecord {
         guard let tracker = recordCD.tracker,
               let id = tracker.trackerId,
               let date = recordCD.date else {
@@ -81,7 +81,7 @@ final class RecordStore: NSObject, RecordStoreProtocol {
     }
     
     func addRecord(_ record: TrackerRecord) {
-//        removeRecord(record)
+
         guard let tracker = storageService?.getTracker(trackerId: record.trackerID) else {
             return
         }
@@ -113,10 +113,7 @@ final class RecordStore: NSObject, RecordStoreProtocol {
 
 extension RecordStore: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        //попробовать просто вызвать апдейт у делегата и не забыть обновить полный список во вьюконтроллере
         delegate?.recordStoreDidUpdate()
     }
 }
-
-//rgba(0, 123, 250, 1), rgba(70, 230, 157, 1), rgba(253, 76, 73, 1)
 

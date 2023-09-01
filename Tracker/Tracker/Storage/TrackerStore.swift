@@ -74,7 +74,7 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
         newTracker.trackerId = tracker.id
         newTracker.title = tracker.title
         newTracker.emoji = tracker.emoji
-        newTracker.schedule = Weekday.convertToCD(tracker.timetable, context: context)
+        newTracker.schedule = convertWeekdaysToCD(tracker.timetable, context: context)
         newTracker.colorIndex = Int16(sectionColors.firstIndex(of: tracker.color) ?? 0)
         newTracker.category = cat
         newTracker.records = []
@@ -111,7 +111,7 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
         return trackers.first
     }
     
-    func convertTracker(from trackerCD: TrackerCoreData) throws -> Tracker {
+    private func convertTracker(from trackerCD: TrackerCoreData) throws -> Tracker {
         guard let title = trackerCD.title,
               let emoji = trackerCD.emoji,
               let weekdaysCD = trackerCD.schedule,
@@ -123,16 +123,24 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
             return Tracker(eventTitle: title, emoji: emoji, color: sectionColors[Int(trackerCD.colorIndex)], id: id)
         }
     }
+    
+    private func convertWeekdaysToCD(_ weekdays: [Weekday], context: NSManagedObjectContext) -> TrackerScheduleCoreData {
+        let weekdaysCD = TrackerScheduleCoreData(context: context)
+        let weekdaysSet = Set(weekdays)
+        weekdaysCD.monday = weekdaysSet.contains(.monday)
+        weekdaysCD.tuesday = weekdaysSet.contains(.tuesday)
+        weekdaysCD.wednesday = weekdaysSet.contains(.wednesday)
+        weekdaysCD.thursday = weekdaysSet.contains(.thursday)
+        weekdaysCD.friday = weekdaysSet.contains(.friday)
+        weekdaysCD.saturday = weekdaysSet.contains(.saturday)
+        weekdaysCD.sunday = weekdaysSet.contains(.sunday)
+        
+        return weekdaysCD
+    }
 }
 
 extension TrackerStore: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        //попробовать просто вызвать апдейт у делегата и не забыть обновить полный список во вьюконтроллере
         delegate?.trackerStoreDidUpdate()
     }
 }
-//save
-
-//edit
-
-//pin

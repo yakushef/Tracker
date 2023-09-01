@@ -63,8 +63,6 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
         try? context.save()
     }
     
-    //TODO: - checkIfEmptyAndRemove
-    
     func getCategory(named name: String) -> TrackerCategoryCoreData? {
         try? controller?.performFetch()
         let category = controller?.fetchedObjects?.filter({
@@ -73,7 +71,7 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
         return category?.first
     }
     
-    func convertCategoryFromCoreData(_ categoryCD: TrackerCategoryCoreData) throws -> TrackerCategory {
+    private func convertCategoryFromCoreData(_ categoryCD: TrackerCategoryCoreData) throws -> TrackerCategory {
         guard let title = categoryCD.title else { throw CategoryError.categoryDecodingError }
         let trackers = storageService?.getTrackers(for: categoryCD)
         let newCategory = TrackerCategory(name: title, trackers: trackers ?? [])
@@ -94,7 +92,6 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
 
 extension CategoryStore: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        //попробовать просто вызвать апдейт у делегата и не забыть обновить полный список во вьюконтроллере
         delegate?.categoryStoreDidUpdate()
     }
 }

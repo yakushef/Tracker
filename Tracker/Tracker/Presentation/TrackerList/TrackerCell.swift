@@ -129,7 +129,7 @@ final class TrackerCell: UICollectionViewCell {
         titleLabel.font = .boldSystemFont(ofSize: 12)
         titleLabel.numberOfLines = 2
         titleLabel.textColor = .AppColors.white
-        titleLabel.font = UIFont(name: "SFPro-Medium", size: 12)
+        titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         titleLabel.text = tracker.title
         
         //MARK: - Management
@@ -176,7 +176,7 @@ final class TrackerCell: UICollectionViewCell {
             daysLabel.topAnchor.constraint(equalTo: managementView.topAnchor, constant: 8),
             daysLabel.bottomAnchor.constraint(equalTo: incrementButton.bottomAnchor)
         ])
-        daysLabel.font = UIFont(name: "SFPro-Medium", size: 12)
+        daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
         updateDay()
     }
     
