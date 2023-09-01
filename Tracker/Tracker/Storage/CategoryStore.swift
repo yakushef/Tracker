@@ -10,6 +10,7 @@ import UIKit
 
 enum CategoryError: Error {
     case categoryDecodingError
+    case categoryEncodingError
 }
 
 protocol CategoryStoreProtocol: AnyObject {
@@ -56,14 +57,13 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
     }
     
     func addCategory(category: TrackerCategory) {
-        //TODO: в сервисе выполнить проверку по имени
         let newCategory = TrackerCategoryCoreData(context: context)
         newCategory.title = category.name
         newCategory.trackers = []
         try? context.save()
     }
     
-    //checkIfEmptyAndRemove
+    //TODO: - checkIfEmptyAndRemove
     
     func getCategory(named name: String) -> TrackerCategoryCoreData? {
         try? controller?.performFetch()
@@ -76,7 +76,6 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
     func convertCategoryFromCoreData(_ categoryCD: TrackerCategoryCoreData) throws -> TrackerCategory {
         guard let title = categoryCD.title else { throw CategoryError.categoryDecodingError }
         let trackers = storageService?.getTrackers(for: categoryCD)
-        print(trackers)
         let newCategory = TrackerCategory(name: title, trackers: trackers ?? [])
         return newCategory
     }
@@ -89,8 +88,6 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
               }) else {
                   return []
               }
-        print(objects)
-        print(categories)
         return categories
     }
 }

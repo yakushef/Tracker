@@ -7,12 +7,16 @@
 
 import UIKit
 
+//PRIVATE!!
+
 protocol StorageServiceProtocol: AnyObject {
+    var calendar: Calendar { get }
     var trackerStorage: TrackerStoreProtocol { get }
     var recordStorage: RecordStoreProtocol { get }
     var categoryStorage: CategoryStoreProtocol { get }
     
     func addTracker(_ tracker: Tracker, categoryName: String)
+    func getTracker(trackerId: UUID) -> TrackerCoreData?
     func getAllCategories() -> [TrackerCategory]
     func getTrackers(for category: TrackerCategoryCoreData) -> [Tracker]
     func getRecords(date: Date) -> [TrackerRecord]
@@ -23,6 +27,7 @@ final class StorageService {
     static let didChageCompletedTrackers = Notification.Name(rawValue: "CompletedTrackersDidChange")
     static let didUpdateCategories = Notification.Name(rawValue: "CategoriesDidUpdate")
     
+    let calendar: Calendar
     var trackerStorage: TrackerStoreProtocol
     var recordStorage: RecordStoreProtocol
     var categoryStorage: CategoryStoreProtocol
@@ -45,56 +50,31 @@ final class StorageService {
         self.categories = categories
         self.records = records
         
-        self.categoryStorage.storageService = self
-    }
-    
-    func getRecords(date: Date) -> [TrackerRecord] {
-        var thisDayRecords: [TrackerRecord] = []
-        for record in records {
-            if Calendar.current.isDate(record.date, inSameDayAs: date) {
-                thisDayRecords.append(record)
+        self.calendar = {
+            var calendar = Calendar.current
+            if let timeZone = TimeZone(secondsFromGMT: 0) {
+                calendar.timeZone = timeZone
             }
-        }
+            return calendar
+        }()
         
-        return thisDayRecords
-    }
-    
-    func getRecords(for id: UUID) -> [TrackerRecord] {
-        var foundRecords: [TrackerRecord] = []
-        for record in records {
-            if record.trackerID == id {
-                foundRecords.append(record)
-            }
-        }
-        return foundRecords
-    }
-    
-    func addRecord(_ record: TrackerRecord) {
-        records.insert(record)
-    }
-    
-    func removeRecord(_ record: TrackerRecord) {
-        let calendar = Calendar.current
-        let newRecords = records.filter { !calendar.isDate($0.date, inSameDayAs: record.date)}
-        records = newRecords
+        self.categoryStorage.storageService = self
+        self.recordStorage.storageService = self
+        self.recordStorage.delegate = self
+        self.trackerStorage.storageService = self
+        self.trackerStorage.delegate = self
+        
+        self.records = Set(self.recordStorage.getAllRecords())
     }
     
     
     func addCategory(_ newCategory: TrackerCategory) {
         let sameCategory = categories.filter {
-            $0.name == newCategory.name
+            $0.name.lowercased() == newCategory.name.lowercased()
         }
         
         if sameCategory.isEmpty {
             categoryStorage.addCategory(category: newCategory)
-            //categories.insert(newCategory)
-        } else {
-            guard let oldCat = sameCategory.first else { return }
-            var allTrackers = newCategory.trackers
-            allTrackers.append(contentsOf: oldCat.trackers)
-            let updatedCat = TrackerCategory(name: newCategory.name, trackers: allTrackers)
-            categories.remove(oldCat)
-            categories.insert(updatedCat)
         }
     }
     
@@ -119,9 +99,49 @@ extension StorageService: StorageServiceProtocol {
     func getTrackers(for category: TrackerCategoryCoreData) -> [Tracker] {
         trackerStorage.getTrackers(category: category)
     }
+    
+    func getRecords(date: Date) -> [TrackerRecord] {
+        var thisDayRecords: [TrackerRecord] = []
+        for record in records {
+            if Calendar.current.isDate(record.date, inSameDayAs: date) {
+                thisDayRecords.append(record)
+            }
+        }
+        
+        return thisDayRecords
+    }
+    
+    func getTracker(trackerId: UUID) -> TrackerCoreData? {
+        return trackerStorage.getTracker(trackerId: trackerId)
+    }
+    
+    func getRecords(for id: UUID) -> [TrackerRecord] {
+        var foundRecords: [TrackerRecord] = []
+        for record in records {
+            if record.trackerID == id {
+                foundRecords.append(record)
+            }
+        }
+        return foundRecords
+    }
+    
+    func addRecord(_ record: TrackerRecord) {
+        recordStorage.addRecord(record)
+    }
+    
+    func removeRecord(_ record: TrackerRecord) {
+        recordStorage.removeRecord(record)
+//        let calendar = Calendar.current
+//        let newRecords = records.filter { !calendar.isDate($0.date, inSameDayAs: record.date)}
+//        records = newRecords
+    }
 }
 
-extension StorageService: CategoryStoreDelegate, TrackerStoreDelegate {
+extension StorageService: CategoryStoreDelegate, TrackerStoreDelegate, RecordStoreDelegate {
+    func recordStoreDidUpdate() {
+        records = Set(recordStorage.getAllRecords())
+    }
+    
     func categoryStoreDidUpdate() {
         NotificationCenter.default.post(Notification(name: StorageService.didUpdateCategories,
                                                      object: nil))

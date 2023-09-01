@@ -35,7 +35,6 @@ final class TrackerListViewController: UIViewController {
         
         NotificationCenter.default.addObserver(forName: StorageService.didUpdateCategories, object: nil, queue: .main, using: { [weak self] _ in
             self?.updateVisibleCategories()
-            self?.trackerCollection.reloadData()
         })
         
         view.backgroundColor = .systemBackground
@@ -258,7 +257,7 @@ extension TrackerListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tracker", for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
+        completedTrackers = StorageService.shared.getRecords(date: StorageService.shared.calendar.startOfDay(for: datePicker.date))
         cell.configureCell(with: tracker, date: datePicker.date)
         cell.delegate = self
         return cell

@@ -118,24 +118,7 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
                               color: newTrackColor ?? .AppColors.gray)
         }
         
-        // получить категорию по имени или создать новую
         storageService.addTracker(tracker, categoryName: newTrackerCategoryName)
-        
-//        let sameNameCategories = storageService.getAllCategories().filter {
-//            $0.name == newTrackerCategoryName
-//        }
-//
-//        if sameNameCategories.isEmpty {
-//            let newCategory = TrackerCategory(name: newTrackerCategoryName, trackers: [tracker])
-//            storageService.addCategory(newCategory)
-//        } else {
-//            guard let existingCategory = sameNameCategories.first else { return }
-//            var newTrackerList = existingCategory.trackers
-//            newTrackerList.append(tracker)
-//            let newCategory = TrackerCategory(name: newTrackerCategoryName, trackers: newTrackerList)
-//            storageService.removeCategory(existingCategory)
-//            storageService.addCategory(newCategory)
-//        }
         
         trackerListVC?.newTrackerAdded()
     }

@@ -18,8 +18,12 @@ protocol TrackerStoreDelegate: AnyObject {
 }
 
 protocol TrackerStoreProtocol: AnyObject {
+    var delegate: TrackerStoreDelegate? { get set }
+    var storageService: StorageServiceProtocol? { get set }
+    
     func addTracker(_ tracker: Tracker, categoryCD: TrackerCategoryCoreData)
     func getTrackers(category: TrackerCategoryCoreData) -> [Tracker]
+    func getTracker(trackerId: UUID) -> TrackerCoreData?
 }
 
 final class TrackerStore: NSObject, TrackerStoreProtocol {
@@ -61,24 +65,21 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
             newTracker.isHabit = false
         }
         
-        let cat = context.object(with: categoryCD.objectID) as! TrackerCategoryCoreData
+        guard let cat = context.object(with: categoryCD.objectID) as? TrackerCategoryCoreData else {
+            assertionFailure(TrackerError.trackerDecodingError.localizedDescription)
+            return
+        }
         
         newTracker.isPinned = tracker.isPinned
-        newTracker.id = tracker.id
+        newTracker.trackerId = tracker.id
         newTracker.title = tracker.title
         newTracker.emoji = tracker.emoji
         newTracker.schedule = Weekday.convertToCD(tracker.timetable, context: context)
         newTracker.colorIndex = Int16(sectionColors.firstIndex(of: tracker.color) ?? 0)
         newTracker.category = cat
         newTracker.records = []
-        
-//        print(newTracker)
-        
 
         cat.addToTrackers(newTracker)
-//        categoryCD.addToTrackers(newTracker)
-        
-//        print(cat)
         
         do { try context.save() }
         catch {
@@ -100,15 +101,26 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
         return trackers
     }
     
+    func getTracker(trackerId: UUID) -> TrackerCoreData? {
+        controller?.fetchRequest.predicate = NSPredicate(format: "%K = %@", argumentArray: [#keyPath(TrackerCoreData.trackerId), trackerId])
+        try? controller?.performFetch()
+        
+        guard let trackers = controller?.fetchedObjects else {
+                  return nil
+              }
+        return trackers.first
+    }
+    
     func convertTracker(from trackerCD: TrackerCoreData) throws -> Tracker {
         guard let title = trackerCD.title,
               let emoji = trackerCD.emoji,
-              let weekdaysCD = trackerCD.schedule else { throw TrackerError.trackerDecodingError }
+              let weekdaysCD = trackerCD.schedule,
+              let id = trackerCD.trackerId else { throw TrackerError.trackerDecodingError }
         
         if trackerCD.isHabit {
-            return Tracker(habitTitle: title, emoji: emoji, color: sectionColors[Int(trackerCD.colorIndex)], timetable: Weekday.convertFromCD(weekdaysCD))
+            return Tracker(habitTitle: title, emoji: emoji, color: sectionColors[Int(trackerCD.colorIndex)], timetable: Weekday.convertFromCD(weekdaysCD), id: id)
         } else {
-            return Tracker(eventTitle: title, emoji: emoji, color: sectionColors[Int(trackerCD.colorIndex)])
+            return Tracker(eventTitle: title, emoji: emoji, color: sectionColors[Int(trackerCD.colorIndex)], id: id)
         }
     }
 }
