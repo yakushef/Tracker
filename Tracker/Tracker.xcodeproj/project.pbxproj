@@ -28,6 +28,8 @@
 		BC75DC682A7D8831001CB797 /* EmptyTablePlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */; };
 		BC9E20522A97AAC500D30116 /* TrackerCatHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9E20512A97AAC500D30116 /* TrackerCatHeader.swift */; };
 		BCB7239D2A96309B00AB7FA7 /* GerericAppButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7239C2A96309B00AB7FA7 /* GerericAppButton.swift */; };
+		BCE240D72AA790450040C2C8 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE240D62AA790450040C2C8 /* OnboardingViewController.swift */; };
+		BCE240D92AA7997B0040C2C8 /* OnboardingPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE240D82AA7997B0040C2C8 /* OnboardingPageController.swift */; };
 		BCE38F472A98C280005BE0E6 /* TimetableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE38F462A98C280005BE0E6 /* TimetableCell.swift */; };
 		BCE38F492A98D190005BE0E6 /* Extension UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE38F482A98D190005BE0E6 /* Extension UIImage.swift */; };
 		BCE38F4B2A98FDF8005BE0E6 /* TrackerNameField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE38F4A2A98FDF8005BE0E6 /* TrackerNameField.swift */; };
@@ -67,6 +69,8 @@
 		BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTablePlaceholder.swift; sourceTree = "<group>"; };
 		BC9E20512A97AAC500D30116 /* TrackerCatHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCatHeader.swift; sourceTree = "<group>"; };
 		BCB7239C2A96309B00AB7FA7 /* GerericAppButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GerericAppButton.swift; sourceTree = "<group>"; };
+		BCE240D62AA790450040C2C8 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
+		BCE240D82AA7997B0040C2C8 /* OnboardingPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageController.swift; sourceTree = "<group>"; };
 		BCE38F462A98C280005BE0E6 /* TimetableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimetableCell.swift; sourceTree = "<group>"; };
 		BCE38F482A98D190005BE0E6 /* Extension UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension UIImage.swift"; sourceTree = "<group>"; };
 		BCE38F4A2A98FDF8005BE0E6 /* TrackerNameField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerNameField.swift; sourceTree = "<group>"; };
@@ -96,6 +100,7 @@
 		BC307CFF2A7976EE0076AA89 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				BCE240D52AA7902D0040C2C8 /* Onboarding */,
 				BC75DC602A7D58D7001CB797 /* Create + Edit */,
 				BCE38F4C2A98FE31005BE0E6 /* TrackerList */,
 				BC307D082A79805F0076AA89 /* TabBarController.swift */,
@@ -152,6 +157,15 @@
 				BCE38F462A98C280005BE0E6 /* TimetableCell.swift */,
 			);
 			path = "Create + Edit";
+			sourceTree = "<group>";
+		};
+		BCE240D52AA7902D0040C2C8 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				BCE240D62AA790450040C2C8 /* OnboardingViewController.swift */,
+				BCE240D82AA7997B0040C2C8 /* OnboardingPageController.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		BCE38F4C2A98FE31005BE0E6 /* TrackerList */ = {
@@ -304,10 +318,12 @@
 				BC307D0B2A7980830076AA89 /* StatisticsViewController.swift in Sources */,
 				BCE38F952A9FBCF2005BE0E6 /* CategoryStore.swift in Sources */,
 				BCE38F522A98FF77005BE0E6 /* TrackerRecord.swift in Sources */,
+				BCE240D92AA7997B0040C2C8 /* OnboardingPageController.swift in Sources */,
 				BCE38F492A98D190005BE0E6 /* Extension UIImage.swift in Sources */,
 				BCE38F5A2A9B45D0005BE0E6 /* EmojiCell.swift in Sources */,
 				BC5157152A72D3F80080B6EA /* SceneDelegate.swift in Sources */,
 				BCE38F472A98C280005BE0E6 /* TimetableCell.swift in Sources */,
+				BCE240D72AA790450040C2C8 /* OnboardingViewController.swift in Sources */,
 				BCF2FBDF2A7ACDDF007E6583 /* StorageService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
