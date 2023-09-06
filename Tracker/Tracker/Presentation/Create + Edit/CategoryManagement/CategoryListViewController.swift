@@ -9,7 +9,7 @@ import UIKit
 
 final class CategoryListViewController: UIViewController {
     
-    private var categories: [String] = []
+    private var viewModel = CategoryListViewModel()
     
     private let addButton = GenericAppButton(type: .system)
     private var placeholder = UIView()
@@ -18,19 +18,22 @@ final class CategoryListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        viewModel.$categoryNameList.makeBinding { [weak self] _ in
+            self?.categoryTable.separatorStyle = .singleLine
+            self?.categoryTable.reloadData()
+        }
+        
         navigationItem.title = "Категория"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
         view.backgroundColor = .systemBackground
         categoryTable.isScrollEnabled = false
-        let categoryList = StorageService.shared.getAllCategories()
-        categories = categoryList.map { $0.name }
         setupUI()
     }
     
     private func checkIfEmpty() {
-        placeholder.isHidden = !categories.isEmpty
-        categoryTable.isHidden = categories.isEmpty
+        placeholder.isHidden = !viewModel.categoryNameList.isEmpty
+        categoryTable.isHidden = viewModel.categoryNameList.isEmpty
     }
     
     private func setupUI() {
@@ -75,28 +78,8 @@ final class CategoryListViewController: UIViewController {
     
     @objc private func newCategory() {
         let newCategoryVC = NewCategoryViewController()
-        newCategoryVC.delegate = self
+        newCategoryVC.delegate = viewModel
         show(UINavigationController(rootViewController: newCategoryVC), sender: nil)
-    }
-}
-
-extension CategoryListViewController: NewCategoryDelegate {
-    
-    func addCategory(_ categoryName: String) {
-        let currentCategories = StorageService.shared.getAllCategories()
-        let sameCat = currentCategories.filter {
-            $0.name == categoryName
-        }
-        
-        if sameCat.isEmpty {
-            StorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
-        }
-        
-        let categoryList = StorageService.shared.getAllCategories()
-        categories = categoryList.map { $0.name }
-        checkIfEmpty()
-        categoryTable.separatorStyle = .singleLine
-        categoryTable.reloadData()
     }
 }
 
@@ -106,13 +89,13 @@ extension CategoryListViewController: UITableViewDelegate {
             cell.accessoryType = .checkmark
         }
         
-        NewTrackerDelegate.shared.setNewTrackerCategoryName(to: categories[indexPath.row])
+        NewTrackerDelegate.shared.setNewTrackerCategoryName(to: viewModel.categoryNameList[indexPath.row])
         dismiss(animated: true)
         
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if 75 * CGFloat(categories.count) > categoryTable.frame.height {
+        if 75 * CGFloat(viewModel.categoryNameList.count) > categoryTable.frame.height {
             categoryTable.isScrollEnabled = true
         } else {
             categoryTable.isScrollEnabled = false
@@ -123,7 +106,7 @@ extension CategoryListViewController: UITableViewDelegate {
 
 extension CategoryListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
+        viewModel.categoryNameList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -132,12 +115,12 @@ extension CategoryListViewController: UITableViewDataSource {
         cell.accessoryType = .none
         cell.tintColor = .AppColors.blue
         cell.backgroundColor = .AppColors.background
-        cell.textLabel?.text = categories[indexPath.row]
+        cell.textLabel?.text = viewModel.categoryNameList[indexPath.row]
         cell.layer.masksToBounds = true
         cell.layer.cornerRadius = 16
         cell.layoutSubviews()
         
-        if indexPath.row == 0 && categories.count == 1 {
+        if indexPath.row == 0 && viewModel.categoryNameList.count == 1 {
             cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
@@ -145,7 +128,7 @@ extension CategoryListViewController: UITableViewDataSource {
             case 0:
                 cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-            case categories.count - 1:
+            case viewModel.categoryNameList.count - 1:
                 cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
             default:
