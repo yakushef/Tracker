@@ -38,7 +38,7 @@ final class StorageService {
         }
     }
     
-    init(categories: Set<TrackerCategory> = [], records: Set<TrackerRecord> = []) {
+    private init(categories: Set<TrackerCategory> = [], records: Set<TrackerRecord> = []) {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
         self.categoryStorage = CategoryStore(context: context)

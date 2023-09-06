@@ -489,7 +489,7 @@ extension NewTrackerViewController: UICollectionViewDelegate {
 
 extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let size = (collectionView.frame.width - 36) / 6
+        let size = (collectionView.frame.width - collectionView.contentInset.left - collectionView.contentInset.right) / 6
         return CGSize(width: size, height: size)
     }
     
