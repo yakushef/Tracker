@@ -23,7 +23,7 @@ final class CategoryListViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         categoryTable.isScrollEnabled = false
-        let categoryList = TrackerStorageService.shared.getAllCategories()
+        let categoryList = StorageService.shared.getAllCategories()
         categories = categoryList.map { $0.name }
         setupUI()
     }
@@ -83,16 +83,16 @@ final class CategoryListViewController: UIViewController {
 extension CategoryListViewController: NewCategoryDelegate {
     
     func addCategory(_ categoryName: String) {
-        let currentCategories = TrackerStorageService.shared.getAllCategories()
+        let currentCategories = StorageService.shared.getAllCategories()
         let sameCat = currentCategories.filter {
             $0.name == categoryName
         }
         
         if sameCat.isEmpty {
-            TrackerStorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
+            StorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
         }
         
-        let categoryList = TrackerStorageService.shared.getAllCategories()
+        let categoryList = StorageService.shared.getAllCategories()
         categories = categoryList.map { $0.name }
         checkIfEmpty()
         categoryTable.separatorStyle = .singleLine

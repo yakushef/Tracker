@@ -22,24 +22,24 @@ struct Tracker: Hashable {
         case habit
     }
     
-    init(eventTitle: String, emoji: String, color: UIColor, isPinned: Bool = false) {
+    init(eventTitle: String, emoji: String, color: UIColor, isPinned: Bool = false, id: UUID = UUID()) {
         self.title = eventTitle
         self.emoji = emoji
         self.color = color
         self.trackerType = .singleEvent
         self.timetable = weekDays
         self.isPinned = isPinned
-        self.id = UUID()
+        self.id = id
     }
     
-    init(habitTitle: String, emoji: String, color: UIColor, timetable: [Weekday], isPinned: Bool = false) {
+    init(habitTitle: String, emoji: String, color: UIColor, timetable: [Weekday], isPinned: Bool = false, id: UUID = UUID()) {
         self.title = habitTitle
         self.emoji = emoji
         self.color = color
         self.trackerType = .habit
         self.timetable = timetable
         self.isPinned = isPinned
-        self.id = UUID()
+        self.id = id
     }
     
     func hash(into hasher: inout Hasher) {

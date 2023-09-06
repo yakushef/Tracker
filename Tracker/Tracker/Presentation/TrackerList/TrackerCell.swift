@@ -24,12 +24,13 @@ final class TrackerCell: UICollectionViewCell {
     private var isRecorded: Bool = false {
         didSet {
             incrementButton.setImage(buttonImage(), for: .normal)
-            incrementButton.alpha = isRecorded ? 0.3 : 1
         }
     }
     private lazy var buttonImage = { [weak self] in
         guard let self else { return UIImage() }
         var image = UIImage(named: self.isRecorded ? "Recorded" : "Plus") ?? UIImage()
+        self.incrementButton.alpha = self.isRecorded ? 0.3 : 1
+        incrementButton.layoutSubviews()
         return image
     }
     private var allRecords: [TrackerRecord] = []
@@ -46,12 +47,13 @@ final class TrackerCell: UICollectionViewCell {
         daysLabel.text = ""
         daysLabel.removeFromSuperview()
         incrementButton.removeFromSuperview()
+        managementView.removeFromSuperview()
     }
     
     //MARK: - Status for select date
     
     private func checkIfRecorded() {
-        allRecords = TrackerStorageService.shared.getRecords(for: cellTracker.id)
+        allRecords = StorageService.shared.getRecords(for: cellTracker.id)
 
         var isNowRecorded = false
 
@@ -65,6 +67,7 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     func configureCell(with tracker: Tracker, date: Date) {
+        
         cellTracker = tracker
         cellDate = date
         checkIfRecorded()
@@ -126,7 +129,7 @@ final class TrackerCell: UICollectionViewCell {
         titleLabel.font = .boldSystemFont(ofSize: 12)
         titleLabel.numberOfLines = 2
         titleLabel.textColor = .AppColors.white
-        titleLabel.font = UIFont(name: "SFPro-Medium", size: 12)
+        titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         titleLabel.text = tracker.title
         
         //MARK: - Management
@@ -142,22 +145,25 @@ final class TrackerCell: UICollectionViewCell {
         
         //MARK: - Increment Button
         
-        incrementButton = UIButton(type: .system)
-        incrementButton.setImage(buttonImage(), for: .normal)
-        managementView.addSubview(incrementButton)
-        incrementButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            incrementButton.heightAnchor.constraint(equalToConstant: 34),
-            incrementButton.widthAnchor.constraint(equalToConstant: 34),
-            incrementButton.topAnchor.constraint(equalTo: managementView.topAnchor, constant: 8),
-            incrementButton.trailingAnchor.constraint(equalTo: managementView.trailingAnchor, constant: -12)
-        ])
-        incrementButton.backgroundColor = tracker.color
-        incrementButton.tintColor = .AppColors.white
-        incrementButton.clipsToBounds = true
-        incrementButton.layer.cornerRadius = 17
-        incrementButton.addTarget(self, action: #selector(incrementButtonTapped), for: .touchUpInside)
-        incrementButton.showsTouchWhenHighlighted = true
+        if viewWithTag(1) == nil {
+            incrementButton.tag = 1
+            incrementButton = UIButton(type: .system)
+            incrementButton.setImage(buttonImage(), for: .normal)
+            managementView.addSubview(incrementButton)
+            incrementButton.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                incrementButton.heightAnchor.constraint(equalToConstant: 34),
+                incrementButton.widthAnchor.constraint(equalToConstant: 34),
+                incrementButton.topAnchor.constraint(equalTo: managementView.topAnchor, constant: 8),
+                incrementButton.trailingAnchor.constraint(equalTo: managementView.trailingAnchor, constant: -12)
+            ])
+            incrementButton.backgroundColor = tracker.color
+            incrementButton.tintColor = .AppColors.white
+            incrementButton.clipsToBounds = true
+            incrementButton.layer.cornerRadius = 17
+            incrementButton.addTarget(self, action: #selector(incrementButtonTapped), for: .touchUpInside)
+            incrementButton.showsTouchWhenHighlighted = true
+        }
         
         //MARK: - Day Label
         
@@ -170,17 +176,17 @@ final class TrackerCell: UICollectionViewCell {
             daysLabel.topAnchor.constraint(equalTo: managementView.topAnchor, constant: 8),
             daysLabel.bottomAnchor.constraint(equalTo: incrementButton.bottomAnchor)
         ])
-        daysLabel.font = UIFont(name: "SFPro-Medium", size: 12)
+        daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
         updateDay()
     }
     
     private func updateDay() {
-        let daysCount = TrackerStorageService.shared.getRecords(for: cellTracker.id)
+        let daysCount = StorageService.shared.getRecords(for: cellTracker.id)
         daysLabel.text = dayFormatter.string(from: DateComponents(day: daysCount.count))
     }
     
     @objc func incrementButtonTapped() {
-        let record = TrackerRecord(trackerID: cellTracker.id, date: cellDate)
+        let record = TrackerRecord(trackerID: cellTracker.id, date: StorageService.shared.calendar.startOfDay(for: cellDate))
         delegate?.updateRecords(with: record) { [weak self] newRecStatus in
             self?.isRecorded = newRecStatus
         }

@@ -14,7 +14,8 @@ final class TrackerListViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     
-    private var trackerCollection = UICollectionView(frame: CGRect(), collectionViewLayout: UICollectionViewLayout())
+    private var trackerCollection = UICollectionView(frame: CGRect(),
+                                                     collectionViewLayout: UICollectionViewLayout())
     private var filterButton = UIButton()
     private var placeholder = UIView()
     private let datePicker = UIDatePicker()
@@ -27,15 +28,25 @@ final class TrackerListViewController: UIViewController {
         
         NewTrackerDelegate.shared.trackerListVC = self
         
-        NotificationCenter.default.addObserver(forName: TrackerStorageService.didChageCompletedTrackers, object: nil, queue: .main, using: { [weak self] _ in
+        NotificationCenter.default.addObserver(forName: StorageService.didChageCompletedTrackers,
+                                               object: nil,
+                                               queue: .main,
+                                               using: { [weak self] _ in
             guard let self else { return }
             
-            completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+            completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
+        })
+        
+        NotificationCenter.default.addObserver(forName: StorageService.didUpdateCategories,
+                                               object: nil,
+                                               queue: .main,
+                                               using: { [weak self] _ in
+            self?.updateVisibleCategories()
         })
         
         view.backgroundColor = .systemBackground
         
-        updateCategories()
+        updateVisibleCategories()
         navBarSetup()
         collectionSetup()
     }
@@ -52,7 +63,10 @@ final class TrackerListViewController: UIViewController {
         navigationItem.title = "Трекеры"
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "AddTracker"), style: .plain, target: self, action: #selector(addNewTracker))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "AddTracker"),
+                                                           style: .plain,
+                                                           target: self,
+                                                           action: #selector(addNewTracker))
         
         datePicker.locale = Locale(identifier: "ru_DE_POSIX")
         datePicker.calendar = Calendar(identifier: .gregorian)
@@ -61,7 +75,9 @@ final class TrackerListViewController: UIViewController {
         datePicker.preferredDatePickerStyle = .compact
         let dateButton = UIBarButtonItem(customView: datePicker)
         datePicker.maximumDate = Date()
-        datePicker.addTarget(self, action: #selector(updateVisibleCategories), for: .valueChanged)
+        datePicker.addTarget(self,
+                             action: #selector(updateVisibleCategories),
+                             for: .valueChanged)
         datePicker.tintColor = .AppColors.blue
         navigationItem.rightBarButtonItem = dateButton
         
@@ -82,8 +98,11 @@ final class TrackerListViewController: UIViewController {
         trackerCollection.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         trackerCollection.delegate = self
         trackerCollection.dataSource = self
-        trackerCollection.register(TrackerCatHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        trackerCollection.register(TrackerCell.self, forCellWithReuseIdentifier: "tracker")
+        trackerCollection.register(TrackerCatHeader.self,
+                                   forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                   withReuseIdentifier: "header")
+        trackerCollection.register(TrackerCell.self,
+                                   forCellWithReuseIdentifier: "tracker")
         view.addSubview(trackerCollection)
         trackerCollection.reloadData()
         
@@ -91,7 +110,7 @@ final class TrackerListViewController: UIViewController {
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         filterButton.backgroundColor = .AppColors.blue
         filterButton.setTitle("Фильтры", for: .normal)
-        filterButton.titleLabel?.font = UIFont(name: "SFPro-Regular", size: 17)
+        filterButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         view.addSubview(filterButton)
         NSLayoutConstraint.activate([
             filterButton.heightAnchor.constraint(equalToConstant: 50),
@@ -152,7 +171,7 @@ final class TrackerListViewController: UIViewController {
         visibleCategories = visibleCategories.filter {
             !$0.trackers.isEmpty
         }
-        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
         checkVisibility()
         trackerCollection.reloadData()
     }
@@ -192,18 +211,18 @@ final class TrackerListViewController: UIViewController {
             !$0.trackers.isEmpty
         }
         
-        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
         
         checkVisibility()
         trackerCollection.reloadData()
     }
     
     func updateCategories() {
-        categories = TrackerStorageService.shared.getAllCategories()
+        categories = StorageService.shared.getAllCategories()
     }
     
     func newTrackerAdded() {
-        categories = TrackerStorageService.shared.getAllCategories()
+        categories = StorageService.shared.getAllCategories()
         updateVisibleCategories()
     }
 }
@@ -253,7 +272,7 @@ extension TrackerListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tracker", for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        completedTrackers = StorageService.shared.getRecords(date: StorageService.shared.calendar.startOfDay(for: datePicker.date))
         cell.configureCell(with: tracker, date: datePicker.date)
         cell.delegate = self
         return cell
@@ -286,15 +305,15 @@ extension TrackerListViewController: TrackerCellDelegate {
     }
     
     func updateRecords(with record: TrackerRecord, completion: (Bool) -> Void) {
-        completedTrackers = TrackerStorageService.shared.getRecords(date: datePicker.date)
+        completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
         let completedID = completedTrackers.filter {
             $0.trackerID == record.trackerID
         }
         let isRecorded = !completedID.isEmpty
         if !isRecorded {
-            TrackerStorageService.shared.addRecord(record)
+            StorageService.shared.addRecord(record)
         } else {
-            TrackerStorageService.shared.removeRecord(record)
+            StorageService.shared.removeRecord(record)
         }
         completion(!isRecorded)
     }

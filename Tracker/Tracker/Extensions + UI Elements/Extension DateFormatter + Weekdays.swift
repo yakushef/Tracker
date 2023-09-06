@@ -44,6 +44,32 @@ enum Weekday: String, CaseIterable {
         }
         return day
     }
+    
+    static func convertFromCD(_ weekdaysCD: TrackerScheduleCoreData) -> [Weekday] {
+        var weekdays: [Weekday] = []
+        if weekdaysCD.monday {
+            weekdays.append(.monday)
+        }
+        if weekdaysCD.tuesday {
+            weekdays.append(.tuesday)
+        }
+        if weekdaysCD.wednesday {
+            weekdays.append(.wednesday)
+        }
+        if weekdaysCD.thursday {
+            weekdays.append(.thursday)
+        }
+        if weekdaysCD.friday {
+            weekdays.append(.friday)
+        }
+        if weekdaysCD.saturday {
+            weekdays.append(.saturday)
+        }
+        if weekdaysCD.sunday {
+            weekdays.append(.sunday)
+        }
+        return weekdays
+    }
 }
 
 let weekDays = Weekday.allCases
