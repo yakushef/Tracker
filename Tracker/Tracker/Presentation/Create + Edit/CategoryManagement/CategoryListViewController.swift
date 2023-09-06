@@ -9,7 +9,7 @@ import UIKit
 
 final class CategoryListViewController: UIViewController {
     
-    private var viewModel = CategoryListViewModel()
+    private var viewModel = (UIApplication.shared.delegate as! AppDelegate).categoryModel
     
     private let addButton = GenericAppButton(type: .system)
     private var placeholder = UIView()
@@ -19,6 +19,7 @@ final class CategoryListViewController: UIViewController {
         super.viewDidLoad()
         
         viewModel.$categoryNameList.makeBinding { [weak self] _ in
+            self?.checkIfEmpty()
             self?.categoryTable.separatorStyle = .singleLine
             self?.categoryTable.reloadData()
         }
@@ -78,7 +79,6 @@ final class CategoryListViewController: UIViewController {
     
     @objc private func newCategory() {
         let newCategoryVC = NewCategoryViewController()
-        newCategoryVC.delegate = viewModel
         show(UINavigationController(rootViewController: newCategoryVC), sender: nil)
     }
 }

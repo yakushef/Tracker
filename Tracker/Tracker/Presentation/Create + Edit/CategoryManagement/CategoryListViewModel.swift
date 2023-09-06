@@ -20,7 +20,7 @@ final class CategoryListViewModel {
     }
 }
 
-extension CategoryListViewModel: NewCategoryDelegate {
+extension CategoryListViewModel {
     func addCategory(_ categoryName: String) {
         let currentCategories = StorageService.shared.getAllCategories()
         let sameCat = currentCategories.filter {

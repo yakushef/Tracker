@@ -7,16 +7,12 @@
 
 import UIKit
 
-protocol NewCategoryDelegate: AnyObject {
-    func addCategory(_ categoryName: String)
-}
-
 final class NewCategoryViewController: UIViewController {
     
     private let textField = TrackerNameField()
     private let doneButton = GenericAppButton(type: .system)
     
-    weak var delegate: NewCategoryDelegate?
+    var model = (UIApplication.shared.delegate as! AppDelegate).categoryModel
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,7 +68,7 @@ final class NewCategoryViewController: UIViewController {
     
     @objc private func done() {
         if let text = textField.text {
-            delegate?.addCategory(text)
+            model.addCategory(text)
         }
         dismiss(animated: true)
     }
