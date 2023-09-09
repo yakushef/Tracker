@@ -19,18 +19,3 @@ final class CategoryListViewModel {
         updateCategories()
     }
 }
-
-extension CategoryListViewModel {
-    func addCategory(_ categoryName: String) {
-        let currentCategories = StorageService.shared.getAllCategories()
-        let sameCat = currentCategories.filter {
-            $0.name == categoryName
-        }
-        
-        if sameCat.isEmpty {
-            StorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
-        }
-        
-        updateCategories()
-    }
-}

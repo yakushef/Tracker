@@ -11,8 +11,6 @@ final class NewCategoryViewController: UIViewController {
     
     private let textField = TrackerNameField()
     private let doneButton = GenericAppButton(type: .system)
-    
-    var model = (UIApplication.shared.delegate as! AppDelegate).categoryModel
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,8 +65,15 @@ final class NewCategoryViewController: UIViewController {
     }
     
     @objc private func done() {
-        if let text = textField.text {
-            model.addCategory(text)
+        if let categoryName = textField.text {
+            let currentCategories = StorageService.shared.getAllCategories()
+            let sameCat = currentCategories.filter {
+                $0.name == categoryName
+            }
+            
+            if sameCat.isEmpty {
+                StorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
+            }
         }
         dismiss(animated: true)
     }

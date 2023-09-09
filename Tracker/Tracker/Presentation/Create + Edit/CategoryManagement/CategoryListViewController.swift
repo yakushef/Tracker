@@ -9,7 +9,7 @@ import UIKit
 
 final class CategoryListViewController: UIViewController {
     
-    private var viewModel = (UIApplication.shared.delegate as! AppDelegate).categoryModel
+    private var viewModel = CategoryListViewModel()
     
     private let addButton = GenericAppButton(type: .system)
     private var placeholder = UIView()
@@ -17,6 +17,13 @@ final class CategoryListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(forName: StorageService.didUpdateCategories,
+                                               object: nil,
+                                               queue: .main,
+                                               using: { [weak self] _ in
+            self?.viewModel.updateCategories()
+        })
         
         viewModel.$categoryNameList.makeBinding { [weak self] _ in
             self?.checkIfEmpty()
