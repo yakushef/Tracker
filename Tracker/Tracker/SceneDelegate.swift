@@ -10,8 +10,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         
@@ -20,9 +19,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tab = MainListTabBar()
         tab.setup()
         
-        window.rootViewController = tab
-        window.backgroundColor = .black
+        let seenOnboarding = UserDefaults.standard.bool(forKey: "seenOnboarding")
+        if !seenOnboarding {
+            let onboarding = OnboardingViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            onboarding.firstScreenVC = tab
+            window.rootViewController = onboarding
+            UserDefaults.standard.set(true, forKey: "seenOnboarding")
+        } else {
+            window.rootViewController = tab
+        }
         
+        window.backgroundColor = .black
         self.window = window
         window.makeKeyAndVisible()
     }

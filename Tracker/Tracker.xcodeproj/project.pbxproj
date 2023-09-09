@@ -28,6 +28,10 @@
 		BC75DC682A7D8831001CB797 /* EmptyTablePlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */; };
 		BC9E20522A97AAC500D30116 /* TrackerCatHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9E20512A97AAC500D30116 /* TrackerCatHeader.swift */; };
 		BCB7239D2A96309B00AB7FA7 /* GerericAppButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7239C2A96309B00AB7FA7 /* GerericAppButton.swift */; };
+		BCE240D72AA790450040C2C8 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE240D62AA790450040C2C8 /* OnboardingViewController.swift */; };
+		BCE240D92AA7997B0040C2C8 /* OnboardingPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE240D82AA7997B0040C2C8 /* OnboardingPageController.swift */; };
+		BCE240DC2AA7A6690040C2C8 /* CategoryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE240DB2AA7A6690040C2C8 /* CategoryListViewModel.swift */; };
+		BCE240DE2AA8FF620040C2C8 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE240DD2AA8FF620040C2C8 /* Observable.swift */; };
 		BCE38F472A98C280005BE0E6 /* TimetableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE38F462A98C280005BE0E6 /* TimetableCell.swift */; };
 		BCE38F492A98D190005BE0E6 /* Extension UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE38F482A98D190005BE0E6 /* Extension UIImage.swift */; };
 		BCE38F4B2A98FDF8005BE0E6 /* TrackerNameField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE38F4A2A98FDF8005BE0E6 /* TrackerNameField.swift */; };
@@ -67,6 +71,10 @@
 		BC75DC672A7D8831001CB797 /* EmptyTablePlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTablePlaceholder.swift; sourceTree = "<group>"; };
 		BC9E20512A97AAC500D30116 /* TrackerCatHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCatHeader.swift; sourceTree = "<group>"; };
 		BCB7239C2A96309B00AB7FA7 /* GerericAppButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GerericAppButton.swift; sourceTree = "<group>"; };
+		BCE240D62AA790450040C2C8 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
+		BCE240D82AA7997B0040C2C8 /* OnboardingPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageController.swift; sourceTree = "<group>"; };
+		BCE240DB2AA7A6690040C2C8 /* CategoryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListViewModel.swift; sourceTree = "<group>"; };
+		BCE240DD2AA8FF620040C2C8 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		BCE38F462A98C280005BE0E6 /* TimetableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimetableCell.swift; sourceTree = "<group>"; };
 		BCE38F482A98D190005BE0E6 /* Extension UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension UIImage.swift"; sourceTree = "<group>"; };
 		BCE38F4A2A98FDF8005BE0E6 /* TrackerNameField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerNameField.swift; sourceTree = "<group>"; };
@@ -96,6 +104,7 @@
 		BC307CFF2A7976EE0076AA89 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				BCE240D52AA7902D0040C2C8 /* Onboarding */,
 				BC75DC602A7D58D7001CB797 /* Create + Edit */,
 				BCE38F4C2A98FE31005BE0E6 /* TrackerList */,
 				BC307D082A79805F0076AA89 /* TabBarController.swift */,
@@ -142,16 +151,35 @@
 		BC75DC602A7D58D7001CB797 /* Create + Edit */ = {
 			isa = PBXGroup;
 			children = (
+				BCE240DA2AA7A6410040C2C8 /* CategoryManagement */,
 				BC307D0E2A79814C0076AA89 /* NewTrackerViewController.swift */,
 				BCE38F592A9B45D0005BE0E6 /* EmojiCell.swift */,
 				BCE38F572A9B4590005BE0E6 /* ColorCell.swift */,
 				BC307D0C2A79810A0076AA89 /* TrackerTypeChoiceViewController.swift */,
 				BC75DC612A7D5959001CB797 /* TimetableViewController.swift */,
-				BC75DC632A7D596C001CB797 /* CategoryListViewController.swift */,
-				BC75DC652A7D5999001CB797 /* NewCategoryViewController.swift */,
 				BCE38F462A98C280005BE0E6 /* TimetableCell.swift */,
 			);
 			path = "Create + Edit";
+			sourceTree = "<group>";
+		};
+		BCE240D52AA7902D0040C2C8 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				BCE240D62AA790450040C2C8 /* OnboardingViewController.swift */,
+				BCE240D82AA7997B0040C2C8 /* OnboardingPageController.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		BCE240DA2AA7A6410040C2C8 /* CategoryManagement */ = {
+			isa = PBXGroup;
+			children = (
+				BC75DC632A7D596C001CB797 /* CategoryListViewController.swift */,
+				BCE240DB2AA7A6690040C2C8 /* CategoryListViewModel.swift */,
+				BC75DC652A7D5999001CB797 /* NewCategoryViewController.swift */,
+				BCE240DD2AA8FF620040C2C8 /* Observable.swift */,
+			);
+			path = CategoryManagement;
 			sourceTree = "<group>";
 		};
 		BCE38F4C2A98FE31005BE0E6 /* TrackerList */ = {
@@ -281,6 +309,7 @@
 				BCE38F932A9FBCD7005BE0E6 /* RecordStore.swift in Sources */,
 				BC307D032A797D820076AA89 /* Extension DateFormatter + Weekdays.swift in Sources */,
 				BC307D092A79805F0076AA89 /* TabBarController.swift in Sources */,
+				BCE240DE2AA8FF620040C2C8 /* Observable.swift in Sources */,
 				BC537A1F2A803CE600407C34 /* FilterViewController.swift in Sources */,
 				BC307D0F2A79814C0076AA89 /* NewTrackerViewController.swift in Sources */,
 				BCE38F562A9904B2005BE0E6 /* Extension UIViewController.swift in Sources */,
@@ -304,10 +333,13 @@
 				BC307D0B2A7980830076AA89 /* StatisticsViewController.swift in Sources */,
 				BCE38F952A9FBCF2005BE0E6 /* CategoryStore.swift in Sources */,
 				BCE38F522A98FF77005BE0E6 /* TrackerRecord.swift in Sources */,
+				BCE240D92AA7997B0040C2C8 /* OnboardingPageController.swift in Sources */,
 				BCE38F492A98D190005BE0E6 /* Extension UIImage.swift in Sources */,
 				BCE38F5A2A9B45D0005BE0E6 /* EmojiCell.swift in Sources */,
 				BC5157152A72D3F80080B6EA /* SceneDelegate.swift in Sources */,
+				BCE240DC2AA7A6690040C2C8 /* CategoryListViewModel.swift in Sources */,
 				BCE38F472A98C280005BE0E6 /* TimetableCell.swift in Sources */,
+				BCE240D72AA790450040C2C8 /* OnboardingViewController.swift in Sources */,
 				BCF2FBDF2A7ACDDF007E6583 /* StorageService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

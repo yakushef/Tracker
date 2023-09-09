@@ -14,6 +14,7 @@ enum CategoryError: Error {
 }
 
 protocol CategoryStoreProtocol: AnyObject {
+    var delegate: CategoryStoreDelegate? { get set }
     var storageService: StorageServiceProtocol? { get set }
     func getAllCategories() -> [TrackerCategory]
     func getCategory(named name: String) -> TrackerCategoryCoreData?
@@ -61,6 +62,7 @@ final class CategoryStore: NSObject, CategoryStoreProtocol {
         newCategory.title = category.name
         newCategory.trackers = []
         try? context.save()
+        delegate?.categoryStoreDidUpdate()
     }
     
     func getCategory(named name: String) -> TrackerCategoryCoreData? {

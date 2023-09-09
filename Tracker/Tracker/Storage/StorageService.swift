@@ -31,6 +31,7 @@ final class StorageService {
     var categoryStorage: CategoryStoreProtocol
     
     private var categories: Set<TrackerCategory>
+    
     private var records: Set<TrackerRecord> {
         didSet {
             NotificationCenter.default.post(Notification(name: StorageService.didChageCompletedTrackers,
@@ -38,7 +39,7 @@ final class StorageService {
         }
     }
     
-    init(categories: Set<TrackerCategory> = [], records: Set<TrackerRecord> = []) {
+    private init(categories: Set<TrackerCategory> = [], records: Set<TrackerRecord> = []) {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
         self.categoryStorage = CategoryStore(context: context)
@@ -57,6 +58,7 @@ final class StorageService {
         }()
         
         self.categoryStorage.storageService = self
+        self.categoryStorage.delegate = self
         self.recordStorage.storageService = self
         self.recordStorage.delegate = self
         self.trackerStorage.storageService = self
@@ -64,7 +66,6 @@ final class StorageService {
         
         self.records = Set(self.recordStorage.getAllRecords())
     }
-    
     
     func addCategory(_ newCategory: TrackerCategory) {
         let sameCategory = categories.filter {
@@ -78,6 +79,7 @@ final class StorageService {
 }
 
 extension StorageService: StorageServiceProtocol {
+    
     func addTracker(_ tracker: Tracker, categoryName: String) {
         guard let categoryCD = categoryStorage.getCategory(named: categoryName) else { return }
         
