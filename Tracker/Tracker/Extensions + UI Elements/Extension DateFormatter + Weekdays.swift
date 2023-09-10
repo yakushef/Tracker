@@ -16,13 +16,34 @@ var dayFormatter: DateComponentsFormatter = { let formatter = DateComponentsForm
 }()
 
 enum Weekday: String, CaseIterable {
-    case monday = "Понедельник"
-    case tuesday = "Вторник"
-    case wednesday = "Среда"
-    case thursday = "Четверг"
-    case friday = "Пятница"
-    case saturday = "Суббота"
-    case sunday = "Воскресенье"
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    case sunday
+    
+    func convertToString() -> String {
+        var dayString = ""
+        switch self {
+        case .monday:
+            dayString = NSLocalizedString("schedule.monday.full", comment: "Понедельник")
+        case .tuesday:
+            dayString = NSLocalizedString("schedule.tuesday.full", comment: "Вторник")
+        case .wednesday:
+            dayString = NSLocalizedString("schedule.wednesday.full", comment: "Среда")
+        case .thursday:
+            dayString = NSLocalizedString("schedule.thursday.full", comment: "Четверг")
+        case .friday:
+            dayString = NSLocalizedString("schedule.friday.full", comment: "Пятница")
+        case .saturday:
+            dayString = NSLocalizedString("schedule.saturday.full", comment: "Суббота")
+        case .sunday:
+            dayString = NSLocalizedString("schedule.sunday.full", comment: "Воскресенье")
+        }
+        return dayString
+    }
     
     func convertToCalendarWeekday() -> Int {
         var day = 0

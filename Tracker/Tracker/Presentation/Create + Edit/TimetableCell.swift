@@ -15,19 +15,19 @@ final class TimetableCell: UITableViewCell {
         didSet {
             var day = 0
             switch textLabel?.text {
-            case "Понедельник":
+            case NSLocalizedString("schedule.monday.full", comment: "Понедельник"):
                 day = 0
-            case "Вторник":
+            case NSLocalizedString("schedule.tuesday.full", comment: "Вторник"):
                 day = 1
-            case "Среда":
+            case NSLocalizedString("schedule.wednesday.full", comment: "Среда"):
                 day = 2
-            case "Четверг":
+            case NSLocalizedString("schedule.thursday.full", comment: "Четверг"):
                 day = 3
-            case "Пятница":
+            case NSLocalizedString("schedule.friday.full", comment: "Пятница"):
                 day = 4
-            case "Суббота":
+            case NSLocalizedString("schedule.saturday.full", comment: "Суббота"):
                 day = 5
-            case "Воскресенье":
+            case NSLocalizedString("schedule.sunday.full", comment: "Воскресенье"):
                 day = 6
             default:
                 return

@@ -16,7 +16,9 @@ final class StatisticsViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
 
-        navigationItem.title = "Статистика"
+        let statTitle = NSLocalizedString("statisticsPage.title",
+                                          comment: "Заголовок экрана статистики")
+        navigationItem.title = statTitle
         navigationController?.navigationBar.prefersLargeTitles = true
         
         placeholder = EmptyTablePlaceholder(type: .statistics, frame: view.safeAreaLayoutGuide.layoutFrame)

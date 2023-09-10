@@ -21,7 +21,9 @@ final class TimetableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Расписание"
+        let timetableTitle = NSLocalizedString("schedule.pageTtle",
+                                               comment: "Заголовок экрана расписания")
+        navigationItem.title = timetableTitle
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
         view.backgroundColor = .systemBackground
@@ -55,7 +57,8 @@ final class TimetableViewController: UIViewController {
             doneButton.heightAnchor.constraint(equalToConstant: 60),
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-        doneButton.setTitle("Готово", for: .normal)
+        let doneButtonTitle = NSLocalizedString("buttons.done", comment: "Готово")
+        doneButton.setTitle(doneButtonTitle, for: .normal)
         doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         doneButton.switchActiveState(isActive: !activeDays.isEmpty)
     }
@@ -108,7 +111,7 @@ extension TimetableViewController: UITableViewDataSource {
         
         cell.setupUI()
         
-        let weekday = weekDays[indexPath.row].rawValue
+        let weekday = weekDays[indexPath.row].convertToString()
         cell.textLabel?.text = weekday
         return cell
     }

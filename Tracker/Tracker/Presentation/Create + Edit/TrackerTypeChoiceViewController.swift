@@ -14,7 +14,8 @@ final class TrackerTypeChoiceViewController: UIViewController {
         
         view.backgroundColor = .systemBackground
         setupUI()
-        navigationItem.title = "Создание трекера"
+        let newTrackerNavTitle = NSLocalizedString("newTracker.pageTitle", comment: "Создание трекера")
+        navigationItem.title = newTrackerNavTitle
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
     }
     
@@ -30,11 +31,13 @@ final class TrackerTypeChoiceViewController: UIViewController {
     
     private func setupUI() {
         let habitButton = UIButton.systemButton(with: UIImage(), target: self, action: #selector(addHabit))
-        habitButton.setTitle("Привычка", for: .normal)
+        let habitButtonTitle = NSLocalizedString("newTracker.habit", comment: "Привычка")
+        habitButton.setTitle(habitButtonTitle, for: .normal)
         setup(button: habitButton)
         
         let singleButton = UIButton.systemButton(with: UIImage(), target: self, action: #selector(addSingleEvent))
-        singleButton.setTitle("Нерегулярное событие", for: .normal)
+        let eventButtonTitle = NSLocalizedString("newTracker.event", comment: "Нерегулярное событие")
+        singleButton.setTitle(eventButtonTitle, for: .normal)
         setup(button: singleButton)
         
         let buttonsStack = UIStackView()

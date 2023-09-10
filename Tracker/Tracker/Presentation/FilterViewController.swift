@@ -11,6 +11,7 @@ final class FilterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        navigationItem.title = "Фильтры"
+        navigationItem.title = NSLocalizedString("filters",
+                                                 comment: "Заголовок страницы фильтров")
     }
 }

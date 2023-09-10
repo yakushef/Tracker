@@ -31,7 +31,8 @@ final class CategoryListViewController: UIViewController {
             self?.categoryTable.reloadData()
         }
         
-        navigationItem.title = "Категория"
+        let categotyTitle = NSLocalizedString("newTracker.category", comment: "Категория")
+        navigationItem.title = categotyTitle
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
         view.backgroundColor = .systemBackground
@@ -53,7 +54,8 @@ final class CategoryListViewController: UIViewController {
             addButton.heightAnchor.constraint(equalToConstant: 60),
             addButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-        addButton.setTitle("Добавить категорию", for: .normal)
+        let addCategoryButtonText = NSLocalizedString("buttons.addCategory", comment: "Добавить категорию")
+        addButton.setTitle(addCategoryButtonText, for: .normal)
         addButton.addTarget(self, action: #selector(newCategory), for: .touchUpInside)
         
         placeholder = EmptyTablePlaceholder(type: .category, frame: view.safeAreaLayoutGuide.layoutFrame)

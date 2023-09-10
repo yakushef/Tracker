@@ -60,7 +60,8 @@ final class TrackerListViewController: UIViewController {
     // MARK: - UI Setup
     
     private func navBarSetup() {
-        navigationItem.title = "Трекеры"
+        let title = NSLocalizedString("trackerPage.title", comment: "Трекеры")
+        navigationItem.title = title
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "AddTracker"),
@@ -82,7 +83,7 @@ final class TrackerListViewController: UIViewController {
         navigationItem.rightBarButtonItem = dateButton
         
         search.hidesNavigationBarDuringPresentation = false
-        search.searchBar.placeholder = "Поиск"
+        search.searchBar.placeholder = NSLocalizedString("search", comment: "Поиск")
         search.searchBar.delegate = self
         navigationItem.searchController = search
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -109,7 +110,8 @@ final class TrackerListViewController: UIViewController {
         filterButton = GenericAppButton(type: .system)
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         filterButton.backgroundColor = .AppColors.blue
-        filterButton.setTitle("Фильтры", for: .normal)
+        let filterTitle = NSLocalizedString("filters", comment: "Фильтры")
+        filterButton.setTitle(filterTitle, for: .normal)
         filterButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         view.addSubview(filterButton)
         NSLayoutConstraint.activate([

@@ -1,0 +1,61 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Aleksey Yakushev on 09.09.2023.
+  
+*/
+
+"trackerPage.title" = "Трекеры";
+"statisticsPage.title" = "Статистика";
+
+"newTracker.pageTitle" = "Создание трекера";
+"newTracker.habit" = "Новая привычка";
+"newTracker.event" = "Новое нерегулярное событие";
+"newTracker.titlePlaceholder" = "Введите название трекера";
+"newTracker.lengthLimit" = "Ограничение 38 символов";
+"newTracker.category" = "Категория";
+"newTracker.emoji" = "Emoji";
+"newTracker.color" = "Цвет";
+
+"newCategory.pageTitle" = "Новая категория";
+"newCategory.titlePlaceholder" = "Введите название категории";
+
+"buttons.filter" = "Фильры";
+"buttons.habit" = "Привычка";
+"buttons.event" = "Нерегулярное событие";
+"buttons.cancel" = "Отменить";
+"buttons.create" = "Создать";
+"buttons.done" = "Готово";
+"buttons.addCategory" = "Добавить категорию";
+
+"filters" = "Фильтры";
+"search" = "Поиск";
+
+"placeholder.stats" = "Анализировать пока нечего";
+"placeholder.search" = "Ничего не найдено";
+"placeholder.trackers" = "Что будем отслеживать";
+"placeholder.category" = "Привычки и события можно\nобъединить по смыслу";
+
+"onboarding.page1" = "Отслеживайте только то, что хотите";
+"onboarding.page2" = "Даже если это не литры воды и йога";
+"onboarding.button" = "Вот это технологии!";
+
+"schedule.pageTtle" = "Расписание";
+
+"schedule.monday.full" = "Понедельник";
+"schedule.tuesday.full" = "Вторник";
+"schedule.wednesday.full" = "Среда";
+"schedule.thursday.full" = "Четверг";
+"schedule.friday.full" = "Пятница";
+"schedule.saturday.full" = "Суббота";
+"schedule.sunday.full" = "Воскресенье";
+
+"schedule.monday.short" = "Пн";
+"schedule.tuesday.short" = "Вт";
+"schedule.wednesday.short" = "Ср";
+"schedule.thursday.short" = "Чт";
+"schedule.friday.short" = "Пт";
+"schedule.saturday.short" = "Сб";
+"schedule.sunday.short" = "Вс";
+"schedule.everyday" = "Каждый день";

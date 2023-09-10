@@ -15,7 +15,8 @@ final class NewCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Новая категория"
+        let newCatTitle = NSLocalizedString("newCategory.pageTitle" , comment: "Новая категория")
+        navigationItem.title = newCatTitle
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
         view.backgroundColor = .systemBackground
@@ -36,7 +37,9 @@ final class NewCategoryViewController: UIViewController {
         textField.clipsToBounds = true
         textField.layer.cornerRadius = 16
         textField.font = .systemFont(ofSize: 17)
-        textField.placeholder = "Введите название категории"
+        let newCatPlaceholder = NSLocalizedString("newCategory.titlePlaceholder",
+                                                  comment: "Введите название категории")
+        textField.placeholder = newCatPlaceholder
         textField.backgroundColor = .AppColors.background
         textField.clearButtonMode = .whileEditing
         textField.delegate = self
@@ -50,7 +53,8 @@ final class NewCategoryViewController: UIViewController {
             doneButton.heightAnchor.constraint(equalToConstant: 60),
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-        doneButton.setTitle("Готово", for: .normal)
+        let doneButtonText = NSLocalizedString("buttons.done", comment: "Готово")
+        doneButton.setTitle(doneButtonText, for: .normal)
         doneButton.addTarget(self, action: #selector(done), for: .touchUpInside)
         doneButton.switchActiveState(isActive: false)
     }

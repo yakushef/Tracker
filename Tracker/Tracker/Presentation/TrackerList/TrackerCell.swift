@@ -181,8 +181,13 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     private func updateDay() {
-        let daysCount = StorageService.shared.getRecords(for: cellTracker.id)
-        daysLabel.text = dayFormatter.string(from: DateComponents(day: daysCount.count))
+//        let daysCount = StorageService.shared.getRecords(for: cellTracker.id)
+//        daysLabel.text = dayFormatter.string(from: DateComponents(day: daysCount.count))
+        let daysCount = StorageService.shared.getRecords(for: cellTracker.id).count
+        daysLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("daysTracked", comment: "Number of days tracked"),
+            daysCount
+        )
     }
     
     @objc func incrementButtonTapped() {

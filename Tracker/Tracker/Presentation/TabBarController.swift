@@ -17,19 +17,26 @@ final class MainListTabBar: UITabBarController {
     func setup() {
         
         let trackersVC = UINavigationController(rootViewController: TrackerListViewController())
-        trackersVC.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(named: "trackers"), selectedImage: nil)
+        let trackersTitle = NSLocalizedString("trackerPage.title",
+                                              comment: "Заголовок страницы трекеров")
+        trackersVC.tabBarItem = UITabBarItem(title: trackersTitle,
+                                             image: UIImage(named: "trackers"),
+                                             selectedImage: nil)
         trackersVC.navigationController?.navigationBar.prefersLargeTitles = true
         trackersVC.navigationItem.largeTitleDisplayMode = .never
 
         
         let statVC = UINavigationController(rootViewController: StatisticsViewController())
-        statVC.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(named: "stats"), selectedImage: nil)
+        let ststTitle = NSLocalizedString("statisticsPage.title",
+                                          comment: "Заголовок страницы статистики")
+        statVC.tabBarItem = UITabBarItem(title: ststTitle,
+                                         image: UIImage(named: "stats"),
+                                         selectedImage: nil)
         
         viewControllers = [trackersVC, statVC]
 
         tabBar.tintColor = .AppColors.blue
         
-
         let dividerView = UIView(frame: CGRect(x: tabBar.frame.minX, y: 0, width: tabBar.frame.width, height: 0.5))
         dividerView.backgroundColor = UIColor.AppColors.gray
         tabBar.addSubview(dividerView)
