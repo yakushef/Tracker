@@ -93,7 +93,7 @@ final class NewTrackerViewController: UIViewController {
     //MARK: - Setup UI
     
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
         
         // MARK: - ScrollView
         

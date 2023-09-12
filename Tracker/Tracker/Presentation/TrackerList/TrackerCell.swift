@@ -112,7 +112,7 @@ final class TrackerCell: UICollectionViewCell {
         ])
         emojiLabel.layer.cornerRadius = 12
         emojiLabel.clipsToBounds = true
-        emojiLabel.backgroundColor = .AppColors.background
+        emojiLabel.backgroundColor = .white.withAlphaComponent(0.3)
         emojiLabel.font = .systemFont(ofSize: 14)
         emojiLabel.textAlignment = .center
         emojiLabel.text = tracker.emoji
@@ -128,7 +128,7 @@ final class TrackerCell: UICollectionViewCell {
         ])
         titleLabel.font = .boldSystemFont(ofSize: 12)
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .AppColors.white
+        titleLabel.textColor = .white
         titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         titleLabel.text = tracker.title
         

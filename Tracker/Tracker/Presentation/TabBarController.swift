@@ -38,7 +38,7 @@ final class MainListTabBar: UITabBarController {
         tabBar.tintColor = .AppColors.blue
         
         let dividerView = UIView(frame: CGRect(x: tabBar.frame.minX, y: 0, width: tabBar.frame.width, height: 0.5))
-        dividerView.backgroundColor = UIColor.AppColors.gray
+        dividerView.backgroundColor = UIColor.AppColors.divider
         tabBar.addSubview(dividerView)
     }
 }

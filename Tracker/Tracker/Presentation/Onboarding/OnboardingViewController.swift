@@ -61,6 +61,8 @@ final class OnboardingViewController: UIPageViewController {
         dataSource = self
         delegate = self
         
+        overrideUserInterfaceStyle = .light
+        
         if let first = pages.first {
             setViewControllers([first], direction: .forward, animated: true)
         }

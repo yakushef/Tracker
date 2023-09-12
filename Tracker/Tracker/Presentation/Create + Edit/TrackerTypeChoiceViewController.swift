@@ -12,7 +12,7 @@ final class TrackerTypeChoiceViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
         setupUI()
         let newTrackerNavTitle = NSLocalizedString("newTracker.pageTitle", comment: "Создание трекера")
         navigationItem.title = newTrackerNavTitle

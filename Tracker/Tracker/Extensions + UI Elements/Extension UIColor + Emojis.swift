@@ -41,11 +41,20 @@ extension UIColor {
                 return UIColor(red: 0.254, green: 0.254, blue: 0.254, alpha: 0.85)
             }
         })
+        
+        static let divider = UIColor(dynamicProvider: { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
+            } else {
+                return UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+            }
+        })
    
         static let gray = UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1)
         static let lightGray = UIColor(red: 0.902, green: 0.91, blue: 0.922, alpha: 1)
         static let red = UIColor(red: 0.961, green: 0.42, blue: 0.424, alpha: 1)
         static let blue = UIColor(red: 0.216, green: 0.447, blue: 0.906, alpha: 1)
+        static let datePickerBackground = UIColor(red: 0.942, green: 0.942, blue: 0.942, alpha: 1)
     }
     
     struct ColorSections {

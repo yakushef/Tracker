@@ -14,7 +14,7 @@ final class StatisticsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
 
         let statTitle = NSLocalizedString("statisticsPage.title",
                                           comment: "Заголовок экрана статистики")

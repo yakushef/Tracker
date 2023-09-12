@@ -22,12 +22,14 @@ final class OnboardingPageController: UIViewController {
         label.font = .boldSystemFont(ofSize: 32)
         label.textAlignment = .center
         label.numberOfLines = 0
+        label.textColor = .AppColors.black
         return label
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        overrideUserInterfaceStyle = .light
         setupViews()
     }
     

@@ -35,7 +35,7 @@ final class CategoryListViewController: UIViewController {
         navigationItem.title = categotyTitle
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
         categoryTable.isScrollEnabled = false
         setupUI()
     }

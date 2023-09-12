@@ -26,7 +26,7 @@ final class TimetableViewController: UIViewController {
         navigationItem.title = timetableTitle
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
         setupUI()
     }
     

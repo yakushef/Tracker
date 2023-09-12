@@ -10,7 +10,7 @@ import UIKit
 final class FilterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
         navigationItem.title = NSLocalizedString("filters",
                                                  comment: "Заголовок страницы фильтров")
     }

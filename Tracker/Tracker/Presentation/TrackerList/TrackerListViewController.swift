@@ -44,7 +44,7 @@ final class TrackerListViewController: UIViewController {
             self?.updateVisibleCategories()
         })
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
         
         updateVisibleCategories()
         navBarSetup()
@@ -80,8 +80,22 @@ final class TrackerListViewController: UIViewController {
                              action: #selector(updateVisibleCategories),
                              for: .valueChanged)
         datePicker.tintColor = .AppColors.blue
-        navigationItem.rightBarButtonItem = dateButton
+        datePicker.overrideUserInterfaceStyle = .light
+        for subview in datePicker.subviews {
+            subview.backgroundColor = .AppColors.datePickerBackground
+            subview.layer.cornerRadius = 8
+            subview.clipsToBounds = true
+            for subsubview in subview.subviews {
+                if let subsubview = subsubview as? UILabel {
+                    subsubview.backgroundColor = .clear
+                } else {
+                    subsubview.subviews.first?.isHidden = true
+                }
+            }
+        }
         
+        navigationItem.rightBarButtonItem = dateButton
+
         search.hidesNavigationBarDuringPresentation = false
         search.searchBar.placeholder = NSLocalizedString("search", comment: "Поиск")
         search.searchBar.delegate = self
@@ -104,12 +118,14 @@ final class TrackerListViewController: UIViewController {
                                    withReuseIdentifier: "header")
         trackerCollection.register(TrackerCell.self,
                                    forCellWithReuseIdentifier: "tracker")
+        trackerCollection.backgroundColor = .clear
         view.addSubview(trackerCollection)
         trackerCollection.reloadData()
         
         filterButton = GenericAppButton(type: .system)
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         filterButton.backgroundColor = .AppColors.blue
+        filterButton.tintColor = .white
         let filterTitle = NSLocalizedString("filters", comment: "Фильтры")
         filterButton.setTitle(filterTitle, for: .normal)
         filterButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)

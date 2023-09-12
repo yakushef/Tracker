@@ -19,7 +19,7 @@ final class NewCategoryViewController: UIViewController {
         navigationItem.title = newCatTitle
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
         setupUI()
         addTapGestureToHideKeyboard(for: textField)
     }
