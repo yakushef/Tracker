@@ -243,6 +243,11 @@ final class TrackerListViewController: UIViewController {
         categories = StorageService.shared.getAllCategories()
         updateVisibleCategories()
     }
+    
+    func changePinForCell(indexPath: IndexPath) {
+        guard let cell = trackerCollection.cellForItem(at: indexPath) as? TrackerCell else { return }
+        cell.pinStatusChanged()
+    }
 }
 
     // MARK: - UICollectionViewDelegate
@@ -255,6 +260,24 @@ extension TrackerListViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width - 32, height: 46)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let indexPath = indexPaths.first,
+              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
+        
+        let title = cell.isPinned ? "Открепить" : "Закрепить"
+        
+        return UIContextMenuConfiguration(actionProvider: { _ in
+            return UIMenu(children: [
+                UIAction(title: title) { [weak self] _ in
+                    self?.changePinForCell(indexPath: indexPath)
+                },
+                UIAction(title: "Удалить", attributes: .destructive) { _ in
+                    StorageService.shared.deleteTracker(id: cell.cellTracker.id)
+                }
+            ])
+        })
     }
 }
 
@@ -318,8 +341,8 @@ extension TrackerListViewController: UISearchBarDelegate {
 // MARK: - TrackerCellDelegate
 
 extension TrackerListViewController: TrackerCellDelegate {
-    func updatePinnedStatus() {
-        
+    func updatePinnedStatus(trackerID: UUID, to pinned: Bool) {
+        StorageService.shared.changePinStatus(for: trackerID, to: pinned)
     }
     
     func updateRecords(with record: TrackerRecord, completion: (Bool) -> Void) {

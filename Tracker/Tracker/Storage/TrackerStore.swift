@@ -25,6 +25,8 @@ protocol TrackerStoreProtocol: AnyObject {
     func getTrackers(category: TrackerCategoryCoreData) -> [Tracker]
     func getTracker(trackerId: UUID) -> TrackerCoreData?
     func getCompletedTrackers() -> [Tracker]
+    func changeTrackerPinStatus(trackerId: UUID, pinned: Bool)
+    func deleteTracker(trackerId: UUID)
 }
 
 final class TrackerStore: NSObject, TrackerStoreProtocol {
@@ -112,6 +114,27 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
         return trackers.first
     }
     
+    func deleteTracker(trackerId: UUID) {
+        guard let tracker = getTracker(trackerId: trackerId) else { return }
+        
+        context.delete(tracker)
+        
+        do { try context.save() }
+        catch {
+            assertionFailure(error.localizedDescription)
+        }
+    }
+    
+    func changeTrackerPinStatus(trackerId: UUID, pinned: Bool) {
+        guard let tracker = getTracker(trackerId: trackerId) else { return }
+        tracker.isPinned = pinned
+        
+        do { try context.save() }
+        catch {
+            assertionFailure(error.localizedDescription)
+        }
+    }
+    
     func getCompletedTrackers() -> [Tracker] {
         controller?.fetchRequest.predicate = NSPredicate(format: "records.@count > 0")
         try? controller?.performFetch()
@@ -132,9 +155,9 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
               let id = trackerCD.trackerId else { throw TrackerError.trackerDecodingError }
         
         if trackerCD.isHabit {
-            return Tracker(habitTitle: title, emoji: emoji, color: sectionColors[Int(trackerCD.colorIndex)], timetable: Weekday.convertFromCD(weekdaysCD), id: id)
+            return Tracker(habitTitle: title, emoji: emoji, color: sectionColors[Int(trackerCD.colorIndex)], timetable: Weekday.convertFromCD(weekdaysCD), isPinned: trackerCD.isPinned, id: id)
         } else {
-            return Tracker(eventTitle: title, emoji: emoji, color: sectionColors[Int(trackerCD.colorIndex)], id: id)
+            return Tracker(eventTitle: title, emoji: emoji, color: sectionColors[Int(trackerCD.colorIndex)], isPinned: trackerCD.isPinned, id: id)
         }
     }
     

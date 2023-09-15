@@ -20,7 +20,7 @@ final class StatisticsService: StatisticsServiceProtocol {
     private let testArray = [128, 256, 64, 32, 512, 16, 1024, 8]
     
     func getCompletedTrackersCount() -> Int {
-        return storage.getCompletedTrackers().count //testArray.randomElement() ?? 0
+        return storage.getCompletedTrackers().count
     }
     
     func getAvegageTrackerCont() -> Int {
