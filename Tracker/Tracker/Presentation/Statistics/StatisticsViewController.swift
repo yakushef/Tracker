@@ -9,21 +9,26 @@ import UIKit
 
 final class StatisticsViewController: UIViewController {
     
+    let viewModel = StatisticsViewModel()
+    
     var placeholder = UIView()
     
     lazy var statisticsTable = {
         let table = UITableView()
-
         return table
     }()
-    
-    private let statTitle = NSLocalizedString("statisticsPage.title",
-                                      comment: "Заголовок экрана статистики")
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        viewModel.$statistics.makeBinding(action: { [weak self] _ in
+            self?.checkVisibility()
+            self?.statisticsTable.reloadData()
+        })
+        
         view.backgroundColor = .AppColors.white
+        let statTitle = NSLocalizedString("statisticsPage.title",
+                                          comment: "Заголовок экрана статистики")
         navigationItem.title = statTitle
         navigationController?.navigationBar.prefersLargeTitles = true
         
@@ -31,6 +36,16 @@ final class StatisticsViewController: UIViewController {
         view.addSubview(placeholder)
         
         setupUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewModel.updateStatistics()
+    }
+    
+    func checkVisibility() {
+        
     }
     
     func setupUI() {
@@ -129,8 +144,24 @@ extension StatisticsViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.setupCell()
-        cell.setDays(Int.random(in: 1...8))
-        cell.setDescription("Mic Check")
+        
+        switch indexPath.row {
+        case 0:
+            cell.setDays(viewModel.statistics.bestDayTrackerCount)
+            cell.setDescription("Лучший период")
+        case 1:
+            cell.setDays(viewModel.statistics.idealDaysCount)
+            cell.setDescription("Идеальные дни")
+        case 2:
+            cell.setDays(viewModel.statistics.completedTrackerCount)
+            cell.setDescription("Трекеров завершено")
+        case 3:
+            cell.setDays(viewModel.statistics.averageTrackerCount)
+            cell.setDescription("Среднее значение")
+        default:
+            cell.setDays(0)
+            cell.setDescription("👾")
+        }
         return cell
     }
 }
