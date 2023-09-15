@@ -24,6 +24,7 @@ protocol TrackerStoreProtocol: AnyObject {
     func addTracker(_ tracker: Tracker, categoryCD: TrackerCategoryCoreData)
     func getTrackers(category: TrackerCategoryCoreData) -> [Tracker]
     func getTracker(trackerId: UUID) -> TrackerCoreData?
+    func getCompletedTrackers() -> [Tracker]
 }
 
 final class TrackerStore: NSObject, TrackerStoreProtocol {
@@ -109,6 +110,19 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
                   return nil
               }
         return trackers.first
+    }
+    
+    func getCompletedTrackers() -> [Tracker] {
+        controller?.fetchRequest.predicate = NSPredicate(format: "records.@count > 0")
+        try? controller?.performFetch()
+        
+        guard let objects = controller?.fetchedObjects,
+              let trackers = try? objects.map({
+                  try convertTracker(from: $0)
+              }) else {
+                  return []
+              }
+        return trackers
     }
     
     private func convertTracker(from trackerCD: TrackerCoreData) throws -> Tracker {

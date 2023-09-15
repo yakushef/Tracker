@@ -18,6 +18,7 @@ protocol StorageServiceProtocol: AnyObject {
     func getAllCategories() -> [TrackerCategory]
     func getTrackers(for category: TrackerCategoryCoreData) -> [Tracker]
     func getRecords(date: Date) -> [TrackerRecord]
+    func getCompletedTrackers() -> [Tracker]
 }
 
 final class StorageService {
@@ -79,6 +80,10 @@ final class StorageService {
 }
 
 extension StorageService: StorageServiceProtocol {
+    
+    func getCompletedTrackers() -> [Tracker] {
+        trackerStorage.getCompletedTrackers()
+    }
     
     func addTracker(_ tracker: Tracker, categoryName: String) {
         guard let categoryCD = categoryStorage.getCategory(named: categoryName) else { return }
