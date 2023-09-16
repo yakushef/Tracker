@@ -46,13 +46,17 @@ final class NewTrackerViewController: UIViewController {
             checkIfReady()
             UIView.animate(withDuration: 0.25, animations: { [weak self] in
                 guard let self else { return }
-                self.textErrorLabel.isHidden = (self.textField.text?.count ?? 0) <= 38
-                if self.textErrorLabel.alpha == 1 {
-                    self.textErrorLabel.alpha = 0
-                } else {
-                    self.textErrorLabel.alpha = 1
-                }
+                self.textErrorLabel.isHidden = (self.textField.text?.count ?? 0) < 39
             })
+//            UIView.animate(withDuration: 0.25, animations: { [weak self] in
+//                guard let self else { return }
+//                self.textErrorLabel.isHidden = (self.textField.text?.count ?? 0) <= 38
+//                if self.textErrorLabel.alpha == 1 {
+//                    self.textErrorLabel.alpha = 0
+//                } else {
+//                    self.textErrorLabel.alpha = 1
+//                }
+//            })
         }
     }
     
@@ -60,6 +64,7 @@ final class NewTrackerViewController: UIViewController {
     private let createButton = GenericAppButton(type: .system)
     private let textErrorLabel = UILabel()
     private let textField = TrackerNameField()
+    private let dayslabel = UILabel()
     private let optionsTable = UITableView()
     private let emojiLabel = UILabel()
     private let colorLabel = UILabel()
@@ -112,6 +117,7 @@ final class NewTrackerViewController: UIViewController {
         textStack.translatesAutoresizingMaskIntoConstraints = false
         textStack.axis = .vertical
         textStack.spacing = 0
+        textStack.addArrangedSubview(dayslabel)
         textStack.addArrangedSubview(textField)
         textStack.addArrangedSubview(textErrorLabel)
         scrollView.addSubview(textStack)
@@ -120,6 +126,17 @@ final class NewTrackerViewController: UIViewController {
             textStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
             textStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18)
         ])
+        
+        dayslabel.translatesAutoresizingMaskIntoConstraints = false
+        dayslabel.font = .systemFont(ofSize: 32, weight: .bold)
+        dayslabel.backgroundColor = .clear
+        dayslabel.textColor = .AppColors.black
+        dayslabel.textAlignment = .center
+        NSLayoutConstraint.activate([
+            dayslabel.topAnchor.constraint(equalTo: textStack.topAnchor),
+            dayslabel.bottomAnchor.constraint(equalTo: textField.topAnchor, constant: -40)
+        ])
+        dayslabel.isHidden = vcMode == .new
         
         textField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -145,9 +162,11 @@ final class NewTrackerViewController: UIViewController {
         textErrorLabel.contentMode = .center
         textErrorLabel.textAlignment = .center
         NSLayoutConstraint.activate([
+            textErrorLabel.bottomAnchor.constraint(equalTo: textStack.bottomAnchor),
+            textErrorLabel.topAnchor.constraint(equalTo: textField.bottomAnchor),
             textErrorLabel.heightAnchor.constraint(equalToConstant: 38)
         ])
-        textErrorLabel.isHidden = (textField.text?.count ?? 0) <= 38
+        textErrorLabel.isHidden = false
         textErrorLabel.alpha = textErrorLabel.isHidden ? 0 : 1
         
         // MARK: - Options
@@ -275,6 +294,10 @@ final class NewTrackerViewController: UIViewController {
         cancelButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
         cancelButton.setTitleColor(.AppColors.red, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
+        
+        if (textField.text?.count ?? 0) <= 38 {
+            textErrorLabel.isHidden = true
+        }
     }
     
     // MARK: - Methods
@@ -441,17 +464,18 @@ extension NewTrackerViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        textFieldDidChange()
         return true
     }
 }
 
 extension NewTrackerViewController {
     @objc private func textFieldDidChange() {
-        isReady = (textField.text?.count ?? 0) <= 38
-        if let text = textField.text,
-           text.isEmpty {
-            isReady = false
-        }
+        isReady = (textField.text?.count ?? 0) < 39
+        UIView.animate(withDuration: 0.25, animations: { [weak self] in
+            guard let self else { return }
+            self.textErrorLabel.isHidden = (self.textField.text?.count ?? 0) < 39
+        })
     }
 }
 
@@ -543,6 +567,13 @@ extension NewTrackerViewController {
         newTrackerTimetable = tracker.timetable
         NewTrackerDelegate.shared.newTrackerSchedule = Set(tracker.timetable)
         activeDays = Set(tracker.timetable)
+        
+        let daysCount = StorageService.shared.getRecords(for: tracker.id).count
+        dayslabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("daysTracked", comment: "Number of days tracked"),
+            daysCount
+        )
+        
         isReady = true
         checkIfReady()
     }

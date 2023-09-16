@@ -26,7 +26,7 @@ protocol CategoryStoreDelegate: AnyObject {
 }
 
 final class CategoryStore: NSObject, CategoryStoreProtocol {
-    
+
     private let context: NSManagedObjectContext
     private var controller: NSFetchedResultsController<TrackerCategoryCoreData>?
     

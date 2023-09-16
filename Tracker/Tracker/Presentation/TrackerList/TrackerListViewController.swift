@@ -291,9 +291,10 @@ extension TrackerListViewController: UICollectionViewDelegate {
                     self?.changePinForCell(indexPath: indexPath)
                 },
                 UIAction(title: "Редактировать", handler: { [weak self] _ in
-                    if let category = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: indexPath) as? TrackerCatHeader {
-                        self?.editTracker(cell.cellTracker, categoryName: category.label.text ?? "!")
-                    }
+                    guard let trackerCD = StorageService.shared.getTracker(trackerId: cell.cellTracker.id),
+                          let cat = trackerCD.category,
+                    let categoryTitle = cat.title else { return }
+                    self?.editTracker(cell.cellTracker, categoryName: categoryTitle)
                 }),
                 UIAction(title: "Удалить", attributes: .destructive) { _ in
                     StorageService.shared.deleteTracker(id: cell.cellTracker.id)
