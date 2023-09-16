@@ -151,7 +151,7 @@ final class TrackerListViewController: UIViewController {
             placeholder = EmptyTablePlaceholder(type: .search, frame: frame)
             view.addSubview(placeholder)
         } else {
-            filterButton.isHidden = visibleCategories.isEmpty
+            filterButton.isHidden = StorageService.shared.trackerCount < 1
             placeholder.removeFromSuperview()
             placeholder = EmptyTablePlaceholder(type: .tracker, frame: frame)
             view.addSubview(placeholder)
@@ -229,6 +229,8 @@ final class TrackerListViewController: UIViewController {
             }
             visibleCategories = searchResults
         }
+        
+        updateFiltration()
         
         visibleCategories = visibleCategories.filter {
             !$0.trackers.isEmpty
@@ -402,7 +404,7 @@ extension TrackerListViewController: TrackerCellDelegate {
 extension TrackerListViewController: FilterDelegate {
     func filterDidChange(to filter: Filter) {
         appliedFilter = filter
-        updateFiltration()
+        updateVisibleCategories()
     }
     
     private func updateFiltration() {
@@ -419,18 +421,65 @@ extension TrackerListViewController: FilterDelegate {
     }
     
     private func filterForAll() {
-        
+        enableDatePicker()
     }
     
     private func filterForToday() {
-        
+        datePicker.date = Date()
+        disableDatePicker()
     }
     
     private func filterForToDo() {
-        
+        enableDatePicker()
+        var toDoCategories: [TrackerCategory]
+        toDoCategories = visibleCategories.map { oldCategory in
+            let newTrackers = oldCategory.trackers.filter {
+                !checkIfDoneToday(trackerID: $0.id)
+            }
+            let newCategory = TrackerCategory(name: oldCategory.name, trackers: newTrackers)
+            return newCategory
+        }
+        visibleCategories = toDoCategories
     }
     
     private func filterForDone() {
-        
+        enableDatePicker()
+        var toDoCategories: [TrackerCategory]
+        toDoCategories = visibleCategories.map { oldCategory in
+            let newTrackers = oldCategory.trackers.filter {
+                checkIfDoneToday(trackerID: $0.id)
+            }
+            let newCategory = TrackerCategory(name: oldCategory.name, trackers: newTrackers)
+            return newCategory
+        }
+        visibleCategories = toDoCategories
+    }
+    
+    private func enableDatePicker() {
+        datePicker.isEnabled = true
+        datePicker.alpha = 1
+        datePicker.overrideUserInterfaceStyle = .light
+        datePicker.backgroundColor = .AppColors.lightGray
+    }
+    
+    private func disableDatePicker() {
+        datePicker.isEnabled = false
+        datePicker.alpha = 0.3
+        datePicker.overrideUserInterfaceStyle = .dark
+        datePicker.backgroundColor = .AppColors.gray
+    }
+    
+    private func checkIfDoneToday(trackerID: UUID) -> Bool {
+        let allRecords = StorageService.shared.getRecords(for: trackerID)
+
+        var isRecorded = false
+
+        for record in allRecords {
+            let calendar = Calendar.current
+            if calendar.isDate(datePicker.date, inSameDayAs: record.date) {
+                isRecorded = true
+            }
+        }
+        return isRecorded
     }
 }

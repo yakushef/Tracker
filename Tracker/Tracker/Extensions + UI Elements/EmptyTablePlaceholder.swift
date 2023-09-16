@@ -23,6 +23,7 @@ final class EmptyTablePlaceholder: UIView {
     init(type: PlaceholderType, frame: CGRect) {
         self.type = type
         super.init(frame: frame)
+        self.isUserInteractionEnabled = false
         setupType()
         setupStack()
     }

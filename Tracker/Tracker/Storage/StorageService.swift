@@ -30,7 +30,9 @@ final class StorageService {
     static let didChageCompletedTrackers = Notification.Name(rawValue: "CompletedTrackersDidChange")
     static let didUpdateCategories = Notification.Name(rawValue: "CategoriesDidUpdate")
     
-    var trackerCount: Int = 0
+    lazy var trackerCount: Int = {
+        trackerStorage.getTrackerCount()
+    }()
     let calendar: Calendar
     var trackerStorage: TrackerStoreProtocol
     var recordStorage: RecordStoreProtocol
@@ -86,6 +88,7 @@ final class StorageService {
 }
 
 extension StorageService: StorageServiceProtocol {
+    
     func deleteTracker(id: UUID) {
         trackerCount = trackerStorage.getTrackerCount() - 1
         trackerStorage.deleteTracker(trackerId: id)
