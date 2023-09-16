@@ -76,7 +76,6 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     func configureCell(with tracker: Tracker, date: Date) {
-        
         cellTracker = tracker
         cellDate = date
         checkIfRecorded()

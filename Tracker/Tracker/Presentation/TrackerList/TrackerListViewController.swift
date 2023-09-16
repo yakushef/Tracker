@@ -10,6 +10,7 @@ import UIKit
 final class TrackerListViewController: UIViewController {
     
     private var trackers: [Tracker] = []
+    private var pinnedTrackers: [Tracker] = []
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
@@ -154,8 +155,8 @@ final class TrackerListViewController: UIViewController {
             view.addSubview(placeholder)
         }
         
-        placeholder.isHidden = !visibleCategories.isEmpty
-        trackerCollection.isHidden = visibleCategories.isEmpty
+        placeholder.isHidden = !visibleCategories.isEmpty || !pinnedTrackers.isEmpty
+        trackerCollection.isHidden = visibleCategories.isEmpty && pinnedTrackers.isEmpty
     }
     
     // MARK: - Navigation
@@ -236,6 +237,7 @@ final class TrackerListViewController: UIViewController {
     }
     
     func updateCategories() {
+        pinnedTrackers = StorageService.shared.getPinnedTrackers()
         categories = StorageService.shared.getAllCategories()
     }
     
@@ -247,6 +249,7 @@ final class TrackerListViewController: UIViewController {
     func changePinForCell(indexPath: IndexPath) {
         guard let cell = trackerCollection.cellForItem(at: indexPath) as? TrackerCell else { return }
         cell.pinStatusChanged()
+        updateVisibleCategories()
     }
 }
 
@@ -291,7 +294,16 @@ extension TrackerListViewController: UICollectionViewDelegateFlowLayout {
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as? TrackerCatHeader else {
                 return UICollectionReusableView()
             }
-            header.label.text = visibleCategories[indexPath.section].name
+            if pinnedTrackers.isEmpty {
+                header.label.text = visibleCategories[indexPath.section].name
+            } else {
+                switch indexPath.section {
+                case 0:
+                    header.label.text = "Закрепленные"
+                default:
+                    header.label.text = visibleCategories[indexPath.section - 1].name
+                }
+            }
             return header
         } else {
             return UICollectionReusableView()
@@ -303,16 +315,39 @@ extension TrackerListViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackerListViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return visibleCategories.count
+        if pinnedTrackers.isEmpty {
+            return visibleCategories.count
+        } else {
+            return visibleCategories.count + 1
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return visibleCategories[section].trackers.count
+        if pinnedTrackers.isEmpty {
+            return visibleCategories[section].trackers.count
+        } else {
+            switch section {
+            case 0:
+                return pinnedTrackers.count
+            default:
+                return visibleCategories[section - 1].trackers.count
+            }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tracker", for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
-        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        var tracker: Tracker
+        if pinnedTrackers.isEmpty {
+            tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        } else {
+            switch indexPath.section {
+            case 0:
+                tracker = pinnedTrackers[indexPath.row]
+            default:
+                tracker = visibleCategories[indexPath.section - 1].trackers[indexPath.row]
+            }
+        }
         completedTrackers = StorageService.shared.getRecords(date: StorageService.shared.calendar.startOfDay(for: datePicker.date))
         cell.configureCell(with: tracker, date: datePicker.date)
         cell.delegate = self

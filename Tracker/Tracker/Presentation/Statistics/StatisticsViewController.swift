@@ -45,7 +45,8 @@ final class StatisticsViewController: UIViewController {
     }
     
     func checkVisibility() {
-        
+        statisticsTable.isHidden = (StorageService.shared.trackerCount < 1)
+        print(StorageService.shared.trackerCount)
     }
     
     func setupUI() {

@@ -22,11 +22,13 @@ protocol TrackerStoreProtocol: AnyObject {
     var storageService: StorageServiceProtocol? { get set }
     
     func addTracker(_ tracker: Tracker, categoryCD: TrackerCategoryCoreData)
-    func getTrackers(category: TrackerCategoryCoreData) -> [Tracker]
+    func getTrackers(category: TrackerCategoryCoreData, includePinned: Bool) -> [Tracker]
+    func getPinnedTrackers() -> [Tracker]
     func getTracker(trackerId: UUID) -> TrackerCoreData?
     func getCompletedTrackers() -> [Tracker]
     func changeTrackerPinStatus(trackerId: UUID, pinned: Bool)
     func deleteTracker(trackerId: UUID)
+    func getTrackerCount() -> Int
 }
 
 final class TrackerStore: NSObject, TrackerStoreProtocol {
@@ -57,6 +59,16 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
         
         controller.delegate = self
         self.controller = controller
+    }
+    
+    func getTrackerCount() -> Int {
+        controller?.fetchRequest.predicate = nil
+        try? controller?.performFetch()
+        
+        guard let objects = controller?.fetchedObjects else {
+            return 0
+        }
+        return objects.count
     }
     
     func addTracker(_ tracker: Tracker, categoryCD: TrackerCategoryCoreData) {
@@ -90,9 +102,33 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
         }
     }
     
-    func getTrackers(category: TrackerCategoryCoreData) -> [Tracker] {
+    func getTrackers(category: TrackerCategoryCoreData, includePinned: Bool) -> [Tracker] {
+        if includePinned {
+            controller?.fetchRequest.predicate = NSPredicate(format: "%K = %@",
+                            argumentArray: [#keyPath(TrackerCoreData.category), category])
+        } else {
+            let categoryPredicate = NSPredicate(format: "%K = %@",
+                                                argumentArray: [#keyPath(TrackerCoreData.category), category])
+            let pinnedPredicate = NSPredicate(format: "%K = %@",
+                                              argumentArray: [#keyPath(TrackerCoreData.isPinned), false])
+            controller?.fetchRequest.predicate = NSCompoundPredicate(type: .and,
+                                                                     subpredicates: [categoryPredicate,
+                                                                                    pinnedPredicate])
+        }
+        try? controller?.performFetch()
+        
+        guard let objects = controller?.fetchedObjects,
+              let trackers = try? objects.map({
+                  try convertTracker(from: $0)
+              }) else {
+                  return []
+              }
+        return trackers
+    }
+    
+    func getPinnedTrackers() -> [Tracker] {
         controller?.fetchRequest.predicate = NSPredicate(format: "%K = %@",
-                        argumentArray: [#keyPath(TrackerCoreData.category), category])
+                        argumentArray: [#keyPath(TrackerCoreData.isPinned), true])
         try? controller?.performFetch()
         
         guard let objects = controller?.fetchedObjects,

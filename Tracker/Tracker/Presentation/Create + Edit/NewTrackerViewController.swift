@@ -204,6 +204,7 @@ final class NewTrackerViewController: UIViewController {
             emojiCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             emojiCollection.heightAnchor.constraint(equalToConstant: height/2)
         ])
+        emojiCollection.backgroundColor = .clear
         
         // MARK: - Colors
         
@@ -232,6 +233,7 @@ final class NewTrackerViewController: UIViewController {
             colorCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             colorCollection.heightAnchor.constraint(equalToConstant: height/2)
         ])
+        colorCollection.backgroundColor = .clear
         
     
         // MARK: - Buttons

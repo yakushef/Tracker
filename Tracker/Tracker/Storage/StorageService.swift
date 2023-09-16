@@ -12,11 +12,13 @@ protocol StorageServiceProtocol: AnyObject {
     var trackerStorage: TrackerStoreProtocol { get }
     var recordStorage: RecordStoreProtocol { get }
     var categoryStorage: CategoryStoreProtocol { get }
+    var trackerCount: Int { get }
     
     func addTracker(_ tracker: Tracker, categoryName: String)
     func getTracker(trackerId: UUID) -> TrackerCoreData?
     func getAllCategories() -> [TrackerCategory]
     func getTrackers(for category: TrackerCategoryCoreData) -> [Tracker]
+    func getPinnedTrackers() -> [Tracker]
     func getRecords(date: Date) -> [TrackerRecord]
     func getCompletedTrackers() -> [Tracker]
     func changePinStatus(for trackerID: UUID, to pinned: Bool)
@@ -28,6 +30,7 @@ final class StorageService {
     static let didChageCompletedTrackers = Notification.Name(rawValue: "CompletedTrackersDidChange")
     static let didUpdateCategories = Notification.Name(rawValue: "CategoriesDidUpdate")
     
+    var trackerCount: Int = 0
     let calendar: Calendar
     var trackerStorage: TrackerStoreProtocol
     var recordStorage: RecordStoreProtocol
@@ -68,6 +71,7 @@ final class StorageService {
         self.trackerStorage.delegate = self
         
         self.records = Set(self.recordStorage.getAllRecords())
+        self.trackerCount = trackerStorage.getTrackerCount()
     }
     
     func addCategory(_ newCategory: TrackerCategory) {
@@ -83,6 +87,7 @@ final class StorageService {
 
 extension StorageService: StorageServiceProtocol {
     func deleteTracker(id: UUID) {
+        trackerCount = trackerStorage.getTrackerCount() - 1
         trackerStorage.deleteTracker(trackerId: id)
     }
     
@@ -97,7 +102,7 @@ extension StorageService: StorageServiceProtocol {
     
     func addTracker(_ tracker: Tracker, categoryName: String) {
         guard let categoryCD = categoryStorage.getCategory(named: categoryName) else { return }
-        
+        trackerCount = trackerStorage.getTrackerCount() + 1
         trackerStorage.addTracker(tracker, categoryCD: categoryCD)
     }
     
@@ -108,7 +113,7 @@ extension StorageService: StorageServiceProtocol {
     }
     
     func getTrackers(for category: TrackerCategoryCoreData) -> [Tracker] {
-        trackerStorage.getTrackers(category: category)
+        trackerStorage.getTrackers(category: category, includePinned: false)
     }
     
     func getRecords(date: Date) -> [TrackerRecord] {
@@ -120,6 +125,10 @@ extension StorageService: StorageServiceProtocol {
         }
         
         return thisDayRecords
+    }
+    
+    func getPinnedTrackers() -> [Tracker] {
+        return trackerStorage.getPinnedTrackers()
     }
     
     func getTracker(trackerId: UUID) -> TrackerCoreData? {

@@ -84,6 +84,7 @@ final class CategoryListViewController: UIViewController {
             categoryTable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             categoryTable.bottomAnchor.constraint(equalTo: addButton.topAnchor, constant: -24)
         ])
+        categoryTable.backgroundColor = .clear
     }
     
     @objc private func newCategory() {
@@ -95,6 +96,9 @@ final class CategoryListViewController: UIViewController {
 extension CategoryListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
+            tableView.visibleCells.forEach { anyCell in
+                anyCell.accessoryType = .none
+            }
             cell.accessoryType = .checkmark
         }
         
@@ -121,10 +125,14 @@ extension CategoryListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "category", for: indexPath)
         cell.selectionStyle = .none
-        cell.accessoryType = .none
         cell.tintColor = .AppColors.blue
         cell.backgroundColor = .AppColors.background
         cell.textLabel?.text = viewModel.categoryNameList[indexPath.row]
+        if NewTrackerDelegate.shared.newTrackerCategoryName == viewModel.categoryNameList[indexPath.row] {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
         cell.layer.masksToBounds = true
         cell.layer.cornerRadius = 16
         cell.layoutSubviews()

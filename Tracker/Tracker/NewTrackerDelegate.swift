@@ -56,7 +56,7 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
             newTrackerVC?.newTrackerColor = newTrackColor
         }
     }
-    var newTrackerCategoryName: String = ""
+    private(set) var newTrackerCategoryName: String = ""
     
     func setTrackerTitle(to title: String) {
         newTrackerTitle = title
