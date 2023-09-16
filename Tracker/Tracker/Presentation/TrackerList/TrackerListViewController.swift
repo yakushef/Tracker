@@ -22,6 +22,8 @@ final class TrackerListViewController: UIViewController {
     private let datePicker = UIDatePicker()
     private let search = UISearchController(searchResultsController: nil)
     
+    private var appliedFilter: Filter = .all
+    
     //MARK: - Lifecycle
 
     override func viewDidLoad() {
@@ -167,6 +169,8 @@ final class TrackerListViewController: UIViewController {
     
     @objc func filterButtonTapped() {
         let filterVC = FilterViewController()
+        filterVC.appliedFilter = self.appliedFilter
+        filterVC.delegate = self
         show(UINavigationController(rootViewController: filterVC), sender: nil)
     }
     
@@ -392,5 +396,41 @@ extension TrackerListViewController: TrackerCellDelegate {
             StorageService.shared.removeRecord(record)
         }
         completion(!isRecorded)
+    }
+}
+
+extension TrackerListViewController: FilterDelegate {
+    func filterDidChange(to filter: Filter) {
+        appliedFilter = filter
+        updateFiltration()
+    }
+    
+    private func updateFiltration() {
+        switch appliedFilter {
+        case .all:
+            filterForAll()
+        case .today:
+            filterForToday()
+        case .toDo:
+            filterForToDo()
+        case .done:
+            filterForDone()
+        }
+    }
+    
+    private func filterForAll() {
+        
+    }
+    
+    private func filterForToday() {
+        
+    }
+    
+    private func filterForToDo() {
+        
+    }
+    
+    private func filterForDone() {
+        
     }
 }

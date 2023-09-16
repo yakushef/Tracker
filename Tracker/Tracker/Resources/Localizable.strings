@@ -30,6 +30,11 @@
 "buttons.addCategory" = "Добавить категорию";
 
 "filters" = "Фильтры";
+"filter.all" = "Все трекеры";
+"filter.today" = "Трекеры на сегодня";
+"filter.done" = "Завершенные";
+"filter.toDo" = "Не завершенные";
+
 "search" = "Поиск";
 
 "placeholder.stats" = "Анализировать пока нечего";
