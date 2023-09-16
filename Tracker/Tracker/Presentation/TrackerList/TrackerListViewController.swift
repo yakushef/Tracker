@@ -257,6 +257,14 @@ final class TrackerListViewController: UIViewController {
         cell.pinStatusChanged()
         updateVisibleCategories()
     }
+    
+    private func editTracker(_ tracker: Tracker, categoryName: String) {
+        let newTrackerVC = NewTrackerViewController()
+        newTrackerVC.vcMode = .edit
+        newTrackerVC.trackerType = tracker.trackerType
+        newTrackerVC.setupForEditing(tracker: tracker, categoryName: categoryName)
+        self.show(UINavigationController(rootViewController: newTrackerVC), sender: nil)
+    }
 }
 
     // MARK: - UICollectionViewDelegate
@@ -277,16 +285,22 @@ extension TrackerListViewController: UICollectionViewDelegate {
         
         let title = cell.isPinned ? "Открепить" : "Закрепить"
         
-        return UIContextMenuConfiguration(actionProvider: { _ in
+        let config = UIContextMenuConfiguration(actionProvider: { _ in
             return UIMenu(children: [
                 UIAction(title: title) { [weak self] _ in
                     self?.changePinForCell(indexPath: indexPath)
                 },
+                UIAction(title: "Редактировать", handler: { [weak self] _ in
+                    if let category = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: indexPath) as? TrackerCatHeader {
+                        self?.editTracker(cell.cellTracker, categoryName: category.label.text ?? "!")
+                    }
+                }),
                 UIAction(title: "Удалить", attributes: .destructive) { _ in
                     StorageService.shared.deleteTracker(id: cell.cellTracker.id)
                 }
             ])
         })
+        return config
     }
 }
 

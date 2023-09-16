@@ -27,6 +27,7 @@ final class NewTrackerViewController: UIViewController {
     
     private var scrollView = UIScrollView()
     
+    private var editedTrackerID = UUID()
     private var newTrackerTitle = ""
     private var newTrackerCategoty = ""
     var newTrackerEmoji: String? = nil {
@@ -129,7 +130,9 @@ final class NewTrackerViewController: UIViewController {
         textField.delegate = self
         textField.layer.cornerRadius = 16
         textField.font = .systemFont(ofSize: 17)
-        textField.placeholder = NSLocalizedString("newTracker.titlePlaceholder", comment: "Введите название трекера")
+        if vcMode == .new {
+            textField.placeholder = NSLocalizedString("newTracker.titlePlaceholder", comment: "Введите название трекера")
+        }
         textField.backgroundColor = .AppColors.background
         textField.clearButtonMode = .whileEditing
         textField.delegate = self
@@ -257,7 +260,7 @@ final class NewTrackerViewController: UIViewController {
             buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18)
         ])
         
-        let createButtonTitle = NSLocalizedString("buttons.create", comment: "Создать")
+        let createButtonTitle = vcMode == .new ? NSLocalizedString("buttons.create", comment: "Создать") : NSLocalizedString("buttons.save", comment: "Cохранить")
         createButton.setTitle(createButtonTitle, for: .normal)
         createButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         createButton.switchActiveState(isActive: isReady)
@@ -286,7 +289,12 @@ final class NewTrackerViewController: UIViewController {
     
     @objc func addButtonTapped() {
         NewTrackerDelegate.shared.setTrackerTitle(to: textField.text ?? "")
-        NewTrackerDelegate.shared.createNewTracker()
+        if vcMode == .new {
+            NewTrackerDelegate.shared.createNewTracker()
+        } else {
+            NewTrackerDelegate.shared.updateTracker(id: editedTrackerID)
+        }
+
         
         let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow })
         guard let rootVC = window?.rootViewController as? UITabBarController,
@@ -305,11 +313,11 @@ final class NewTrackerViewController: UIViewController {
     }
     
     func setupForHabit() {
-        navigationItem.title = NSLocalizedString("newTracker.habit", comment: "Новая привычка")
+        navigationItem.title = vcMode == .new ? NSLocalizedString("newTracker.habit", comment: "Новая привычка") : "Редактирование привычки"
     }
     
     func setupForSingleEvent() {
-        navigationItem.title = NSLocalizedString("newTracker.event", comment: "Новое нерегулярное событие")
+        navigationItem.title = vcMode == .new ? NSLocalizedString("newTracker.event", comment: "Новое нерегулярное событие") : "Редактирование события"
     }
     
     func checkIfReady() {
@@ -466,14 +474,22 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCell", for: indexPath) as? EmojiCell else {
                 return UICollectionViewCell()
             }
-            cell.setEmoji(emojiList[indexPath.row])
+            let emoji = emojiList[indexPath.row]
+            cell.setEmoji(emoji)
+            if vcMode == .edit && emoji == newTrackerEmoji {
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
+            }
             cell.awakeFromNib()
             return cell
         } else if collectionView == colorCollection {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ColorCell", for: indexPath) as? ColorCell else {
                 return UICollectionViewCell()
             }
-            cell.setColor(sectionColors[indexPath.row])
+            let color = sectionColors[indexPath.row]
+            cell.setColor(color)
+            if vcMode == .edit && color == newTrackerColor {
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
+            }
             cell.awakeFromNib()
             return cell
         } else {
@@ -512,5 +528,22 @@ extension NewTrackerViewController {
     public enum Mode {
         case new
         case edit
+    }
+    
+    func setupForEditing(tracker: Tracker, categoryName: String) {
+        editedTrackerID = tracker.id
+        textField.text = tracker.title
+        newTrackerCategoty = categoryName
+        category = categoryName
+        NewTrackerDelegate.shared.setNewTrackerCategoryName(to: categoryName)
+        newTrackerEmoji = tracker.emoji
+        NewTrackerDelegate.shared.setTrackerEmoji(to: tracker.emoji)
+        newTrackerColor = tracker.color
+        NewTrackerDelegate.shared.newTrackColor = tracker.color
+        newTrackerTimetable = tracker.timetable
+        NewTrackerDelegate.shared.newTrackerSchedule = Set(tracker.timetable)
+        activeDays = Set(tracker.timetable)
+        isReady = true
+        checkIfReady()
     }
 }

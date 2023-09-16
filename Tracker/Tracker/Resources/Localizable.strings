@@ -25,6 +25,7 @@
 "buttons.habit" = "Привычка";
 "buttons.event" = "Нерегулярное событие";
 "buttons.cancel" = "Отменить";
+"buttons.save" = "Cохранить";
 "buttons.create" = "Создать";
 "buttons.done" = "Готово";
 "buttons.addCategory" = "Добавить категорию";

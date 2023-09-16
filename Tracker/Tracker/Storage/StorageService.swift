@@ -23,6 +23,7 @@ protocol StorageServiceProtocol: AnyObject {
     func getCompletedTrackers() -> [Tracker]
     func changePinStatus(for trackerID: UUID, to pinned: Bool)
     func deleteTracker(id: UUID)
+    func editTracker(_ tracker: Tracker, categoryName: String)
 }
 
 final class StorageService {
@@ -88,6 +89,12 @@ final class StorageService {
 }
 
 extension StorageService: StorageServiceProtocol {
+    
+    func editTracker(_ tracker: Tracker, categoryName: String) {
+        guard let categoryCD = categoryStorage.getCategory(named: categoryName) else { return }
+        trackerCount = trackerStorage.getTrackerCount() + 1
+        trackerStorage.updateTracker(tracker, categoryCD: categoryCD)
+    }
     
     func deleteTracker(id: UUID) {
         trackerCount = trackerStorage.getTrackerCount() - 1

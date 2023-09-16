@@ -29,6 +29,7 @@ protocol TrackerStoreProtocol: AnyObject {
     func changeTrackerPinStatus(trackerId: UUID, pinned: Bool)
     func deleteTracker(trackerId: UUID)
     func getTrackerCount() -> Int
+    func updateTracker(_ tracker: Tracker, categoryCD: TrackerCategoryCoreData)
 }
 
 final class TrackerStore: NSObject, TrackerStoreProtocol {
@@ -69,6 +70,33 @@ final class TrackerStore: NSObject, TrackerStoreProtocol {
             return 0
         }
         return objects.count
+    }
+    
+    func updateTracker(_ tracker: Tracker, categoryCD: TrackerCategoryCoreData) {
+        guard let editedTracker = getTracker(trackerId: tracker.id) else { return }
+        
+        switch tracker.trackerType {
+        case .habit:
+            editedTracker.isHabit = true
+        case .singleEvent:
+            editedTracker.isHabit = false
+        }
+        
+        guard let cat = context.object(with: categoryCD.objectID) as? TrackerCategoryCoreData else {
+            assertionFailure(TrackerError.trackerDecodingError.localizedDescription)
+            return
+        }
+        
+        editedTracker.title = tracker.title
+        editedTracker.emoji = tracker.emoji
+        editedTracker.schedule = convertWeekdaysToCD(tracker.timetable, context: context)
+        editedTracker.colorIndex = Int16(sectionColors.firstIndex(of: tracker.color) ?? 0)
+        editedTracker.category = cat
+        
+        do { try context.save() }
+        catch {
+            assertionFailure(error.localizedDescription)
+        }
     }
     
     func addTracker(_ tracker: Tracker, categoryCD: TrackerCategoryCoreData) {
