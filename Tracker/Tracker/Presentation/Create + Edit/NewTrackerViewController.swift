@@ -336,11 +336,11 @@ final class NewTrackerViewController: UIViewController {
     }
     
     func setupForHabit() {
-        navigationItem.title = vcMode == .new ? NSLocalizedString("newTracker.habit", comment: "Новая привычка") : "Редактирование привычки"
+        navigationItem.title = vcMode == .new ? NSLocalizedString("newTracker.habit", comment: "Новая привычка") : NSLocalizedString("edit.habit", comment: "Редактирование привычки")
     }
     
     func setupForSingleEvent() {
-        navigationItem.title = vcMode == .new ? NSLocalizedString("newTracker.event", comment: "Новое нерегулярное событие") : "Редактирование события"
+        navigationItem.title = vcMode == .new ? NSLocalizedString("newTracker.event", comment: "Новое нерегулярное событие") : NSLocalizedString("edit.event", comment: "Редактировать событие")
     }
     
     func checkIfReady() {

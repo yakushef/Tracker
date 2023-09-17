@@ -137,7 +137,7 @@ final class StatisticsViewController: UIViewController {
 
 extension StatisticsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        4
+        1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -148,17 +148,8 @@ extension StatisticsViewController: UITableViewDataSource {
         
         switch indexPath.row {
         case 0:
-            cell.setDays(viewModel.statistics.bestDayTrackerCount)
-            cell.setDescription("Лучший период")
-        case 1:
-            cell.setDays(viewModel.statistics.idealDaysCount)
-            cell.setDescription("Идеальные дни")
-        case 2:
             cell.setDays(viewModel.statistics.completedTrackerCount)
-            cell.setDescription("Трекеров завершено")
-        case 3:
-            cell.setDays(viewModel.statistics.averageTrackerCount)
-            cell.setDescription("Среднее значение")
+            cell.setDescription(NSLocalizedString("statistics.total", comment: "Трекеров завершено"))
         default:
             cell.setDays(0)
             cell.setDescription("👾")

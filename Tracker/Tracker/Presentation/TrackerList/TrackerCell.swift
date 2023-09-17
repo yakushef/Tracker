@@ -17,7 +17,7 @@ protocol TrackerCellDelegate: AnyObject {
 //MARK: - TrackerCell
 
 final class TrackerCell: UICollectionViewCell {
-    private var cardView = UIView()
+    private(set) var cardView = UIView()
     private var emojiLabel = UILabel()
     private var pinImage = UIImageView()
     private var titleLabel = UILabel()

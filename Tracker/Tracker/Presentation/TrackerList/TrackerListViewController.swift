@@ -8,7 +8,7 @@
 import UIKit
 
 final class TrackerListViewController: UIViewController {
-    
+    private var alertPresenter: AlertPresenter?
     private var trackers: [Tracker] = []
     private var pinnedTrackers: [Tracker] = []
     private var categories: [TrackerCategory] = []
@@ -28,7 +28,7 @@ final class TrackerListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        alertPresenter = AlertPresenter(delegate: self)
         NewTrackerDelegate.shared.trackerListVC = self
         
         NotificationCenter.default.addObserver(forName: StorageService.didChageCompletedTrackers,
@@ -279,25 +279,35 @@ extension TrackerListViewController: UICollectionViewDelegate {
         return CGSize(width: collectionView.bounds.width - 32, height: 46)
     }
     
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        
+        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
+        
+        let preview = UITargetedPreview(view: cell.cardView)
+        return preview
+    }
+    
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         guard let indexPath = indexPaths.first,
               let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
         
-        let title = cell.isPinned ? "Открепить" : "Закрепить"
+        let title = cell.isPinned ? NSLocalizedString("tracker.unpin", comment: "Открепить") : NSLocalizedString("tracker.pin", comment: "Закрепить")
         
         let config = UIContextMenuConfiguration(actionProvider: { _ in
             return UIMenu(children: [
                 UIAction(title: title) { [weak self] _ in
                     self?.changePinForCell(indexPath: indexPath)
                 },
-                UIAction(title: "Редактировать", handler: { [weak self] _ in
+                UIAction(title: NSLocalizedString("buttons.edit", comment: "Редактировать"), handler: { [weak self] _ in
                     guard let trackerCD = StorageService.shared.getTracker(trackerId: cell.cellTracker.id),
                           let cat = trackerCD.category,
                     let categoryTitle = cat.title else { return }
                     self?.editTracker(cell.cellTracker, categoryName: categoryTitle)
                 }),
-                UIAction(title: "Удалить", attributes: .destructive) { _ in
-                    StorageService.shared.deleteTracker(id: cell.cellTracker.id)
+                UIAction(title: NSLocalizedString("buttons.delete", comment: "Удалить"), attributes: .destructive) { [weak self] _ in
+                    self?.alertPresenter?.presentDeleteAlert(message: NSLocalizedString("tracker.deleteConfirmation", comment: "Уверены что хотите удалить трекер?"), completion: {
+                        StorageService.shared.deleteTracker(id: cell.cellTracker.id)
+                    })
                 }
             ])
         })
@@ -320,7 +330,7 @@ extension TrackerListViewController: UICollectionViewDelegateFlowLayout {
             } else {
                 switch indexPath.section {
                 case 0:
-                    header.label.text = "Закрепленные"
+                    header.label.text = NSLocalizedString("pinned", comment: "Закрепленные")
                 default:
                     header.label.text = visibleCategories[indexPath.section - 1].name
                 }
@@ -496,5 +506,11 @@ extension TrackerListViewController: FilterDelegate {
             }
         }
         return isRecorded
+    }
+}
+
+extension TrackerListViewController: AlertPresenterDelegate {
+    func show(alert: UIAlertController) {
+        present(alert, animated: true)
     }
 }

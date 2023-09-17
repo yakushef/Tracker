@@ -29,6 +29,8 @@
 "buttons.create" = "Создать";
 "buttons.done" = "Готово";
 "buttons.addCategory" = "Добавить категорию";
+"buttons.delete" = "Удалить";
+"buttons.edit" = "Редактировать";
 
 "filters" = "Фильтры";
 "filter.all" = "Все трекеры";
@@ -37,6 +39,13 @@
 "filter.toDo" = "Не завершенные";
 
 "search" = "Поиск";
+
+"pinned" = "Закрепленные";
+"edit.event" = "Редактирование события";
+"edit.habit" = "Редактирование привычки";
+"tracker.deleteConfirmation" = "Уверены что хотите удалить трекер?";
+"tracker.pin" = "Закрепить";
+"tracker.unpin" = "Открепить";
 
 "placeholder.stats" = "Анализировать пока нечего";
 "placeholder.search" = "Ничего не найдено";
@@ -65,3 +74,5 @@
 "schedule.saturday.short" = "Сб";
 "schedule.sunday.short" = "Вс";
 "schedule.everyday" = "Каждый день";
+
+"statistics.total" = "Трекеров завершено";
