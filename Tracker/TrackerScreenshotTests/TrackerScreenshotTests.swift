@@ -13,18 +13,16 @@ final class TrackerScreenshotTests: XCTestCase {
 
     func testMainScreenLight() {
         let lightVC = MainListTabBar()
-        lightVC.overrideUserInterfaceStyle = .light
         lightVC.setup()
         
-        assertSnapshot(matching: lightVC, as: .image)
+        assertSnapshot(matching: lightVC, as: .image(traits: .init(userInterfaceStyle: .light)))
     }
     
     func testMainScreenDark() {
         let darkVC = MainListTabBar()
-        darkVC.overrideUserInterfaceStyle = .dark
         darkVC.setup()
         
-        assertSnapshot(matching: darkVC, as: .image)
+        assertSnapshot(matching: darkVC, as: .image(traits: .init(userInterfaceStyle: .dark)))
     }
 
 }
