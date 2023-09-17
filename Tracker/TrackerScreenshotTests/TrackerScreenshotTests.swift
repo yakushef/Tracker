@@ -9,18 +9,31 @@ import XCTest
 import SnapshotTesting
 @testable import Tracker
 
-final class TrackerScreenshotTests: XCTestCase {
+final class AnalyticsServiceStub: AnalyticsServiceProtocol {
+    func screenOpened(_ screenName: String) {
+        
+    }
+    
+    func screenClosed(_ screenName: String) {
+        
+    }
+    
+    func buttonTapped(_ button: AppMetricaReportModel.YMMItem, screen screenTitle: String) {
+        
+    }
+}
 
+final class TrackerScreenshotTests: XCTestCase {
     func testMainScreenLight() {
         let lightVC = MainListTabBar()
-        lightVC.setup()
+        lightVC.setup(analytics: AnalyticsServiceStub())
         
         assertSnapshot(matching: lightVC, as: .image(traits: .init(userInterfaceStyle: .light)))
     }
     
     func testMainScreenDark() {
         let darkVC = MainListTabBar()
-        darkVC.setup()
+        darkVC.setup(analytics: AnalyticsServiceStub())
         
         assertSnapshot(matching: darkVC, as: .image(traits: .init(userInterfaceStyle: .dark)))
     }

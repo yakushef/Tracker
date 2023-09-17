@@ -14,9 +14,12 @@ final class MainListTabBar: UITabBarController {
         setup()
     }
     
-    func setup() {
+    func setup(analytics: AnalyticsServiceProtocol = AnalyticsService.shared) {
         
-        let trackersVC = UINavigationController(rootViewController: TrackerListViewController())
+        let trackerList = TrackerListViewController()
+        trackerList.analyticsService = analytics
+        let trackersVC = UINavigationController(rootViewController: trackerList)
+        
         let trackersTitle = NSLocalizedString("trackerPage.title",
                                               comment: "Заголовок страницы трекеров")
         trackersVC.tabBarItem = UITabBarItem(title: trackersTitle,

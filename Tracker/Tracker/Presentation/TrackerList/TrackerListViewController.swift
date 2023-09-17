@@ -8,6 +8,8 @@
 import UIKit
 
 final class TrackerListViewController: UIViewController {
+    var analyticsService: AnalyticsServiceProtocol?
+    
     private var alertPresenter: AlertPresenter?
     private var trackers: [Tracker] = []
     private var pinnedTrackers: [Tracker] = []
@@ -57,7 +59,12 @@ final class TrackerListViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        analyticsService?.screenOpened(AppMetricaReportModel.YMMScreens.main.rawValue)
         checkVisibility()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        analyticsService?.screenClosed(AppMetricaReportModel.YMMScreens.main.rawValue)
     }
     
     // MARK: - UI Setup
@@ -164,10 +171,16 @@ final class TrackerListViewController: UIViewController {
     // MARK: - Navigation
     
     @objc func addNewTracker() {
+        analyticsService?.buttonTapped(.add_track,
+                                       screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+        
         self.show(UINavigationController(rootViewController: TrackerTypeChoiceViewController()), sender: nil)
     }
     
     @objc func filterButtonTapped() {
+        analyticsService?.buttonTapped(.filter,
+                                       screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+        
         let filterVC = FilterViewController()
         filterVC.appliedFilter = self.appliedFilter
         filterVC.delegate = self
@@ -299,13 +312,20 @@ extension TrackerListViewController: UICollectionViewDelegate {
                     self?.changePinForCell(indexPath: indexPath)
                 },
                 UIAction(title: NSLocalizedString("buttons.edit", comment: "Редактировать"), handler: { [weak self] _ in
+                    
+                    self?.analyticsService?.buttonTapped(.edit,
+                                                         screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+                    
                     guard let trackerCD = StorageService.shared.getTracker(trackerId: cell.cellTracker.id),
                           let cat = trackerCD.category,
                     let categoryTitle = cat.title else { return }
                     self?.editTracker(cell.cellTracker, categoryName: categoryTitle)
                 }),
                 UIAction(title: NSLocalizedString("buttons.delete", comment: "Удалить"), attributes: .destructive) { [weak self] _ in
-                    self?.alertPresenter?.presentDeleteAlert(message: NSLocalizedString("tracker.deleteConfirmation", comment: "Уверены что хотите удалить трекер?"), completion: {
+                    self?.alertPresenter?.presentDeleteAlert(message: NSLocalizedString("tracker.deleteConfirmation", comment: "Уверены что хотите удалить трекер?"), completion: { [weak self] in
+                        self?.analyticsService?.buttonTapped(.delete,
+                                                       screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+                        
                         StorageService.shared.deleteTracker(id: cell.cellTracker.id)
                     })
                 }
@@ -412,6 +432,9 @@ extension TrackerListViewController: TrackerCellDelegate {
     }
     
     func updateRecords(with record: TrackerRecord, completion: (Bool) -> Void) {
+        analyticsService?.buttonTapped(.track,
+                                       screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+        
         completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
         let completedID = completedTrackers.filter {
             $0.trackerID == record.trackerID
@@ -424,6 +447,8 @@ extension TrackerListViewController: TrackerCellDelegate {
         }
         completion(!isRecorded)
     }
+    
+    
 }
 
 extension TrackerListViewController: FilterDelegate {
