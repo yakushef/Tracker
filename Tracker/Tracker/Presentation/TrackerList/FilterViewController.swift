@@ -26,6 +26,8 @@ final class FilterViewController: UIViewController {
     var appliedFilter: Filter = .all
     weak var delegate: FilterDelegate?
     
+    //MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .AppColors.white
@@ -33,6 +35,8 @@ final class FilterViewController: UIViewController {
                                                  comment: "Заголовок страницы фильтров")
         setupUI()
     }
+    
+    // MARK: - UI
     
     private func setupUI() {
         setupTable()
@@ -57,6 +61,8 @@ final class FilterViewController: UIViewController {
         filterTable.contentInset = UIEdgeInsets(top: -5, left: 0, bottom: 0, right: 0)
     }
 }
+
+// MARK: - TAbleView Data Source
 
 extension FilterViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -104,6 +110,8 @@ extension FilterViewController: UITableViewDataSource {
         return cell
     }
 }
+
+// MARK: - TableView Delegate
 
 extension FilterViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -452,9 +452,9 @@ extension TrackerListViewController: TrackerCellDelegate {
         }
         completion(!isRecorded)
     }
-    
-    
 }
+
+//MARK: Filter Delegate
 
 extension TrackerListViewController: FilterDelegate {
     func filterDidChange(to filter: Filter) {
@@ -538,6 +538,8 @@ extension TrackerListViewController: FilterDelegate {
         return isRecorded
     }
 }
+
+// MARK: Alert Presenter Delegate
 
 extension TrackerListViewController: AlertPresenterDelegate {
     func show(alert: UIAlertController) {

@@ -43,6 +43,7 @@ final class MainListTabBar: UITabBarController {
         let dividerView = UIView(frame: CGRect(x: tabBar.frame.minX, y: 0, width: tabBar.frame.width, height: 0.5))
         dividerView.backgroundColor = UIColor.AppColors.divider
         tabBar.addSubview(dividerView)
+        tabBar.layoutIfNeeded()
     }
 }
 

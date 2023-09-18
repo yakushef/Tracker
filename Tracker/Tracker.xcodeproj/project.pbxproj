@@ -21,6 +21,7 @@
 		BC2A7BCF2AB7823D00335654 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2A7BCE2AB7823D00335654 /* AnalyticsService.swift */; };
 		BC2A7BD12AB78B8E00335654 /* AnalyticsReportKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2A7BD02AB78B8E00335654 /* AnalyticsReportKeys.swift */; };
 		BC2A7BD72AB81F6800335654 /* Extension UITableview.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2A7BD62AB81F6800335654 /* Extension UITableview.swift */; };
+		BC2A7BD92AB8B83000335654 /* GradientFrameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2A7BD82AB8B83000335654 /* GradientFrameView.swift */; };
 		BC307D012A7977030076AA89 /* Extension UIColor + Emojis.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC307D002A7977030076AA89 /* Extension UIColor + Emojis.swift */; };
 		BC307D032A797D820076AA89 /* Extension DateFormatter + Weekdays.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC307D022A797D820076AA89 /* Extension DateFormatter + Weekdays.swift */; };
 		BC307D092A79805F0076AA89 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC307D082A79805F0076AA89 /* TabBarController.swift */; };
@@ -93,6 +94,7 @@
 		BC2A7BCE2AB7823D00335654 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		BC2A7BD02AB78B8E00335654 /* AnalyticsReportKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsReportKeys.swift; sourceTree = "<group>"; };
 		BC2A7BD62AB81F6800335654 /* Extension UITableview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension UITableview.swift"; sourceTree = "<group>"; };
+		BC2A7BD82AB8B83000335654 /* GradientFrameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientFrameView.swift; sourceTree = "<group>"; };
 		BC307D002A7977030076AA89 /* Extension UIColor + Emojis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension UIColor + Emojis.swift"; sourceTree = "<group>"; };
 		BC307D022A797D820076AA89 /* Extension DateFormatter + Weekdays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension DateFormatter + Weekdays.swift"; sourceTree = "<group>"; };
 		BC307D082A79805F0076AA89 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				BC307D022A797D820076AA89 /* Extension DateFormatter + Weekdays.swift */,
 				BCE38F552A9904B2005BE0E6 /* Extension UIViewController.swift */,
 				BC2A7BD62AB81F6800335654 /* Extension UITableview.swift */,
+				BC2A7BD82AB8B83000335654 /* GradientFrameView.swift */,
 			);
 			path = "Extensions + UI Elements";
 			sourceTree = "<group>";
@@ -570,6 +573,7 @@
 				BCE38F952A9FBCF2005BE0E6 /* CategoryStore.swift in Sources */,
 				BCE38F522A98FF77005BE0E6 /* TrackerRecord.swift in Sources */,
 				BCE240D92AA7997B0040C2C8 /* OnboardingPageController.swift in Sources */,
+				BC2A7BD92AB8B83000335654 /* GradientFrameView.swift in Sources */,
 				BC2A7BAC2AB4321700335654 /* StatisticsViewModel.swift in Sources */,
 				BC1D45622AB22319007D5F5A /* StatisticsCell.swift in Sources */,
 				BC2A7BAE2AB4322400335654 /* StatisticsService.swift in Sources */,

@@ -15,8 +15,13 @@ final class StatisticsViewController: UIViewController {
     
     lazy var statisticsTable = {
         let table = UITableView()
+        table.separatorStyle = .none
+        table.backgroundColor = .AppColors.white
+        table.isScrollEnabled = false
         return table
     }()
+    
+    //MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +49,8 @@ final class StatisticsViewController: UIViewController {
         viewModel.updateStatistics()
     }
     
+    //MARK: - UI
+    
     func checkVisibility() {
         statisticsTable.isHidden = (StorageService.shared.trackerCount < 1)
         print(StorageService.shared.trackerCount)
@@ -54,86 +61,28 @@ final class StatisticsViewController: UIViewController {
         statisticsTable.delegate = self
         
         view.addSubview(statisticsTable)
-        
         statisticsTable.translatesAutoresizingMaskIntoConstraints = false
-  
-        let search = UISearchController()
-        search.hidesNavigationBarDuringPresentation = false
-//        navigationItem.searchController = search
-        search.searchBar.isUserInteractionEnabled = false
-        search.searchBar.alpha = 1
-        navigationItem.hidesSearchBarWhenScrolling = false
-        
-        statisticsTable.separatorStyle = .none
-        statisticsTable.backgroundColor = .AppColors.white
-        statisticsTable.isScrollEnabled = true
+    
         statisticsTable.register(StatisticsCell.self, forCellReuseIdentifier: "statistics_cell")
         
         let layoutFrame = view.safeAreaLayoutGuide.layoutFrame
-        let navBarFrame = search.searchBar.frame// ?? layoutFrame
-
         let navBarHeight = self.navigationController?.navigationBar.frame.height ?? 0
-        let statusBarHeight = UIApplication.shared.statusBarFrame.height
-        let navBarBottomY = navBarHeight + statusBarHeight
         
-        let yo = {
-//            guard let titleLabel = navigationItem.titleView as? UILabel else { return 0.0 }
-            
-            let className = "LargeTitle"
-            for subview in navigationController!.navigationBar.subviews {
-                // Get the name of the class as a string
-                let elementName = String(describing: type(of: subview))
-                // Check if the name contains the class name
-
-                if elementName.contains(className) {
-                    print("\(subview) is a \(className)")
-                } else {
-                    print("\(subview) is NOT a \(className)")
-                    for subsubview in subview.subviews {
-                        let elementName1 = String(describing: type(of: subsubview))
-                        if elementName1.contains(className) {
-                            print("\(subsubview) is a \(className)")
-                        } else {
-                            print("\(subsubview) is NOT a \(className)")
-                        }
-                    }
-                }
-            }
-            
-            var titleLabel = UIVisualEffectView()
-            
-            for subview in navigationController!.navigationBar.subviews {
-                if let subview = subview as? UIVisualEffectView {
-                    titleLabel = subview
-                } else {
-                    for subsubview in subview.subviews {
-
-                        if let subsubview = subsubview as? UIVisualEffectView{
-                            titleLabel = subsubview
-                            print(subsubview)
-                            break
-                        }
-                    }
-                }
-            }
-            // Get the frame of the UILabel in the window's coordinate system
-            let titleLabelFrame = titleLabel.convert(titleLabel.bounds, to: nil)
-            // Get the max Y of the frame
-            let titleLabelMaxY = titleLabelFrame.maxY
-            
-            return titleLabel.bounds.height
-        }()
-        
-        print(yo)
+        let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        let statusBarHeight = scene?.statusBarManager?.statusBarFrame.height ?? 0
         
         statisticsTable.frame = layoutFrame
+        
         let navBottomInset = navigationController?.navigationBar.safeAreaInsets.bottom ?? 0
-        print("INSET")
-        print(navBottomInset)
-        statisticsTable.contentInset = UIEdgeInsets(top: (navigationController?.navigationBar.frame.height ?? 0) + statusBarHeight + 53 - navBottomInset, left: 0, bottom: 0, right: 0)
-        statisticsTable.isScrollEnabled = false
+        
+        statisticsTable.contentInset = UIEdgeInsets(top: navBarHeight + statusBarHeight + 53 - navBottomInset,
+                                                    left: 0,
+                                                    bottom: 0,
+                                                    right: 0)
     }
 }
+
+// MARK: - TableView Data Source
 
 extension StatisticsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -157,6 +106,8 @@ extension StatisticsViewController: UITableViewDataSource {
         return cell
     }
 }
+
+//MARK: - TableView Delegate
 
 extension StatisticsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
