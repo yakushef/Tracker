@@ -41,6 +41,7 @@ final class FilterViewController: UIViewController {
     private func setupTable() {
         filterTable.delegate = self
         filterTable.dataSource = self
+        filterTable.isScrollEnabled = false
         filterTable.register(UITableViewCell.self, forCellReuseIdentifier: "filter")
         view.addSubview(filterTable)
         filterTable.translatesAutoresizingMaskIntoConstraints = false
@@ -51,6 +52,9 @@ final class FilterViewController: UIViewController {
             filterTable.heightAnchor.constraint(equalToConstant: CGFloat(75 * filterList.count))
         ])
         filterTable.backgroundColor = .clear
+        filterTable.clipsToBounds = true
+        filterTable.layer.cornerRadius = 16
+        filterTable.contentInset = UIEdgeInsets(top: -5, left: 0, bottom: 0, right: 0)
     }
 }
 
@@ -84,23 +88,15 @@ extension FilterViewController: UITableViewDataSource {
             cell.accessoryType = .checkmark
         }
         
-        cell.layer.masksToBounds = true
-        cell.layer.cornerRadius = 16
-        cell.layoutSubviews()
-        
         if indexPath.row == 0 && filterList.count == 1 {
-            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
             switch indexPath.row {
             case 0:
-                cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             case filterList.count - 1:
-                cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
             default:
-                cell.layer.maskedCorners = []
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             }
         }
@@ -111,7 +107,11 @@ extension FilterViewController: UITableViewDataSource {
 
 extension FilterViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        75
+        if indexPath.row == 0 {
+            return 80
+        } else {
+            return 75
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

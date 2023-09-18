@@ -8,7 +8,6 @@
 import UIKit
 
 final class CategoryListViewController: UIViewController {
-    
     private var viewModel = CategoryListViewModel()
     
     private let addButton = GenericAppButton(type: .system)
@@ -125,6 +124,7 @@ extension CategoryListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "category", for: indexPath)
         cell.selectionStyle = .none
+
         cell.tintColor = .AppColors.blue
         cell.backgroundColor = .AppColors.background
         cell.textLabel?.text = viewModel.categoryNameList[indexPath.row]
@@ -139,7 +139,7 @@ extension CategoryListViewController: UITableViewDataSource {
         
         if indexPath.row == 0 && viewModel.categoryNameList.count == 1 {
             cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.frame.width)
         } else {
             switch indexPath.row {
             case 0:
