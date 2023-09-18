@@ -234,13 +234,18 @@ final class TrackerListViewController: UIViewController {
         
         if let searchText = search.searchBar.text,
            !searchText.isEmpty {
-            let searchResults: [TrackerCategory] = visibleCategories.map {
+            let searchResults: [Tracker] = pinnedTrackers.filter {
+                    $0.title.localizedCaseInsensitiveContains(searchText)
+                }
+            pinnedTrackers = searchResults
+            
+            let notPinnedSearchResults: [TrackerCategory] = visibleCategories.map {
                 let trackers = $0.trackers.filter {
                     $0.title.localizedCaseInsensitiveContains(searchText)
                 }
                 return TrackerCategory(name: $0.name, trackers: trackers)
             }
-            visibleCategories = searchResults
+            visibleCategories = notPinnedSearchResults
         }
         
         updateFiltration()

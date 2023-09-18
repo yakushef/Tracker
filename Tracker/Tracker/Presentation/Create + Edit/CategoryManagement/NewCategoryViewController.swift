@@ -79,7 +79,9 @@ final class NewCategoryViewController: UIViewController {
                 StorageService.shared.addCategory(TrackerCategory(name: categoryName, trackers: []))
             }
         }
-        dismiss(animated: true)
+        dismiss(animated: true) {
+            self.presentingViewController?.dismiss(animated: true)
+        }
     }
 }
 
