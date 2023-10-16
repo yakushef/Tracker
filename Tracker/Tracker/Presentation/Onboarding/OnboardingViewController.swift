@@ -15,14 +15,16 @@ final class OnboardingViewController: UIPageViewController {
         let page1 = {
             let page1vc = OnboardingPageController()
             page1vc.setImage(UIImage(named: "Onboarding1"))
-            page1vc.setTitle("Отслеживайте только то, что хотите")
+            let page1title = NSLocalizedString("onboarding.page1", comment: "Отслеживайте только то, что хотите")
+            page1vc.setTitle(page1title)
             return page1vc
         }()
         
         let page2 = {
             let page2vc = OnboardingPageController()
             page2vc.setImage(UIImage(named: "Onboarding2"))
-            page2vc.setTitle("Даже если это не литры воды и йога")
+            let page2title = NSLocalizedString("onboarding.page2", comment: "Даже если это не литры воды и йога")
+            page2vc.setTitle(page2title)
             return page2vc
         }()
         
@@ -45,7 +47,8 @@ final class OnboardingViewController: UIPageViewController {
     
     private lazy var okButton: GenericAppButton = {
         let button = GenericAppButton()
-        button.setTitle("Вот это технологии!", for: .normal)
+        let buttonTitle = NSLocalizedString("onboarding.button", comment: "Вот это технологии!")
+        button.setTitle(buttonTitle, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -57,6 +60,8 @@ final class OnboardingViewController: UIPageViewController {
         
         dataSource = self
         delegate = self
+        
+        overrideUserInterfaceStyle = .light
         
         if let first = pages.first {
             setViewControllers([first], direction: .forward, animated: true)

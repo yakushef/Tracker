@@ -10,17 +10,18 @@ import UIKit
 //MARK: - TrackerCellDelegate
 
 protocol TrackerCellDelegate: AnyObject {
-    func updatePinnedStatus()
+    func updatePinnedStatus(trackerID: UUID, to pinned: Bool)
     func updateRecords(with record: TrackerRecord, completion: (Bool) -> Void)
 }
 
 //MARK: - TrackerCell
 
 final class TrackerCell: UICollectionViewCell {
-    private var cardView = UIView()
+    private(set) var cardView = UIView()
     private var emojiLabel = UILabel()
     private var pinImage = UIImageView()
     private var titleLabel = UILabel()
+    private(set) var isPinned = false
     private var isRecorded: Bool = false {
         didSet {
             incrementButton.setImage(buttonImage(), for: .normal)
@@ -41,7 +42,11 @@ final class TrackerCell: UICollectionViewCell {
     private var daysLabel = UILabel()
     private var cellDate = Date()
     
-    private var cellTracker = Tracker(eventTitle: "", emoji: "", color: .gray)
+    private(set) var cellTracker = Tracker(eventTitle: "", emoji: "", color: .gray) {
+        didSet {
+            isPinned = cellTracker.isPinned
+        }
+    }
     
     override func prepareForReuse() {
         daysLabel.text = ""
@@ -66,11 +71,16 @@ final class TrackerCell: UICollectionViewCell {
         isRecorded = isNowRecorded
     }
     
+    func pinStatusChanged() {
+        delegate?.updatePinnedStatus(trackerID: cellTracker.id, to: !cellTracker.isPinned)
+    }
+    
     func configureCell(with tracker: Tracker, date: Date) {
-        
         cellTracker = tracker
         cellDate = date
         checkIfRecorded()
+        
+        backgroundColor = .clear
         
         //MARK: - Card View
         
@@ -112,7 +122,7 @@ final class TrackerCell: UICollectionViewCell {
         ])
         emojiLabel.layer.cornerRadius = 12
         emojiLabel.clipsToBounds = true
-        emojiLabel.backgroundColor = .AppColors.background
+        emojiLabel.backgroundColor = .white.withAlphaComponent(0.3)
         emojiLabel.font = .systemFont(ofSize: 14)
         emojiLabel.textAlignment = .center
         emojiLabel.text = tracker.emoji
@@ -128,7 +138,7 @@ final class TrackerCell: UICollectionViewCell {
         ])
         titleLabel.font = .boldSystemFont(ofSize: 12)
         titleLabel.numberOfLines = 2
-        titleLabel.textColor = .AppColors.white
+        titleLabel.textColor = .white
         titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         titleLabel.text = tracker.title
         
@@ -181,8 +191,11 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     private func updateDay() {
-        let daysCount = StorageService.shared.getRecords(for: cellTracker.id)
-        daysLabel.text = dayFormatter.string(from: DateComponents(day: daysCount.count))
+        let daysCount = StorageService.shared.getRecords(for: cellTracker.id).count
+        daysLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("daysTracked", comment: "Number of days tracked"),
+            daysCount
+        )
     }
     
     @objc func incrementButtonTapped() {

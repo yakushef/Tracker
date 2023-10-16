@@ -27,6 +27,7 @@ protocol RecordStoreDelegate: AnyObject {
 }
 
 final class RecordStore: NSObject, RecordStoreProtocol {
+    
     private let context: NSManagedObjectContext
     private var controller: NSFetchedResultsController<TrackerRecordCoreData>?
     
@@ -61,8 +62,11 @@ final class RecordStore: NSObject, RecordStoreProtocol {
         controller?.fetchRequest.predicate = nil
         try? controller?.performFetch()
         if let recordsCD = controller?.fetchedObjects {
-            do { allRecords = try recordsCD.map {
-                try recordFromCD($0)
+            do { allRecords = try recordsCD.flatMap {
+                if let record = try? recordFromCD($0) {
+                    return record } else {
+                        return nil
+                    }
             }
             } catch {
                 assertionFailure(error.localizedDescription)
@@ -71,7 +75,7 @@ final class RecordStore: NSObject, RecordStoreProtocol {
         return allRecords
     }
     
-    private func recordFromCD(_ recordCD: TrackerRecordCoreData) throws -> TrackerRecord {
+    private func recordFromCD(_ recordCD: TrackerRecordCoreData) throws -> TrackerRecord? {
         guard let tracker = recordCD.tracker,
               let id = tracker.trackerId,
               let date = recordCD.date else {

@@ -12,7 +12,7 @@ class EmojiCell: UICollectionViewCell {
     
     override var isSelected: Bool {
         didSet {
-            backgroundColor = isSelected ? .AppColors.background : .clear
+            backgroundColor = isSelected ? .AppColors.lightGray : .clear
         }
     }
     

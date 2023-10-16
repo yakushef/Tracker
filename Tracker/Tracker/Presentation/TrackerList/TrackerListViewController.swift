@@ -8,8 +8,11 @@
 import UIKit
 
 final class TrackerListViewController: UIViewController {
+    var analyticsService: AnalyticsServiceProtocol?
     
+    private var alertPresenter: AlertPresenter?
     private var trackers: [Tracker] = []
+    private var pinnedTrackers: [Tracker] = []
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
@@ -21,11 +24,13 @@ final class TrackerListViewController: UIViewController {
     private let datePicker = UIDatePicker()
     private let search = UISearchController(searchResultsController: nil)
     
+    private var appliedFilter: Filter = .all
+    
     //MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        alertPresenter = AlertPresenter(delegate: self)
         NewTrackerDelegate.shared.trackerListVC = self
         
         NotificationCenter.default.addObserver(forName: StorageService.didChageCompletedTrackers,
@@ -44,7 +49,7 @@ final class TrackerListViewController: UIViewController {
             self?.updateVisibleCategories()
         })
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
         
         updateVisibleCategories()
         navBarSetup()
@@ -54,13 +59,19 @@ final class TrackerListViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        analyticsService?.screenOpened(AppMetricaReportModel.YMMScreens.main.rawValue)
         checkVisibility()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        analyticsService?.screenClosed(AppMetricaReportModel.YMMScreens.main.rawValue)
     }
     
     // MARK: - UI Setup
     
     private func navBarSetup() {
-        navigationItem.title = "Трекеры"
+        let title = NSLocalizedString("trackerPage.title", comment: "Трекеры")
+        navigationItem.title = title
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "AddTracker"),
@@ -79,10 +90,24 @@ final class TrackerListViewController: UIViewController {
                              action: #selector(updateVisibleCategories),
                              for: .valueChanged)
         datePicker.tintColor = .AppColors.blue
-        navigationItem.rightBarButtonItem = dateButton
+        datePicker.overrideUserInterfaceStyle = .light
+        for subview in datePicker.subviews {
+            subview.backgroundColor = .AppColors.datePickerBackground
+            subview.layer.cornerRadius = 8
+            subview.clipsToBounds = true
+            for subsubview in subview.subviews {
+                if let subsubview = subsubview as? UILabel {
+                    subsubview.backgroundColor = .clear
+                } else {
+                    subsubview.subviews.first?.isHidden = true
+                }
+            }
+        }
         
+        navigationItem.rightBarButtonItem = dateButton
+
         search.hidesNavigationBarDuringPresentation = false
-        search.searchBar.placeholder = "Поиск"
+        search.searchBar.placeholder = NSLocalizedString("search", comment: "Поиск")
         search.searchBar.delegate = self
         navigationItem.searchController = search
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -103,13 +128,16 @@ final class TrackerListViewController: UIViewController {
                                    withReuseIdentifier: "header")
         trackerCollection.register(TrackerCell.self,
                                    forCellWithReuseIdentifier: "tracker")
+        trackerCollection.backgroundColor = .clear
         view.addSubview(trackerCollection)
         trackerCollection.reloadData()
         
         filterButton = GenericAppButton(type: .system)
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         filterButton.backgroundColor = .AppColors.blue
-        filterButton.setTitle("Фильтры", for: .normal)
+        filterButton.tintColor = .white
+        let filterTitle = NSLocalizedString("filters", comment: "Фильтры")
+        filterButton.setTitle(filterTitle, for: .normal)
         filterButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         view.addSubview(filterButton)
         NSLayoutConstraint.activate([
@@ -130,24 +158,32 @@ final class TrackerListViewController: UIViewController {
             placeholder = EmptyTablePlaceholder(type: .search, frame: frame)
             view.addSubview(placeholder)
         } else {
-            filterButton.isHidden = visibleCategories.isEmpty
+            filterButton.isHidden = StorageService.shared.trackerCount < 1
             placeholder.removeFromSuperview()
             placeholder = EmptyTablePlaceholder(type: .tracker, frame: frame)
             view.addSubview(placeholder)
         }
         
-        placeholder.isHidden = !visibleCategories.isEmpty
-        trackerCollection.isHidden = visibleCategories.isEmpty
+        placeholder.isHidden = !visibleCategories.isEmpty || !pinnedTrackers.isEmpty
+        trackerCollection.isHidden = visibleCategories.isEmpty && pinnedTrackers.isEmpty
     }
     
     // MARK: - Navigation
     
     @objc func addNewTracker() {
+        analyticsService?.buttonTapped(.add_track,
+                                       screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+        
         self.show(UINavigationController(rootViewController: TrackerTypeChoiceViewController()), sender: nil)
     }
     
     @objc func filterButtonTapped() {
+        analyticsService?.buttonTapped(.filter,
+                                       screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+        
         let filterVC = FilterViewController()
+        filterVC.appliedFilter = self.appliedFilter
+        filterVC.delegate = self
         show(UINavigationController(rootViewController: filterVC), sender: nil)
     }
     
@@ -198,14 +234,21 @@ final class TrackerListViewController: UIViewController {
         
         if let searchText = search.searchBar.text,
            !searchText.isEmpty {
-            let searchResults: [TrackerCategory] = visibleCategories.map {
+            let searchResults: [Tracker] = pinnedTrackers.filter {
+                    $0.title.localizedCaseInsensitiveContains(searchText)
+                }
+            pinnedTrackers = searchResults
+            
+            let notPinnedSearchResults: [TrackerCategory] = visibleCategories.map {
                 let trackers = $0.trackers.filter {
                     $0.title.localizedCaseInsensitiveContains(searchText)
                 }
                 return TrackerCategory(name: $0.name, trackers: trackers)
             }
-            visibleCategories = searchResults
+            visibleCategories = notPinnedSearchResults
         }
+        
+        updateFiltration()
         
         visibleCategories = visibleCategories.filter {
             !$0.trackers.isEmpty
@@ -218,12 +261,27 @@ final class TrackerListViewController: UIViewController {
     }
     
     func updateCategories() {
+        pinnedTrackers = StorageService.shared.getPinnedTrackers()
         categories = StorageService.shared.getAllCategories()
     }
     
     func newTrackerAdded() {
         categories = StorageService.shared.getAllCategories()
         updateVisibleCategories()
+    }
+    
+    func changePinForCell(indexPath: IndexPath) {
+        guard let cell = trackerCollection.cellForItem(at: indexPath) as? TrackerCell else { return }
+        cell.pinStatusChanged()
+        updateVisibleCategories()
+    }
+    
+    private func editTracker(_ tracker: Tracker, categoryName: String) {
+        let newTrackerVC = NewTrackerViewController()
+        newTrackerVC.vcMode = .edit
+        newTrackerVC.trackerType = tracker.trackerType
+        newTrackerVC.setupForEditing(tracker: tracker, categoryName: categoryName)
+        self.show(UINavigationController(rootViewController: newTrackerVC), sender: nil)
     }
 }
 
@@ -238,6 +296,48 @@ extension TrackerListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width - 32, height: 46)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        
+        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
+        
+        let preview = UITargetedPreview(view: cell.cardView)
+        return preview
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let indexPath = indexPaths.first,
+              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCell else { return nil }
+        
+        let title = cell.isPinned ? NSLocalizedString("tracker.unpin", comment: "Открепить") : NSLocalizedString("tracker.pin", comment: "Закрепить")
+        
+        let config = UIContextMenuConfiguration(actionProvider: { _ in
+            return UIMenu(children: [
+                UIAction(title: title) { [weak self] _ in
+                    self?.changePinForCell(indexPath: indexPath)
+                },
+                UIAction(title: NSLocalizedString("buttons.edit", comment: "Редактировать"), handler: { [weak self] _ in
+                    
+                    self?.analyticsService?.buttonTapped(.edit,
+                                                         screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+                    
+                    guard let trackerCD = StorageService.shared.getTracker(trackerId: cell.cellTracker.id),
+                          let cat = trackerCD.category,
+                    let categoryTitle = cat.title else { return }
+                    self?.editTracker(cell.cellTracker, categoryName: categoryTitle)
+                }),
+                UIAction(title: NSLocalizedString("buttons.delete", comment: "Удалить"), attributes: .destructive) { [weak self] _ in
+                    self?.alertPresenter?.presentDeleteAlert(message: NSLocalizedString("tracker.deleteConfirmation", comment: "Уверены что хотите удалить трекер?"), completion: { [weak self] in
+                        self?.analyticsService?.buttonTapped(.delete,
+                                                       screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+                        
+                        StorageService.shared.deleteTracker(id: cell.cellTracker.id)
+                    })
+                }
+            ])
+        })
+        return config
+    }
 }
 
 extension TrackerListViewController: UICollectionViewDelegateFlowLayout {
@@ -250,7 +350,16 @@ extension TrackerListViewController: UICollectionViewDelegateFlowLayout {
             guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as? TrackerCatHeader else {
                 return UICollectionReusableView()
             }
-            header.label.text = visibleCategories[indexPath.section].name
+            if pinnedTrackers.isEmpty {
+                header.label.text = visibleCategories[indexPath.section].name
+            } else {
+                switch indexPath.section {
+                case 0:
+                    header.label.text = NSLocalizedString("pinned", comment: "Закрепленные")
+                default:
+                    header.label.text = visibleCategories[indexPath.section - 1].name
+                }
+            }
             return header
         } else {
             return UICollectionReusableView()
@@ -262,16 +371,39 @@ extension TrackerListViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackerListViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return visibleCategories.count
+        if pinnedTrackers.isEmpty {
+            return visibleCategories.count
+        } else {
+            return visibleCategories.count + 1
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return visibleCategories[section].trackers.count
+        if pinnedTrackers.isEmpty {
+            return visibleCategories[section].trackers.count
+        } else {
+            switch section {
+            case 0:
+                return pinnedTrackers.count
+            default:
+                return visibleCategories[section - 1].trackers.count
+            }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tracker", for: indexPath) as? TrackerCell else { return UICollectionViewCell() }
-        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        var tracker: Tracker
+        if pinnedTrackers.isEmpty {
+            tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        } else {
+            switch indexPath.section {
+            case 0:
+                tracker = pinnedTrackers[indexPath.row]
+            default:
+                tracker = visibleCategories[indexPath.section - 1].trackers[indexPath.row]
+            }
+        }
         completedTrackers = StorageService.shared.getRecords(date: StorageService.shared.calendar.startOfDay(for: datePicker.date))
         cell.configureCell(with: tracker, date: datePicker.date)
         cell.delegate = self
@@ -300,11 +432,14 @@ extension TrackerListViewController: UISearchBarDelegate {
 // MARK: - TrackerCellDelegate
 
 extension TrackerListViewController: TrackerCellDelegate {
-    func updatePinnedStatus() {
-        
+    func updatePinnedStatus(trackerID: UUID, to pinned: Bool) {
+        StorageService.shared.changePinStatus(for: trackerID, to: pinned)
     }
     
     func updateRecords(with record: TrackerRecord, completion: (Bool) -> Void) {
+        analyticsService?.buttonTapped(.track,
+                                       screen: AppMetricaReportModel.YMMScreens.main.rawValue)
+        
         completedTrackers = StorageService.shared.getRecords(date: datePicker.date)
         let completedID = completedTrackers.filter {
             $0.trackerID == record.trackerID
@@ -316,5 +451,98 @@ extension TrackerListViewController: TrackerCellDelegate {
             StorageService.shared.removeRecord(record)
         }
         completion(!isRecorded)
+    }
+}
+
+//MARK: Filter Delegate
+
+extension TrackerListViewController: FilterDelegate {
+    func filterDidChange(to filter: Filter) {
+        appliedFilter = filter
+        updateVisibleCategories()
+    }
+    
+    private func updateFiltration() {
+        switch appliedFilter {
+        case .all:
+            filterForAll()
+        case .today:
+            filterForToday()
+        case .toDo:
+            filterForToDo()
+        case .done:
+            filterForDone()
+        }
+    }
+    
+    private func filterForAll() {
+        enableDatePicker()
+    }
+    
+    private func filterForToday() {
+        datePicker.date = Date()
+        disableDatePicker()
+    }
+    
+    private func filterForToDo() {
+        enableDatePicker()
+        var toDoCategories: [TrackerCategory]
+        toDoCategories = visibleCategories.map { oldCategory in
+            let newTrackers = oldCategory.trackers.filter {
+                !checkIfDoneToday(trackerID: $0.id)
+            }
+            let newCategory = TrackerCategory(name: oldCategory.name, trackers: newTrackers)
+            return newCategory
+        }
+        visibleCategories = toDoCategories
+    }
+    
+    private func filterForDone() {
+        enableDatePicker()
+        var toDoCategories: [TrackerCategory]
+        toDoCategories = visibleCategories.map { oldCategory in
+            let newTrackers = oldCategory.trackers.filter {
+                checkIfDoneToday(trackerID: $0.id)
+            }
+            let newCategory = TrackerCategory(name: oldCategory.name, trackers: newTrackers)
+            return newCategory
+        }
+        visibleCategories = toDoCategories
+    }
+    
+    private func enableDatePicker() {
+        datePicker.isEnabled = true
+        datePicker.alpha = 1
+        datePicker.overrideUserInterfaceStyle = .light
+        datePicker.backgroundColor = .AppColors.lightGray
+    }
+    
+    private func disableDatePicker() {
+        datePicker.isEnabled = false
+        datePicker.alpha = 0.3
+        datePicker.overrideUserInterfaceStyle = .dark
+        datePicker.backgroundColor = .AppColors.gray
+    }
+    
+    private func checkIfDoneToday(trackerID: UUID) -> Bool {
+        let allRecords = StorageService.shared.getRecords(for: trackerID)
+
+        var isRecorded = false
+
+        for record in allRecords {
+            let calendar = Calendar.current
+            if calendar.isDate(datePicker.date, inSameDayAs: record.date) {
+                isRecorded = true
+            }
+        }
+        return isRecorded
+    }
+}
+
+// MARK: Alert Presenter Delegate
+
+extension TrackerListViewController: AlertPresenterDelegate {
+    func show(alert: UIAlertController) {
+        present(alert, animated: true)
     }
 }

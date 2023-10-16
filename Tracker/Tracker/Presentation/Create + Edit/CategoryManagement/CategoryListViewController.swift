@@ -8,7 +8,6 @@
 import UIKit
 
 final class CategoryListViewController: UIViewController {
-    
     private var viewModel = CategoryListViewModel()
     
     private let addButton = GenericAppButton(type: .system)
@@ -31,10 +30,11 @@ final class CategoryListViewController: UIViewController {
             self?.categoryTable.reloadData()
         }
         
-        navigationItem.title = "Категория"
+        let categotyTitle = NSLocalizedString("newTracker.category", comment: "Категория")
+        navigationItem.title = categotyTitle
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .AppColors.white
         categoryTable.isScrollEnabled = false
         setupUI()
     }
@@ -53,7 +53,8 @@ final class CategoryListViewController: UIViewController {
             addButton.heightAnchor.constraint(equalToConstant: 60),
             addButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-        addButton.setTitle("Добавить категорию", for: .normal)
+        let addCategoryButtonText = NSLocalizedString("buttons.addCategory", comment: "Добавить категорию")
+        addButton.setTitle(addCategoryButtonText, for: .normal)
         addButton.addTarget(self, action: #selector(newCategory), for: .touchUpInside)
         
         placeholder = EmptyTablePlaceholder(type: .category, frame: view.safeAreaLayoutGuide.layoutFrame)
@@ -82,6 +83,7 @@ final class CategoryListViewController: UIViewController {
             categoryTable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             categoryTable.bottomAnchor.constraint(equalTo: addButton.topAnchor, constant: -24)
         ])
+        categoryTable.backgroundColor = .clear
     }
     
     @objc private func newCategory() {
@@ -93,6 +95,9 @@ final class CategoryListViewController: UIViewController {
 extension CategoryListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
+            tableView.visibleCells.forEach { anyCell in
+                anyCell.accessoryType = .none
+            }
             cell.accessoryType = .checkmark
         }
         
@@ -119,17 +124,22 @@ extension CategoryListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "category", for: indexPath)
         cell.selectionStyle = .none
-        cell.accessoryType = .none
+
         cell.tintColor = .AppColors.blue
         cell.backgroundColor = .AppColors.background
         cell.textLabel?.text = viewModel.categoryNameList[indexPath.row]
+        if NewTrackerDelegate.shared.newTrackerCategoryName == viewModel.categoryNameList[indexPath.row] {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
         cell.layer.masksToBounds = true
         cell.layer.cornerRadius = 16
         cell.layoutSubviews()
         
         if indexPath.row == 0 && viewModel.categoryNameList.count == 1 {
             cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.frame.width)
         } else {
             switch indexPath.row {
             case 0:

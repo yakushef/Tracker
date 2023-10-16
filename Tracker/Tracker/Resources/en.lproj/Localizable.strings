@@ -1,0 +1,78 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Aleksey Yakushev on 09.09.2023.
+  
+*/
+
+"trackerPage.title" = "Trackers";
+"statisticsPage.title" = "Statistics";
+
+"newTracker.pageTitle" = "Create tracker";
+"newTracker.habit" = "New habit";
+"newTracker.event" = "New event";
+"newTracker.titlePlaceholder" = "Enter tracker title";
+"newTracker.lengthLimit" = "Maximum of 38 symbols";
+"newTracker.category" = "Category";
+"newTracker.emoji" = "Emoji";
+"newTracker.color" = "Color";
+
+"newCategory.pageTitle" = "New category";
+"newCategory.titlePlaceholder" = "Enter category title";
+
+"buttons.filter" = "Filter";
+"buttons.habit" = "Habit";
+"buttons.event" = "Event";
+"buttons.cancel" = "Cancel";
+"buttons.save" = "Save";
+"buttons.create" = "Create";
+"buttons.done" = "Done";
+"buttons.addCategory" = "Add category";
+"buttons.delete" = "Delete";
+"buttons.edit" = "Edit";
+
+"filters" = "Filters";
+"filter.all" = "All trackers";
+"filter.today" = "Today trackers";
+"filter.done" = "Done";
+"filter.toDo" = "ToDo";
+
+"search" = "Search";
+
+"pinned" = "Pinned";
+"edit.event" = "Edit event";
+"edit.habit" = "Edit habit";
+"tracker.deleteConfirmation" = "Delete this tracker?";
+"tracker.pin" = "Pin";
+"tracker.unpin" = "Unpin";
+
+"placeholder.stats" = "Nothing to analyze yet";
+"placeholder.search" = "Nothing found";
+"placeholder.trackers" = "Track anything";
+"placeholder.category" = "You can group habits/events";
+
+"onboarding.page1" = "Only track things that you care about";
+"onboarding.page2" = "Even if it's not hydration or yoga";
+"onboarding.button" = "That's great!";
+
+"schedule.pageTtle" = "Schedule";
+
+"schedule.monday.full" = "Monday";
+"schedule.tuesday.full" = "Tuesday";
+"schedule.wednesday.full" = "Wednesday";
+"schedule.thursday.full" = "Thursday";
+"schedule.friday.full" = "Friday";
+"schedule.saturday.full" = "Saturday";
+"schedule.sunday.full" = "Sunday";
+
+"schedule.monday.short" = "Mo";
+"schedule.tuesday.short" = "Tu";
+"schedule.wednesday.short" = "We";
+"schedule.thursday.short" = "Th";
+"schedule.friday.short" = "Fr";
+"schedule.saturday.short" = "Sa";
+"schedule.sunday.short" = "Su";
+"schedule.everyday" = "Everyday";
+
+"statistics.total" = "Completed trackers";

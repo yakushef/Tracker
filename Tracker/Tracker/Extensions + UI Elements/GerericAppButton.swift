@@ -16,25 +16,30 @@ final class GenericAppButton: UIButton {
         self.clipsToBounds = true
         self.layer.cornerRadius = 16
         self.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        self.titleLabel?.textColor = .AppColors.white
     }
     
     func switchActiveState() {
         if isEnabled {
             isEnabled = false
             backgroundColor = .AppColors.gray
+            titleLabel?.textColor = .white
         } else {
             isEnabled = true
             backgroundColor = .AppColors.black
+            titleLabel?.textColor = .AppColors.white
         }
     }
     
     func switchActiveState(isActive: Bool) {
         if isActive {
-            isEnabled = true
+            isUserInteractionEnabled = true
             backgroundColor = .AppColors.black
+            tintColor = .AppColors.white
         } else {
-            isEnabled = false
+            isUserInteractionEnabled = false
             backgroundColor = .AppColors.gray
+            tintColor = .white
         }
     }
     

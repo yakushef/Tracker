@@ -25,6 +25,8 @@ protocol NewTrackerDelegateProtocol: AnyObject {
     func setRandomColor()
     func setTrackerColor(to color: UIColor)
     
+    func updateTracker(id: UUID)
+    
     func wipeAllTrackerInfo()
     func createNewTracker()
 }
@@ -56,7 +58,7 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
             newTrackerVC?.newTrackerColor = newTrackColor
         }
     }
-    var newTrackerCategoryName: String = ""
+    private(set) var newTrackerCategoryName: String = ""
     
     func setTrackerTitle(to title: String) {
         newTrackerTitle = title
@@ -100,6 +102,29 @@ final class NewTrackerDelegate: NewTrackerDelegateProtocol {
         newTrackerSchedule = []
         newTrackEmoji = nil
         newTrackColor = nil
+    }
+    
+    func updateTracker(id: UUID) {
+        var tracker: Tracker
+        switch newTrackerType {
+        case .habit:
+            var days: [Weekday] = []
+            days.append(contentsOf: newTrackerSchedule)
+            tracker = Tracker(habitTitle: newTrackerTitle,
+                              emoji: newTrackEmoji  ?? "🧩",
+                              color: newTrackColor ?? .AppColors.gray,
+                              timetable: days,
+                              id: id)
+        case .singleEvent:
+            tracker = Tracker(eventTitle: newTrackerTitle,
+                              emoji: newTrackEmoji  ?? "🧩",
+                              color: newTrackColor ?? .AppColors.gray,
+                              id: id)
+        }
+        
+        storageService.editTracker(tracker, categoryName: newTrackerCategoryName)
+        
+        trackerListVC?.newTrackerAdded()
     }
     
     func createNewTracker() {

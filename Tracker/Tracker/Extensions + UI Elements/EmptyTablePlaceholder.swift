@@ -23,6 +23,7 @@ final class EmptyTablePlaceholder: UIView {
     init(type: PlaceholderType, frame: CGRect) {
         self.type = type
         super.init(frame: frame)
+        self.isUserInteractionEnabled = false
         setupType()
         setupStack()
     }
@@ -37,22 +38,22 @@ final class EmptyTablePlaceholder: UIView {
             placeholderImage.image = UIImage(named: "nothingFound") ?? UIImage()
             placeholderLabel.heightAnchor.constraint(equalToConstant: 18).isActive = true
             placeholderLabel.numberOfLines = 1
-            placeholderLabel.text = "Ничего не найдено"
+            placeholderLabel.text = NSLocalizedString("placeholder.search", comment: "Ничего не найдено")
         case .category:
             placeholderImage.image = UIImage(named: "fallingStar") ?? UIImage()
             placeholderLabel.heightAnchor.constraint(equalToConstant: 36).isActive = true
             placeholderLabel.numberOfLines = 2
-            placeholderLabel.text = "Привычки и события можно\nобъединить по смыслу"
+            placeholderLabel.text = NSLocalizedString("placeholder.category", comment: "Привычки и события можно\nобъединить по смыслу")
         case .tracker:
             placeholderImage.image = UIImage(named: "fallingStar") ?? UIImage()
             placeholderLabel.heightAnchor.constraint(equalToConstant: 18).isActive = true
             placeholderLabel.numberOfLines = 1
-            placeholderLabel.text = "Что будем отслеживать?"
+            placeholderLabel.text = NSLocalizedString("placeholder.trackers", comment: "Что будем отслеживать?")
         case .statistics:
             placeholderImage.image = UIImage(named: "crying") ?? UIImage()
             placeholderLabel.heightAnchor.constraint(equalToConstant: 18).isActive = true
             placeholderLabel.numberOfLines = 1
-            placeholderLabel.text = "Анализировать пока нечего"
+            placeholderLabel.text = NSLocalizedString("placeholder.stats", comment: "Анализировать пока нечего")
         }
     }
     
